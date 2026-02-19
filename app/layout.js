@@ -6,7 +6,7 @@ import ClientLayout from "@components/ClientLayout";
  * Defines the HTML structure and metadata for the entire application
  */
 export const metadata = {
-  metadataBase: new URL("https://sjkcpeihwa.edu.my"),
+  metadataBase: new URL("https://sjkcpeihwa.vercel.app"),
   title: {
     default: "SJK(C) Pei Hwa | 培华国民型华文小学",
     template: "%s | SJK(C) Pei Hwa",
