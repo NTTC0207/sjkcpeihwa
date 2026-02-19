@@ -10,7 +10,6 @@ import {
   HiArrowRight,
   HiCalendar,
   HiChevronDown,
-  HiArrowsUpDown,
 } from "react-icons/hi2";
 import {
   collection,
@@ -74,7 +73,6 @@ export default function AnnouncementsClient({
     (initialAnnouncements || []).length === 5,
   );
   const [selectedYear, setSelectedYear] = useState("all");
-  const [sortOrder, setSortOrder] = useState("desc");
 
   // Local cache for avoiding redundant reads
   const [dataCache, setDataCache] = useState({
@@ -120,7 +118,11 @@ export default function AnnouncementsClient({
 
     try {
       let q;
-      const constraints = [orderBy("date", "desc"), limit(5)];
+      const constraints = [
+        orderBy("date", "desc"),
+        orderBy("__name__", "desc"),
+        limit(5),
+      ];
 
       if (targetCategory) {
         constraints.unshift(where("department", "==", targetCategory));
@@ -216,10 +218,6 @@ export default function AnnouncementsClient({
     } else {
       fetchAnnouncements(false, newCat);
     }
-  };
-
-  const handleSortChange = () => {
-    setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
   };
 
   // Sync state if props change (e.g. Navigation from another link)
@@ -359,19 +357,6 @@ export default function AnnouncementsClient({
                   </div>
                 </div>
               </div>
-
-              {/* Sort Toggle */}
-              <button
-                onClick={handleSortChange}
-                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-2xl text-primary font-bold hover:shadow-md transition-all active:scale-95"
-              >
-                <HiArrowsUpDown className="w-4 h-4" />
-                <span className="text-sm">
-                  {sortOrder === "desc"
-                    ? translations.announcements.latestToOldest
-                    : translations.announcements.oldestToLatest}
-                </span>
-              </button>
             </div>
 
             <div className="text-sm text-gray-400 font-medium">
@@ -392,14 +377,6 @@ export default function AnnouncementsClient({
               .filter((a) =>
                 selectedYear === "all" ? true : a.date.startsWith(selectedYear),
               )
-              .sort((a, b) => {
-                if (sortOrder === "desc") {
-                  return (
-                    b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
-                  );
-                }
-                return a.date.localeCompare(b.date) || a.id.localeCompare(b.id);
-              })
               .map((announcement) => (
                 <div
                   key={announcement.id}
