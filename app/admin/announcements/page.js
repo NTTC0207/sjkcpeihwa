@@ -801,43 +801,23 @@ export default function AnnouncementsAdminPage() {
         {/* ─── LIST VIEW ─── */}
         {view === "list" && (
           <div className="space-y-6">
-            {/* Stats row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {[
-                {
-                  label: "Dimuatkan",
-                  value: announcements.length,
-                  color: "bg-primary/10 text-primary",
-                },
-                {
-                  label: "Penting (Dalam Paparan)",
-                  value: announcements.filter((a) => a.badge === "Penting")
-                    .length,
-                  color: "bg-red-50 text-red-700",
-                },
-                {
-                  label: "Acara (Dalam Paparan)",
-                  value: announcements.filter((a) => a.badge === "Acara")
-                    .length,
-                  color: "bg-emerald-50 text-emerald-700",
-                },
-                {
-                  label: "Berita (Dalam Paparan)",
-                  value: announcements.filter((a) => a.badge === "Berita")
-                    .length,
-                  color: "bg-blue-50 text-blue-700",
-                },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className={`card rounded-2xl p-4 ${stat.color} flex flex-col`}
-                >
-                  <span className="text-2xl font-bold">{stat.value}</span>
-                  <span className="text-xs font-semibold uppercase tracking-wider opacity-70 mt-1">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
+            {/* Header with Title & Add Button */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Senarai Pengumuman
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Urus dan pantau semua pengumuman sekolah di sini.
+                </p>
+              </div>
+              <button
+                onClick={() => setView("add")}
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all duration-300 shadow-lg shadow-primary/25 hover:-translate-y-0.5"
+              >
+                <HiPlus className="w-5 h-5" />
+                <span>Tambah Pengumuman Baru</span>
+              </button>
             </div>
 
             {/* Search & Filter */}
