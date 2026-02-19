@@ -41,6 +41,7 @@ export default async function AnnouncementsPage({ searchParams }) {
 
   return (
     <AnnouncementsClient
+      key={category || "all"}
       initialAnnouncements={initialAnnouncements}
       initialCategory={category}
     />

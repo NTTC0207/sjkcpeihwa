@@ -342,10 +342,11 @@ export default function AnnouncementsAdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterBadge, setFilterBadge] = useState("All");
   const [filterDepartment, setFilterDepartment] = useState("All");
+  const [filterYear, setFilterYear] = useState("All");
   const [lastDoc, setLastDoc] = useState(null);
   const [hasMore, setHasMore] = useState(true);
-  const [isSearching, setIsSearching] = useState(false);
   const [previewAnn, setPreviewAnn] = useState(null);
+  const [availableYears, setAvailableYears] = useState([]);
   const [toast, setToast] = useState(null);
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -379,7 +380,7 @@ export default function AnnouncementsAdminPage() {
       setLastDoc(null);
       fetchAnnouncements();
     }
-  }, [user, filterBadge, filterDepartment]);
+  }, [user, filterBadge, filterDepartment, filterYear]);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -389,15 +390,18 @@ export default function AnnouncementsAdminPage() {
     if (!user) return;
     setLoading(true);
     try {
-      const constraints = [orderBy("date", "desc")];
-
-      if (filterBadge !== "All") {
-        constraints.push(where("badge", "==", filterBadge));
-      }
+      const constraints = [];
 
       if (filterDepartment !== "All") {
         constraints.push(where("department", "==", filterDepartment));
       }
+
+      if (filterYear !== "All") {
+        constraints.push(where("date", ">=", `${filterYear}-01-01`));
+        constraints.push(where("date", "<=", `${filterYear}-12-31`));
+      }
+
+      constraints.push(orderBy("date", "desc"));
 
       // Firestore doesn't support native substring search.
       // For "cost" efficiency and "firebase search", we implement what's possible.
@@ -417,7 +421,7 @@ export default function AnnouncementsAdminPage() {
         constraints.push(startAfter(lastDoc));
       }
 
-      constraints.push(limit(7));
+      constraints.push(limit(10));
 
       const q = query(collection(db, "announcement"), ...constraints);
       const snap = await getDocs(q);
@@ -445,7 +449,22 @@ export default function AnnouncementsAdminPage() {
       }
 
       setLastDoc(snap.docs[snap.docs.length - 1]);
-      setHasMore(snap.docs.length === 7);
+      setHasMore(snap.docs.length === 10);
+
+      // Update available years for the filter
+      if (!isLoadMore) {
+        const currentYear = new Date().getFullYear();
+        const years = [currentYear.toString()];
+        newDocs.forEach((d) => {
+          if (d.date) {
+            const y = d.date.split("-")[0];
+            if (y && !years.includes(y)) years.push(y);
+          }
+        });
+        setAvailableYears((prev) =>
+          [...new Set([...prev, ...years])].sort((a, b) => b - a),
+        );
+      }
     } catch (err) {
       console.error(err);
       showToast("Gagal memuatkan pengumuman.", "error");
@@ -467,7 +486,7 @@ export default function AnnouncementsAdminPage() {
     setFormData({
       title: ann.title || "",
       date: ann.date || new Date().toISOString().split("T")[0],
-      badge: ann.badge || "Important",
+      badge: ann.badge || "Penting",
       badgeColor:
         BADGE_OPTIONS.find((o) => o.label === ann.badge)?.color || "bg-red-500",
       department: ann.department || "academic",
@@ -680,7 +699,9 @@ export default function AnnouncementsAdminPage() {
       a.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       a.summary?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchBadge = filterBadge === "All" || a.badge === filterBadge;
-    return matchSearch && matchBadge;
+    const matchDepartment =
+      filterDepartment === "All" || a.department === filterDepartment;
+    return matchSearch && matchBadge && matchDepartment;
   });
 
   // Auth loading
@@ -854,7 +875,7 @@ export default function AnnouncementsAdminPage() {
                     (deptId) => {
                       const label =
                         deptId === "All"
-                          ? "All Dept"
+                          ? "Semua Jabatan"
                           : DEPARTMENT_OPTIONS.find(
                               (d) => d.id === deptId,
                             )?.label.split(" (")[0];
@@ -868,11 +889,26 @@ export default function AnnouncementsAdminPage() {
                               : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
                           }`}
                         >
-                          {deptId === "All" ? "Semua Jabatan" : label}
+                          {label}
                         </button>
                       );
                     },
                   )}
+                </div>
+
+                <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+                  <select
+                    value={filterYear}
+                    onChange={(e) => setFilterYear(e.target.value)}
+                    className="bg-transparent text-xs font-semibold text-gray-500 px-2 py-1 outline-none cursor-pointer"
+                  >
+                    <option value="All">Semua Tahun</option>
+                    {availableYears.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
@@ -887,7 +923,7 @@ export default function AnnouncementsAdminPage() {
                   />
                 ))}
               </div>
-            ) : announcements.length === 0 ? (
+            ) : filtered.length === 0 ? (
               <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                 <HiMegaphone className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-bold text-gray-500 mb-2">

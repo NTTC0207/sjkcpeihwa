@@ -66,10 +66,17 @@ export default function AnnouncementsClient({
   const [loadingMore, setLoadingMore] = useState(false);
   const [lastDoc, setLastDoc] = useState(null);
   const [hasMore, setHasMore] = useState(initialAnnouncements?.length === 5);
-  const [selectedYear, setSelectedYear] = useState(
-    new Date().getFullYear().toString(),
-  );
-  const [availableYears, setAvailableYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("all");
+  const [availableYears, setAvailableYears] = useState(() => {
+    // Initial years from server data
+    const levels = (initialAnnouncements || [])
+      .map((a) => a.date?.split("-")[0])
+      .filter(Boolean);
+    const currentYear = new Date().getFullYear().toString();
+    const years = [...new Set(levels)];
+    if (!years.includes(currentYear)) years.push(currentYear);
+    return years.sort((a, b) => b - a);
+  });
 
   // Helper to read nested translation keys
   const tNav = (key, fallback) => {
@@ -120,7 +127,7 @@ export default function AnnouncementsClient({
 
       const years = [
         ...new Set(
-          [...announcements, ...data]
+          [...(isLoadMore ? announcements : []), ...data]
             .map((a) => a.date?.split("-")[0])
             .filter(Boolean),
         ),
@@ -139,12 +146,13 @@ export default function AnnouncementsClient({
     }
   };
 
-  // Only fetch if we don't have initial data or if category changed
+  // Only fetch if we don't have initial data
+  // Since we use 'key' in page.js, this component will remount on category change
   useEffect(() => {
-    if (!initialAnnouncements || category !== initialCategory) {
+    if (!initialAnnouncements || initialAnnouncements.length === 0) {
       fetchAnnouncements();
     }
-  }, [category]);
+  }, []);
 
   const staggerContainer = {
     initial: { opacity: 0 },
