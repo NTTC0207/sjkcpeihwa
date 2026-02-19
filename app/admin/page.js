@@ -227,7 +227,7 @@ export default function AdminPage() {
                   <span className="text-2xl text-white">🤝</span>
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
-                  PTA (PIBG) Management
+                  PIBG Management
                 </h3>
                 <p className="text-sm text-gray-600">
                   Manage Parent-Teacher Association (PIBG) members.

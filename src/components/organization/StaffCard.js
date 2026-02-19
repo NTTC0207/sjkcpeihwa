@@ -2,7 +2,14 @@ import { motion } from "framer-motion";
 import { HiUser } from "react-icons/hi2";
 import { formatGoogleDriveLink } from "@lib/utils";
 
-export default function StaffCard({ staff, getRole, index }) {
+export default function StaffCard({
+  staff,
+  getRole,
+  index,
+  showSubjects = true,
+}) {
+  const hasSubjects = staff.subject && staff.subject.length > 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -57,16 +64,18 @@ export default function StaffCard({ staff, getRole, index }) {
               {staff.category}
             </span>
           </div>
-          <div className="flex flex-wrap gap-1.5 mt-1">
-            {staff.subject?.map((s) => (
-              <span
-                key={s}
-                className="text-[10px] font-medium bg-primary/5 text-primary px-2.5 py-1 rounded-lg border border-primary/10"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
+          {showSubjects && hasSubjects && (
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {staff.subject.map((s) => (
+                <span
+                  key={s}
+                  className="text-[10px] font-medium bg-primary/5 text-primary px-2.5 py-1 rounded-lg border border-primary/10"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </motion.div>

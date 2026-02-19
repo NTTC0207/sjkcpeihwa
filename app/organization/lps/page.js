@@ -39,6 +39,7 @@ export default async function LPSPage() {
         initialData={lpsData}
         translationKey="lps"
         showFilters={false}
+        showSubjects={false}
       />
     </Suspense>
   );

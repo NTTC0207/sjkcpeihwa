@@ -27,12 +27,13 @@ import {
   HiXCircle,
   HiCloudArrowUp,
 } from "react-icons/hi2";
-import Link from "next/link";
+import { subjects } from "@lib/staffData";
 import { useRef } from "react";
 
 export default function StaffTableManager({
   collectionName = "staff",
   title = "Staff",
+  showSubjects = true,
 }) {
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +47,6 @@ export default function StaffTableManager({
   const [formData, setFormData] = useState({
     name: "",
     name_zh: "",
-    role: "Teacher",
     role_ms: "Guru",
     role_zh: "老师",
     category: "Teacher",
@@ -57,18 +57,6 @@ export default function StaffTableManager({
   });
 
   const categories = ["Management", "Teacher", "Admin"];
-  const subjectsList = [
-    "Chinese",
-    "English",
-    "Malay",
-    "Mathematics",
-    "Science",
-    "Music",
-    "Physical Education",
-    "Moral",
-    "History",
-    "Admin",
-  ];
 
   useEffect(() => {
     fetchStaff();
@@ -97,7 +85,6 @@ export default function StaffTableManager({
       setFormData({
         name: staff.name || "",
         name_zh: staff.name_zh || "",
-        role: staff.role || "",
         role_ms: staff.role_ms || "",
         role_zh: staff.role_zh || "",
         category: staff.category || "Teacher",
@@ -111,7 +98,6 @@ export default function StaffTableManager({
       setFormData({
         name: "",
         name_zh: "",
-        role: "Teacher",
         role_ms: "Guru",
         role_zh: "老师",
         category: "Teacher",
@@ -189,8 +175,7 @@ export default function StaffTableManager({
   const filteredStaff = staffList.filter((s) => {
     const matchesSearch =
       s.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.name_zh?.includes(searchTerm) ||
-      s.role?.toLowerCase().includes(searchTerm.toLowerCase());
+      s.name_zh?.includes(searchTerm);
 
     const matchesCategory =
       filterCategory === "All" || s.category === filterCategory;
@@ -253,9 +238,11 @@ export default function StaffTableManager({
                 <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">
                   Category
                 </th>
-                <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">
-                  Subjects
-                </th>
+                {showSubjects && (
+                  <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">
+                    Subjects
+                  </th>
+                )}
                 <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider text-center">
                   Level
                 </th>
@@ -320,9 +307,6 @@ export default function StaffTableManager({
                     <td className="px-6 py-4 text-sm">
                       <div className="space-y-0.5">
                         <div className="font-semibold text-gray-800">
-                          {staff.role}
-                        </div>
-                        <div className="text-xs text-gray-500">
                           {staff.role_ms}
                         </div>
                         <div className="text-xs text-gray-500">
@@ -343,18 +327,20 @@ export default function StaffTableManager({
                         {staff.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1">
-                        {staff.subject?.map((sub) => (
-                          <span
-                            key={sub}
-                            className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-medium text-gray-600"
-                          >
-                            {sub}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
+                    {showSubjects && (
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {staff.subject?.map((sub) => (
+                            <span
+                              key={sub}
+                              className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-medium text-gray-600"
+                            >
+                              {sub}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    )}
                     <td className="px-6 py-4 text-center">
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-xs font-bold text-gray-600 border border-gray-200">
                         {staff.level}
@@ -470,20 +456,6 @@ export default function StaffTableManager({
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Role (EN)
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        className="w-full px-4 py-2 bg-neutral-bg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none"
-                        value={formData.role}
-                        onChange={(e) =>
-                          setFormData({ ...formData, role: e.target.value })
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-gray-700 ml-1">
                         Role (MS)
                       </label>
                       <input
@@ -516,19 +488,16 @@ export default function StaffTableManager({
                       <label className="text-sm font-bold text-gray-700 ml-1">
                         Administrative Category
                       </label>
-                      <select
-                        className="w-full px-4 py-3 bg-neutral-bg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none appearance-none"
+                      <input
+                        type="text"
+                        required
+                        className="w-full px-4 py-3 bg-neutral-bg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none"
+                        placeholder="e.g. Teacher"
                         value={formData.category}
                         onChange={(e) =>
                           setFormData({ ...formData, category: e.target.value })
                         }
-                      >
-                        {categories.map((cat) => (
-                          <option key={cat} value={cat}>
-                            {cat}
-                          </option>
-                        ))}
-                      </select>
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
@@ -568,7 +537,7 @@ export default function StaffTableManager({
                           )
                           .map((s) => (
                             <option key={s.id} value={s.id}>
-                              {s.name} ({s.role})
+                              {s.name} ({s.role_ms})
                             </option>
                           ))}
                       </select>
@@ -577,27 +546,29 @@ export default function StaffTableManager({
                 </section>
 
                 {/* Subjects */}
-                <section className="space-y-4">
-                  <h4 className="text-xs uppercase tracking-widest font-bold text-gray-400 border-b border-gray-100 pb-2">
-                    Subjects Assigned
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {subjectsList.map((sub) => (
-                      <button
-                        key={sub}
-                        type="button"
-                        onClick={() => toggleSubject(sub)}
-                        className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                          formData.subject.includes(sub)
-                            ? "bg-primary text-white shadow-md scale-105"
-                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                        }`}
-                      >
-                        {sub}
-                      </button>
-                    ))}
-                  </div>
-                </section>
+                {showSubjects && (
+                  <section className="space-y-4">
+                    <h4 className="text-xs uppercase tracking-widest font-bold text-gray-400 border-b border-gray-100 pb-2">
+                      Subjects Assigned
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {subjects.map((sub) => (
+                        <button
+                          key={sub}
+                          type="button"
+                          onClick={() => toggleSubject(sub)}
+                          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                            formData.subject.includes(sub)
+                              ? "bg-primary text-white shadow-md scale-105"
+                              : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                          }`}
+                        >
+                          {sub}
+                        </button>
+                      ))}
+                    </div>
+                  </section>
+                )}
 
                 {/* Media */}
                 <section className="space-y-4">

@@ -69,7 +69,7 @@ export default function AdminPTAPage() {
               </Link>
               <div>
                 <h1 className="text-xl font-display font-bold">
-                  PTA (PIBG) Management
+                  PIBG Management
                 </h1>
                 <p className="text-xs text-gray-300">SJK(C) Pei Hwa Machang</p>
               </div>
@@ -107,7 +107,11 @@ export default function AdminPTAPage() {
         </div>
 
         {/* Staff Table Component */}
-        <StaffTableManager collectionName="PTA" title="PTA Member" />
+        <StaffTableManager
+          collectionName="PTA"
+          title="PTA Member"
+          showSubjects={false}
+        />
       </main>
 
       {/* Footer Meta */}

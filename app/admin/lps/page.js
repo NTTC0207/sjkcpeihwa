@@ -107,7 +107,11 @@ export default function AdminLPSPage() {
         </div>
 
         {/* Staff Table Component */}
-        <StaffTableManager collectionName="LPS" title="LPS Member" />
+        <StaffTableManager
+          collectionName="LPS"
+          title="LPS Member"
+          showSubjects={false}
+        />
       </main>
 
       {/* Footer Meta */}

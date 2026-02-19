@@ -14,6 +14,7 @@ export default function GeneralOrgClient({
   initialData,
   translationKey = "organization",
   showFilters = true,
+  showSubjects = true,
 }) {
   const { translations, locale } = useLanguage();
   const router = useRouter();
@@ -187,6 +188,7 @@ export default function GeneralOrgClient({
                           staff={staff}
                           getRole={getLocalizedRole}
                           index={index}
+                          showSubjects={showSubjects}
                         />
                       ))}
                     </div>

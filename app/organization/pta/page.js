@@ -39,6 +39,7 @@ export default async function PTAPage() {
         initialData={ptaData}
         translationKey="pta"
         showFilters={false}
+        showSubjects={false}
       />
     </Suspense>
   );

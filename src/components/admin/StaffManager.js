@@ -12,14 +12,8 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { db } from "@lib/firebase";
-import {
-  HiPlus,
-  HiPencil,
-  HiTrash,
-  HiUser,
-  HiCheck,
-  HiX,
-} from "react-icons/hi2";
+import { HiPlus, HiPencil, HiTrash, HiUser } from "react-icons/hi2";
+import { subjects } from "@lib/staffData";
 
 export default function StaffManager() {
   const [staffList, setStaffList] = useState([]);
@@ -40,18 +34,6 @@ export default function StaffManager() {
   });
 
   const categories = ["Management", "Teacher", "Admin"];
-  const subjects = [
-    "Chinese",
-    "English",
-    "Malay",
-    "Mathematics",
-    "Science",
-    "Music",
-    "Physical Education",
-    "Moral",
-    "History",
-    "Admin",
-  ];
 
   useEffect(() => {
     fetchStaff();
