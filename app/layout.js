@@ -34,10 +34,10 @@ export const metadata = {
   creator: "SJK(C) Pei Hwa",
   publisher: "SJK(C) Pei Hwa",
   alternates: {
-    canonical: "https://sjkcpeihwa.edu.my",
+    canonical: "https://sjkcpeihwa.vercel.app",
     languages: {
-      "zh-CN": "https://sjkcpeihwa.edu.my",
-      "ms-MY": "https://sjkcpeihwa.edu.my",
+      "zh-CN": "https://sjkcpeihwa.vercel.app",
+      "ms-MY": "https://sjkcpeihwa.vercel.app",
     },
   },
   formatDetection: {
@@ -49,7 +49,7 @@ export const metadata = {
     title: "SJK(C) Pei Hwa | 培华国民型华文小学",
     description:
       "Laman web rasmi SJK(C) Pei Hwa - Memupuk Minda Muda, Membina Masa Depan Cerah. 培育英才，共创辉煌。",
-    url: "https://sjkcpeihwa.edu.my",
+    url: "https://sjkcpeihwa.vercel.app",
     siteName: "SJK(C) Pei Hwa",
     images: [
       {
@@ -105,14 +105,14 @@ export default function RootLayout({ children }) {
       "SJKC Pei Hwa Machang",
       "SJK(C) Pei Hwa Machang",
     ],
-    url: "https://sjkcpeihwa.edu.my",
+    url: "https://sjkcpeihwa.vercel.app",
     logo: {
       "@type": "ImageObject",
-      url: "https://sjkcpeihwa.edu.my/logo.png",
+      url: "https://sjkcpeihwa.vercel.app/logo.png",
       width: 200,
       height: 200,
     },
-    image: "https://sjkcpeihwa.edu.my/gallery/landing-hero.avif",
+    image: "https://sjkcpeihwa.vercel.app/gallery/landing-hero.avif",
     description:
       "Laman web rasmi SJK(C) Pei Hwa (培华国民型华文小学), Machang, Kelantan. Sekolah rendah jenis kebangsaan Cina yang menawarkan pendidikan berkualiti tinggi.",
     address: {
@@ -139,7 +139,7 @@ export default function RootLayout({ children }) {
       "Bahasa Malaysia",
       "English",
     ],
-    sameAs: ["https://sjkcpeihwa.edu.my"],
+    sameAs: ["https://sjkcpeihwa.vercel.app"],
   };
 
   return (
