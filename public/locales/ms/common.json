@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "name": "SJK(C) Pei Hwa",
+    "place": "Machang",
+    "home": "Laman Utama",
+    "about": "Tentang Kami",
+    "programs": "Program",
+    "contact": "Hubungi Kami",
+    "admin": "Pentadbir",
+    "falsafah": "Falsafah",
+    "organization": {
+      "title": "Organisasi",
+      "chart": "Carta Organisasi",
+      "staff": "Guru dan Staff"
+    },
+    "announcements": "Pengumuman",
+    "manage": {
+      "academic": "Akademik",
+      "hem": "HEM",
+      "curriculum": "Kurikulum"
+    },
+    "profile": {
+      "title": "Profil Sekolah",
+      "anthem": "Lagu Sekolah",
+      "motto": "Moto Sekolah",
+      "landscape": "Landskap Sekolah",
+      "pta": "PIBG",
+      "lps":"LPS"
+    }
+  },
+  "hero": {
+    "welcome": "Selamat Datang ke SJK(C) Pei Hwa Machang",
+    "motto": "Memupuk Minda Muda, Membina Masa Depan Cerah",
+    "cta": "Ketahui Lebih Lanjut"
+  },
+  "about": {
+    "title": "Tentang Sekolah Kami",
+    "subtitle": "Tempat di mana pembelajaran menjadi hidup",
+    "description": "Sekolah Rendah Peihwa komited untuk menyediakan pendidikan berkualiti dalam persekitaran yang memupuk dan inklusif. Kami percaya dalam membangunkan pelajar yang seimbang yang cemerlang dari segi akademik, sosial, dan emosi.",
+    "mission": "Misi Kami",
+    "missionText": "MELESTARIKAN SISTEM PENDIDIKAN YANG BERKUALITI UNTUK MEMBANGUNKAN POTENSI INDIVIDU BAGI MEMENUHI ASPIRASI NEGARA",
+    "vision": "Visi Kami",
+    "visionText": "PENDIDIKAN BERKUALITI, INSAN TERDIDIK, NEGARA SEJAHTERA"
+  },
+  "charter": {
+    "title": "PIAGAM PELANGGAN",
+    "items": [
+      "Kami sedia memberi pendidikan yang bermutu dan melahirkan pelajar-pelajar yang cemerlang dan wawasan.",
+      "Berusaha meningkatkan tahap pencapaian kecemerlangan pelajar dalam bidang kurikulum dan kokurikulum.",
+      "Menjamin kesihatan dan keselamatan murid-murid semasa belajar dan berada di sekolah.",
+      "Mewujudkan suasana belajar yang selesa dengan menyediakan kemudahan dan kelengkapan pengajaran dan pembelajaran yang sempurna.",
+      "Sedia memberi layanan dan perkhidmatan yang cepat dan mesra kepada semua ibu bapa yang berurusan dengan pihak sekolah.",
+      "Pihak pentadbir bersedia menyelesaikan segala masalah yang timbul berkaiatan dengan sekolah."
+    ]
+  },
+  "programs": {
+    "title": "Program Kami",
+    "subtitle": "Pendidikan menyeluruh untuk setiap kanak-kanak",
+    "academic": {
+      "title": "Kecemerlangan Akademik",
+      "description": "Asas kukuh dalam subjek teras dengan kaedah pengajaran inovatif"
+    },
+    "arts": {
+      "title": "Seni & Budaya",
+      "description": "Program muzik, seni, dan budaya untuk memupuk kreativiti"
+    },
+    "sports": {
+      "title": "Sukan & Kesihatan",
+      "description": "Program pendidikan jasmani dan sukan untuk pembangunan sihat"
+    },
+    "character": {
+      "title": "Pembinaan Karakter",
+      "description": "Program pendidikan nilai dan pembangunan kepimpinan"
+    }
+  },
+  "announcements": {
+    "title": "Pengumuman Terkini",
+    "subtitle": "Kekal dikemas kini dengan berita dan acara sekolah",
+    "viewAll": "Lihat Semua Pengumuman",
+    "filterYear": "Tapis mengikut Tahun",
+    "allYears": "Semua Tahun",
+    "noAnnouncements": "Tiada pengumuman ditemui untuk tahun ini."
+  },
+  "footer": {
+    "contact": "Hubungi Kami",
+    "address": "123 Jalan Pendidikan, Daerah Pembelajaran",
+    "phone": "Telefon: +60 9-9751046",
+    "email": "E-mel: dbc2185@moe.edu.my",
+    "quickLinks": "Pautan Pantas",
+    "followUs": "Ikuti Kami",
+    "copyright": "© {{year}} SJK(C) Pei Hwa Machang. Hak cipta terpelihara."
+  },
+  "organization": {
+    "title": "Guru dan Staff",
+    "subtitle": "Kenali pasukan pengurusan dan kakitangan perguruan kami yang berdedikasi",
+    "chartView": "Paparan Carta",
+    "gridView": "Paparan Grid",
+    "search": "Cari kakitangan...",
+    "filterSubject": "Tapis mengikut Subjek",
+    "filterCategory": "Tapis mengikut Kategori",
+    "allSubjects": "Semua Subjek",
+    "allCategories": "Semua Kategori",
+    "noResults": "Tiada kakitangan ditemui mengikut kriteria anda."
+  },
+  "landscape": {
+    "title": "Landskap Sekolah",
+    "tagline": "Terokai persekitaran yang tenang dan kemudahan moden di SJK(C) Pei Hwa Machang."
+  },
+  "pta": {
+    "title": "PIBG",
+    "subtitle": "Pasukan ibu bapa dan guru kami komited untuk membantu pihak sekolah meningkatkan kualiti pengajaran dan kemudahan sekolah.",
+    "chartView": "Paparan Carta",
+    "gridView": "Paparan Grid",
+    "search": "Cari ahli...",
+    "noResults": "Tiada ahli ditemui mengikut kriteria anda."
+  },
+  "lps": {
+    "title": "LPS",
+    "subtitle": "Lembaga Pengelola Sekolah komited untuk menyediakan kemudahan sekolah yang lengkap, pengurusan pentadbiran yang teratur dan memelihara hak pendidikan Cina.",
+    "chartView": "Paparan Carta",
+    "gridView": "Paparan Grid",
+    "search": "Cari ahli...",
+    "noResults": "Tiada ahli ditemui mengikut kriteria anda."
+  }
+}

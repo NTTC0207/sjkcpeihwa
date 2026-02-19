@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "name": "培华国民型华文小学",
+    "place": "马章",
+    "home": "主页",
+    "about": "关于我们",
+    "programs": "课程",
+    "contact": "联系我们",
+    "admin": "管理员",
+    "falsafah": "原则",
+    "organization": {
+      "title": "行政与组织",
+      "chart": "学校组织架构",
+      "staff": "教师及行政人员"
+    },
+    "announcements": "最新公告",
+    "manage":{
+      "academic":"行政及课程事务",
+      "hem":"学生事务",
+      "curriculum":"课外活动"
+    },
+    "profile": {
+      "title": "学校概况",
+      "anthem": "校歌",
+      "motto": "校训",
+      "landscape": "校园景观",
+      "pta": "家教与教师协会",
+      "lps":"董事部"
+    }
+  },
+  "hero": {
+    "welcome": "欢迎来到马章培华国民型华文小学",
+    "motto": "培育幼小心灵，建设光明未来",
+    "cta": "了解更多"
+  },
+  "about": {
+    "title": "关于我们的学校",
+    "subtitle": "让学习充满活力的地方",
+    "description": "培华小学致力于在培育和包容的环境中提供优质教育。我们相信培养在学术、社交和情感方面全面发展的学生。",
+    "mission": "我们的使命",
+    "missionText": "永续发展素质教育，激发个人潜质，体现国家宏愿。",
+    "vision": "学校宏愿",
+    "visionText": "素质教育、优质国民、国家安康"
+  },
+  "charter": {
+    "title": "客户服务标准",
+    "items": [
+      "我们将提供优良教育于学生，以培养一群优良且具有崇高道德价值观及能迎合建国目标的社会份子。",
+      "我们将致力于提高学生们在学术上的水准。",
+      "我们将确保学生们在校园内的安全与健康。",
+      "我们将尽力营造良好读书环境及提供充足的教学设备。",
+      "我们将以友善的态度对待有事到访的家长们并欢欣地提供周到的服务。",
+      "我们的行政人员将尽力解决所有校方所面临的学生问题和改善不够完善的措施。"
+    ]
+  },
+  "programs": {
+    "title": "我们的课程",
+    "subtitle": "为每个孩子提供全面教育",
+    "academic": {
+      "title": "学术卓越",
+      "description": "通过创新教学方法打下核心科目的坚实基础"
+    },
+    "arts": {
+      "title": "艺术与文化",
+      "description": "音乐、艺术和文化课程培养创造力"
+    },
+    "sports": {
+      "title": "体育与健康",
+      "description": "体育教育和运动项目促进健康发展"
+    },
+    "character": {
+      "title": "品格培养",
+      "description": "价值观教育和领导力发展课程"
+    }
+  },
+  "announcements": {
+    "title": "最新公告",
+    "subtitle": "了解学校新闻和活动",
+    "viewAll": "查看所有公告",
+    "filterYear": "按年份筛选",
+    "allYears": "所有年份",
+    "noAnnouncements": "该年份未找到任何公告。"
+  },
+  "footer": {
+    "contact": "联系我们",
+    "address": "18500 马章，吉兰丹，马来西亚",
+    "phone": "电话：+60 9-9751046",
+    "email": "电邮：dbc2185@moe.edu.my",
+    "quickLinks": "快速链接",
+    "followUs": "关注我们",
+    "copyright": "© {{year}} 马章培华国民型华文小学。版权所有。"
+  },
+  "organization": {
+    "title": "教师及行政人员",
+    "subtitle": "了解我们敬业的管理团队和教职员工",
+    "chartView": "图表视图",
+    "gridView": "列表视图",
+    "search": "搜索教职员...",
+    "filterSubject": "按科目筛选",
+    "filterCategory": "按类别筛选",
+    "allSubjects": "所有科目",
+    "allCategories": "所有类别",
+    "noResults": "未找到匹配条件的教职员。"
+  },
+  "landscape": {
+    "title": "校园景观",
+    "tagline": "探索马章培华国民型华文小学幽静的环境与现代化设施。"
+  },
+  "pta": {
+    "title": "家教与教师协会 (PIBG)",
+    "subtitle": "我们的校友与家长团队致力于协助学校提升教学素质与校园设施。",
+    "chartView": "图表视图",
+    "gridView": "列表视图",
+    "search": "搜索成员...",
+    "noResults": "未找到匹配条件的成员。"
+  },
+  "lps": {
+    "title": "董事部 (LPS)",
+    "subtitle": "董事部致力于提供完善的校园设施、妥善的行政管理和维护华教权益。",
+    "chartView": "图表视图",
+    "gridView": "列表视图",
+    "search": "搜索成员...",
+    "noResults": "未找到匹配条件的成员。"
+  }
+}
