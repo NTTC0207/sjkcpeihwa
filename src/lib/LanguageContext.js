@@ -19,10 +19,29 @@ export function LanguageProvider({ children }) {
     const loadTranslations = async () => {
       try {
         const response = await fetch(`/locales/${locale}/common.json`);
+        if (!response.ok) {
+          throw new Error(`Failed to load translations for ${locale}`);
+        }
         const data = await response.json();
         setTranslations(data);
       } catch (error) {
         console.error("Error loading translations:", error);
+        // Fallback to 'zh' if 'en' or other locale fails
+        if (locale !== "zh") {
+          console.log("Falling back to 'zh' translations");
+          try {
+            const fallbackResponse = await fetch("/locales/zh/common.json");
+            if (fallbackResponse.ok) {
+              const fallbackData = await fallbackResponse.json();
+              setTranslations(fallbackData);
+            }
+          } catch (fallbackError) {
+            console.error(
+              "Critical error: Could not load fallback translations",
+              fallbackError,
+            );
+          }
+        }
       }
     };
     if (isMounted) {

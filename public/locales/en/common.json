@@ -1,0 +1,125 @@
+{
+  "nav": {
+    "name": "Peihwa Primary School",
+    "place": "Machang",
+    "home": "Home",
+    "about": "About Us",
+    "programs": "Programs",
+    "contact": "Contact Us",
+    "admin": "Admin",
+    "falsafah": "Philosophy",
+    "organization": {
+      "title": "Administration & Organization",
+      "chart": "Organization Chart",
+      "staff": "Staff & Teachers"
+    },
+    "announcements": "Latest Announcements",
+    "manage": {
+      "academic": "Academic Affairs",
+      "hem": "Student Affairs",
+      "curriculum": "Co-curricular Activities"
+    },
+    "profile": {
+      "title": "School Profile",
+      "anthem": "School Anthem",
+      "motto": "School Motto",
+      "landscape": "School Landscape",
+      "pta": "PTA (PIBG)",
+      "lps": "Board of Governors (LPS)"
+    }
+  },
+  "hero": {
+    "welcome": "Welcome to SJK(C) Pei Hwa Machang",
+    "motto": "Nurturing Young Minds, Building Bright Futures",
+    "cta": "Learn More"
+  },
+  "about": {
+    "title": "About Our School",
+    "subtitle": "A place where learning comes alive",
+    "description": "Peihwa Primary School is committed to providing quality education in a nurturing and inclusive environment. We believe in developing well-rounded students who excel academically, socially, and emotionally.",
+    "mission": "Our Mission",
+    "missionText": "Sustaining a quality education system to develop individual potential and fulfill national aspirations.",
+    "vision": "Our Vision",
+    "visionText": "Quality Education, Quality Citizens, A Prosperous Nation"
+  },
+  "charter": {
+    "title": "Client Charter",
+    "items": [
+      "We will provide quality education to students to produce a group of excellent citizens with high moral values who meet national goals.",
+      "We will strive to improve student achievement levels in both academic and co-curricular fields.",
+      "We will ensure the health and safety of students while they are at school.",
+      "We will create a conducive learning environment by providing perfect teaching and learning facilities.",
+      "We are ready to provide fast and friendly service to all parents who deal with the school.",
+      "The administration is ready to solve all problems related to the school."
+    ]
+  },
+  "programs": {
+    "title": "Our Programs",
+    "subtitle": "Holistic education for every child",
+    "academic": {
+      "title": "Academic Excellence",
+      "description": "Solid foundation in core subjects through innovative teaching methods"
+    },
+    "arts": {
+      "title": "Arts & Culture",
+      "description": "Music, arts, and cultural programs to nurture creativity"
+    },
+    "sports": {
+      "title": "Sports & Health",
+      "description": "Physical education and sports programs for healthy development"
+    },
+    "character": {
+      "title": "Character Building",
+      "description": "Values education and leadership development programs"
+    }
+  },
+  "announcements": {
+    "title": "Latest Announcements",
+    "subtitle": "Stay updated with school news and events",
+    "viewAll": "View All Announcements",
+    "filterYear": "Filter by Year",
+    "allYears": "All Years",
+    "noAnnouncements": "No announcements found for this year."
+  },
+  "footer": {
+    "contact": "Contact Us",
+    "address": "18500 Machang, Kelantan, Malaysia",
+    "phone": "Tel: +60 9-9751046",
+    "email": "Email: dbc2185@moe.edu.my",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us",
+    "copyright": "© {{year}} SJK(C) Pei Hwa Machang. All rights reserved."
+  },
+  "organization": {
+    "title": "Staff & Teachers",
+    "subtitle": "Meet our dedicated management team and teaching staff",
+    "chartView": "Chart View",
+    "gridView": "Grid View",
+    "search": "Search staff...",
+    "filterSubject": "Filter by Subject",
+    "filterCategory": "Filter by Category",
+    "allSubjects": "All Subjects",
+    "allCategories": "All Categories",
+    "noResults": "No staff found matching your criteria."
+  },
+  "landscape": {
+    "title": "School Landscape",
+    "tagline": "Explore the peaceful surroundings and modern facilities of SJK(C) Pei Hwa Machang."
+  },
+  "pta": {
+    "title": "Parent-Teacher Association (PIBG)",
+    "subtitle": "Our team of parents and teachers is committed to helping the school improve teaching quality and campus facilities.",
+    "chartView": "Chart View",
+    "gridView": "Grid View",
+    "search": "Search members...",
+    "noResults": "No members found matching your criteria."
+  },
+  "lps": {
+    "title": "Board of Governors (LPS)",
+    "subtitle": "The Board of Governors is committed to providing complete school facilities, proper administration and safeguarding Chinese education rights.",
+    "chartView": "Chart View",
+    "gridView": "Grid View",
+    "search": "Search members...",
+    "noResults": "No members found matching your criteria."
+  }
+}
