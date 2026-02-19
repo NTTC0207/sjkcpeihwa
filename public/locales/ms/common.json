@@ -113,6 +113,9 @@
     "allCategories": "Semua Kategori",
     "noResults": "Tiada kakitangan ditemui mengikut kriteria anda."
   },
+  "categories": {
+    "label": "Kategori"
+  },
   "landscape": {
     "title": "Landskap Sekolah",
     "tagline": "Terokai persekitaran yang tenang dan kemudahan moden di SJK(C) Pei Hwa Machang."
@@ -147,6 +150,7 @@
     "pendidikan_kesihatan": "Pendidikan Kesihatan",
     "reka_bentuk_dan_teknologi": "Reka Bentuk dan Teknologi",
     "sejarah": "Sejarah",
+    "pendidikan_pra_sekolah": "Pendidikan Pra Sekolah",
     "admin": "Admin"
   },
   "anthem": {

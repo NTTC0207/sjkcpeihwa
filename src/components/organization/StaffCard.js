@@ -10,6 +10,7 @@ export default function StaffCard({
 }) {
   const { translations } = useLanguage();
   const tSubjects = translations?.subjects || {};
+  const tCategories = translations?.categories || {};
   const hasSubjects = staff.subject && staff.subject.length > 0;
 
   return (
@@ -60,11 +61,20 @@ export default function StaffCard({
         </div>
 
         <div className="w-full pt-4 border-t border-gray-50 flex flex-col gap-3">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span className="font-medium">Category</span>
-            <span className="bg-gray-100 px-2 py-0.5 rounded-md text-gray-700">
-              {staff.category}
+          <div className="flex items-start justify-between text-xs text-gray-500">
+            <span className="font-medium mt-0.5">
+              {tCategories.label || "Category"}
             </span>
+            <div className="flex flex-wrap gap-1 justify-end max-w-[70%]">
+              {staff.category?.split(",").map((cat, i) => (
+                <span
+                  key={i}
+                  className="bg-gray-50 px-2 py-0.5 rounded-md text-gray-600 border border-gray-100 whitespace-nowrap"
+                >
+                  {cat.trim()}
+                </span>
+              ))}
+            </div>
           </div>
           {showSubjects && hasSubjects && (
             <div className="flex flex-wrap gap-1.5 mt-1">

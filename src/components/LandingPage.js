@@ -280,7 +280,7 @@ export default function LandingPage() {
           </div>
 
           {/* Highlights Section */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -335,7 +335,7 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             ))}
-          </motion.div>
+          </motion.div> */}
         </div>
       </section>
 

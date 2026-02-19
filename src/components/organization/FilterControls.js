@@ -75,7 +75,7 @@ export default function FilterControls({
                   <option value="All">{t.allCategories}</option>
                   {categories.map((c) => (
                     <option key={c} value={c}>
-                      {c}
+                      {translations?.categories?.[c] || c}
                     </option>
                   ))}
                 </select>

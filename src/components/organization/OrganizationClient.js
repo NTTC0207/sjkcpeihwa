@@ -59,6 +59,17 @@ export default function OrganizationClient({ initialStaffData }) {
     return staff.role_en || staff.role;
   };
 
+  // Dynamically extract categories from data
+  const uniqueCategories = useMemo(() => {
+    const cats = new Set();
+    staffData.forEach((staff) => {
+      if (staff.category) {
+        staff.category.split(",").forEach((c) => cats.add(c.trim()));
+      }
+    });
+    return Array.from(cats).sort();
+  }, [staffData]);
+
   // Filter staff data
   const filteredStaff = useMemo(() => {
     return staffData.filter((staff) => {
@@ -71,7 +82,12 @@ export default function OrganizationClient({ initialStaffData }) {
         selectedSubject === "All" ||
         (staff.subject && staff.subject.includes(selectedSubject));
       const matchesCategory =
-        selectedCategory === "All" || staff.category === selectedCategory;
+        selectedCategory === "All" ||
+        (staff.category &&
+          staff.category
+            .split(",")
+            .map((c) => c.trim())
+            .includes(selectedCategory));
 
       return matchesSearch && matchesSubject && matchesCategory;
     });
@@ -83,9 +99,24 @@ export default function OrganizationClient({ initialStaffData }) {
     staffData.forEach((item) => (map[item.id] = { ...item, children: [] }));
     const tree = [];
     staffData.forEach((item) => {
-      if (item.parentId && map[item.parentId]) {
-        map[item.parentId].children.push(map[item.id]);
-      } else if (!item.parentId) {
+      // Combine parentId and parentIds into a unique list of parent IDs
+      const pIds = [
+        ...(Array.isArray(item.parentIds) ? item.parentIds : []),
+        ...(item.parentId ? [item.parentId] : []),
+      ].filter((id, index, self) => id && self.indexOf(id) === index);
+
+      let isAssignedAsChild = false;
+      if (pIds.length > 0) {
+        pIds.forEach((pId) => {
+          if (map[pId]) {
+            map[pId].children.push(map[item.id]);
+            isAssignedAsChild = true;
+          }
+        });
+      }
+
+      // If no valid parent was found in the map, this node is treated as a root
+      if (!isAssignedAsChild) {
         tree.push(map[item.id]);
       }
     });
@@ -138,7 +169,7 @@ export default function OrganizationClient({ initialStaffData }) {
               view={view}
               setView={setView}
               subjects={localSubjects}
-              categories={localCategories}
+              categories={uniqueCategories}
             />
           )}
 

@@ -113,6 +113,9 @@
     "allCategories": "所有类别",
     "noResults": "未找到匹配条件的教职员。"
   },
+  "categories": {
+    "label": "类别"
+  },
   "landscape": {
     "title": "校园景观",
     "tagline": "探索马章培华国民型华文小学幽静的环境与现代化设施。"
@@ -147,6 +150,7 @@
     "pendidikan_kesihatan": "健康教育",
     "reka_bentuk_dan_teknologi": "设计与工艺",
     "sejarah": "历史",
+    "pendidikan_pra_sekolah": "学前教育",
     "admin": "行政"
   },
   "anthem": {

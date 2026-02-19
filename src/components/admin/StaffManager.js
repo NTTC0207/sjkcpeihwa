@@ -38,7 +38,7 @@ export default function StaffManager() {
     image: "",
   });
 
-  const categories = ["Management", "Teacher", "Admin"];
+  const categories = ["Management", "Teacher"];
 
   useEffect(() => {
     fetchStaff();
@@ -133,8 +133,7 @@ export default function StaffManager() {
         subject: [],
         level: 2,
         parentId: "",
-        image:
-          "",
+        image: "",
       });
       fetchStaff();
     } catch (error) {
@@ -219,9 +218,7 @@ export default function StaffManager() {
                           ? "Pengurusan"
                           : cat === "Teacher"
                             ? "Guru"
-                            : cat === "Admin"
-                              ? "Pentadbiran"
-                              : cat}
+                            : cat}
                       </option>
                     ))}
                   </select>

@@ -62,6 +62,17 @@ export default function GeneralOrgClient({
     return staff.role_en || staff.role;
   };
 
+  // Dynamically extract categories from data
+  const uniqueCategories = useMemo(() => {
+    const cats = new Set();
+    data.forEach((item) => {
+      if (item.category) {
+        item.category.split(",").forEach((c) => cats.add(c.trim()));
+      }
+    });
+    return Array.from(cats).sort();
+  }, [data]);
+
   // Filter data
   const filteredData = useMemo(() => {
     return data.filter((item) => {
@@ -76,7 +87,12 @@ export default function GeneralOrgClient({
         (item.subject && item.subject.includes(selectedSubject));
 
       const matchesCategory =
-        selectedCategory === "All" || item.category === selectedCategory;
+        selectedCategory === "All" ||
+        (item.category &&
+          item.category
+            .split(",")
+            .map((c) => c.trim())
+            .includes(selectedCategory));
 
       return matchesSearch && matchesSubject && matchesCategory;
     });
@@ -88,9 +104,24 @@ export default function GeneralOrgClient({
     data.forEach((item) => (map[item.id] = { ...item, children: [] }));
     const tree = [];
     data.forEach((item) => {
-      if (item.parentId && map[item.parentId]) {
-        map[item.parentId].children.push(map[item.id]);
-      } else if (!item.parentId) {
+      // Combine parentId and parentIds into a unique list of parent IDs
+      const pIds = [
+        ...(Array.isArray(item.parentIds) ? item.parentIds : []),
+        ...(item.parentId ? [item.parentId] : []),
+      ].filter((id, index, self) => id && self.indexOf(id) === index);
+
+      let isAssignedAsChild = false;
+      if (pIds.length > 0) {
+        pIds.forEach((pId) => {
+          if (map[pId]) {
+            map[pId].children.push(map[item.id]);
+            isAssignedAsChild = true;
+          }
+        });
+      }
+
+      // If no valid parent was found in the map, this node is treated as a root
+      if (!isAssignedAsChild) {
         tree.push(map[item.id]);
       }
     });
@@ -139,7 +170,7 @@ export default function GeneralOrgClient({
               view={view}
               setView={setView}
               subjects={showFilters ? [] : null} // Can pass subjects if needed
-              categories={showFilters ? [] : null}
+              categories={showFilters ? uniqueCategories : null}
               showAdvanced={showFilters}
             />
           )}
