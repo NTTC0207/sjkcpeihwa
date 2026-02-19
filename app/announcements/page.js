@@ -11,7 +11,6 @@ import {
   HiCalendar,
   HiChevronDown,
 } from "react-icons/hi2";
-import { formatGoogleDriveLink } from "@lib/utils";
 import {
   collection,
   getDocs,
@@ -313,7 +312,7 @@ export default function AnnouncementsPage() {
                       {announcement.image ? (
                         <>
                           <img
-                            src={formatGoogleDriveLink(announcement.image)}
+                            src={announcement.image}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             alt={announcement.title}
                           />

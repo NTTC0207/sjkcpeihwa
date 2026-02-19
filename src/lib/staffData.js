@@ -6,7 +6,7 @@ export const staffData = [
     role_ms: "Guru Besar",
     role_zh: "校长",
     category: "Management",
-    subject: ["Admin"],
+    subject: ["admin"],
     image: null,
     level: 0,
   },
@@ -45,23 +45,24 @@ export const staffData = [
     parentId: "1",
     image: null,
     level: 1,
-  }
+  },
 ];
 
 export const subjects = [
-  "Bahasa Cina",
-  "Bahasa Inggeris",
-  "Bahasa Melayu",
-  "Matematik",
-  "Sains",
-  "Muzik",
-  "Pendidikan Jasmani",
-  "Pendidikan Seni",
-  "Pendidikan Moral",
-  "Pendidikan Islam",
-  "Pendidikan Kesihatan",
-  "Reka Bentuk dan Teknologi",
-  "Sejarah",
-  "Admin",
+  "bahasa_cina",
+  "bahasa_inggeris",
+  "bahasa_melayu",
+  "matematik",
+  "sains",
+  "muzik",
+  "pendidikan_jasmani",
+  "pendidikan_seni",
+  "pendidikan_moral",
+  "pendidikan_islam",
+  "pendidikan_kesihatan",
+  "reka_bentuk_dan_teknologi",
+  "sejarah",
+  "admin",
 ];
+
 export const categories = ["Management", "Teacher", "Admin"];

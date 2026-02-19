@@ -14,9 +14,14 @@ import {
 import { db } from "@lib/firebase";
 import { HiPlus, HiPencil, HiTrash, HiUser } from "react-icons/hi2";
 import { subjects } from "@lib/staffData";
+import { useLanguage } from "@lib/LanguageContext";
 
 export default function StaffManager() {
+  const { translations } = useLanguage();
+  const tSubjects = translations?.subjects || {};
   const [staffList, setStaffList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -30,7 +35,7 @@ export default function StaffManager() {
     subject: [],
     level: 2,
     parentId: "",
-    image: null,
+    image: "",
   });
 
   const categories = ["Management", "Teacher", "Admin"];
@@ -38,6 +43,13 @@ export default function StaffManager() {
   useEffect(() => {
     fetchStaff();
   }, []);
+
+  useEffect(() => {
+    const totalPages = Math.ceil(staffList.length / itemsPerPage);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [staffList.length, currentPage]);
 
   const fetchStaff = async () => {
     setLoading(true);
@@ -68,13 +80,17 @@ export default function StaffManager() {
       subject: staff.subject || [],
       level: staff.level || 2,
       parentId: staff.parentId || "",
-      image: staff.image || null,
+      image: staff.image
+        ? typeof staff.image === "object"
+          ? staff.image.url
+          : staff.image
+        : "",
     });
     setIsAdding(false);
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this staff member?")) return;
+    if (!confirm("Adakah anda pasti mahu memadam ahli kakitangan ini?")) return;
     try {
       await deleteDoc(doc(db, "staff", id));
       setStaffList(staffList.filter((s) => s.id !== id));
@@ -117,7 +133,8 @@ export default function StaffManager() {
         subject: [],
         level: 2,
         parentId: "",
-        image: null,
+        image:
+          "",
       });
       fetchStaff();
     } catch (error) {
@@ -136,14 +153,14 @@ export default function StaffManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-display font-bold text-primary">
-          Manage Staff
+          Urus Kakitangan
         </h2>
         {!isAdding && !editingId && (
           <button
             onClick={() => setIsAdding(true)}
             className="btn-primary flex items-center gap-2"
           >
-            <HiPlus /> Add Staff Member
+            <HiPlus /> Tambah Ahli Kakitangan
           </button>
         )}
       </div>
@@ -151,14 +168,14 @@ export default function StaffManager() {
       {(isAdding || editingId) && (
         <div className="card-white p-6 md:p-8 border-2 border-primary/20 shadow-xl animate-in fade-in slide-in-from-top-4">
           <h3 className="text-xl font-bold text-primary mb-6">
-            {editingId ? "Edit Staff Member" : "Add New Staff Member"}
+            {editingId ? "Edit Ahli Kakitangan" : "Tambah Ahli Kakitangan Baru"}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-gray-700">
-                    Name (English/Malay)
+                    Nama (Inggeris/Malay)
                   </label>
                   <input
                     type="text"
@@ -167,13 +184,13 @@ export default function StaffManager() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     className="input-field"
-                    placeholder="Full Name"
+                    placeholder="Nama Penuh"
                     required
                   />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-gray-700">
-                    Name (Chinese)
+                    Nama (Cina)
                   </label>
                   <input
                     type="text"
@@ -187,7 +204,7 @@ export default function StaffManager() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-gray-700">
-                    Category
+                    Kategori
                   </label>
                   <select
                     value={formData.category}
@@ -198,7 +215,13 @@ export default function StaffManager() {
                   >
                     {categories.map((cat) => (
                       <option key={cat} value={cat}>
-                        {cat}
+                        {cat === "Management"
+                          ? "Pengurusan"
+                          : cat === "Teacher"
+                            ? "Guru"
+                            : cat === "Admin"
+                              ? "Pentadbiran"
+                              : cat}
                       </option>
                     ))}
                   </select>
@@ -208,7 +231,7 @@ export default function StaffManager() {
               <div className="space-y-4">
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-gray-700">
-                    Role (English)
+                    Jawatan (Inggeris)
                   </label>
                   <input
                     type="text"
@@ -223,7 +246,7 @@ export default function StaffManager() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-gray-700">
-                    Role (Malay)
+                    Jawatan (Malay)
                   </label>
                   <input
                     type="text"
@@ -237,7 +260,7 @@ export default function StaffManager() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-gray-700">
-                    Role (Chinese)
+                    Jawatan (Cina)
                   </label>
                   <input
                     type="text"
@@ -255,12 +278,12 @@ export default function StaffManager() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-100">
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-gray-700">
-                  Organization Hierarchy
+                  Hierarki Organisasi
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs text-gray-500 mb-1 block">
-                      Level (0=Root, 1=VP, 2=Staff)
+                      Tahap (0=Asal, 1=GPK, 2=Kakitangan)
                     </label>
                     <input
                       type="number"
@@ -278,7 +301,7 @@ export default function StaffManager() {
                   </div>
                   <div>
                     <label className="text-xs text-gray-500 mb-1 block">
-                      Reports To (Parent)
+                      Melapor Kepada (Induk)
                     </label>
                     <select
                       value={formData.parentId}
@@ -287,7 +310,7 @@ export default function StaffManager() {
                       }
                       className="input-field"
                     >
-                      <option value="">None (Top Level)</option>
+                      <option value="">Tiada (Tahap Atas)</option>
                       {staffList
                         .filter(
                           (s) =>
@@ -306,7 +329,7 @@ export default function StaffManager() {
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-gray-700">
-                  Subjects
+                  Mata Pelajaran
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {subjects.map((sub) => (
@@ -320,7 +343,7 @@ export default function StaffManager() {
                           : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                       }`}
                     >
-                      {sub}
+                      {tSubjects[sub] || sub}
                     </button>
                   ))}
                 </div>
@@ -336,10 +359,10 @@ export default function StaffManager() {
                 }}
                 className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
               >
-                Cancel
+                Batal
               </button>
               <button type="submit" className="btn-primary-accent px-8">
-                {editingId ? "Update Staff" : "Add Staff"}
+                {editingId ? "Kemas Kini Kakitangan" : "Tambah Kakitangan"}
               </button>
             </div>
           </form>
@@ -347,62 +370,140 @@ export default function StaffManager() {
       )}
 
       {!isAdding && !editingId && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {staffList.length === 0 ? (
-            <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300 text-gray-500">
-              No staff members found. Add one to get started.
-            </div>
-          ) : (
-            staffList.map((s) => (
-              <div
-                key={s.id}
-                className="card-white p-4 flex items-center justify-between group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary/30">
-                    {s.image ? (
-                      <img
-                        src={s.image}
-                        className="w-full h-full rounded-full object-cover"
-                        alt=""
-                      />
-                    ) : (
-                      <HiUser className="w-6 h-6" />
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-primary leading-tight">
-                      {s.name_zh ? `${s.name_zh} ${s.name}` : s.name}
-                    </h4>
-                    <p className="text-xs text-gray-500">{s.role}</p>
-                    <div className="flex gap-1 mt-1">
-                      {s.subject?.slice(0, 2).map((sub) => (
-                        <span
-                          key={sub}
-                          className="text-[8px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600"
-                        >
-                          {sub}
-                        </span>
-                      ))}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {staffList.length === 0 ? (
+              <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300 text-gray-500">
+                Tiada ahli kakitangan ditemui. Tambah satu untuk bermula.
+              </div>
+            ) : (
+              staffList
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage,
+                )
+                .map((s) => (
+                  <div
+                    key={s.id}
+                    className="card-white p-4 flex items-center justify-between group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary/30">
+                        {s.image ? (
+                          <img
+                            src={s.image}
+                            className="w-full h-full rounded-full object-cover"
+                            alt=""
+                          />
+                        ) : (
+                          <HiUser className="w-6 h-6" />
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-primary leading-tight">
+                          {s.name_zh ? `${s.name_zh} ${s.name}` : s.name}
+                        </h4>
+                        <p className="text-xs text-gray-500">{s.role}</p>
+                        <div className="flex gap-1 mt-1">
+                          {s.subject?.slice(0, 2).map((sub) => (
+                            <span
+                              key={sub}
+                              className="text-[8px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600"
+                            >
+                              {tSubjects[sub] || sub}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEdit(s)}
+                        className="p-1.5 text-primary hover:bg-primary/5 rounded-md transition-colors"
+                      >
+                        <HiPencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(s.id)}
+                        className="p-1.5 text-accent-red hover:bg-red-50 rounded-md transition-colors"
+                      >
+                        <HiTrash className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                </div>
-                <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => handleEdit(s)}
-                    className="p-1.5 text-primary hover:bg-primary/5 rounded-md transition-colors"
-                  >
-                    <HiPencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(s.id)}
-                    className="p-1.5 text-accent-red hover:bg-red-50 rounded-md transition-colors"
-                  >
-                    <HiTrash className="w-4 h-4" />
-                  </button>
-                </div>
+                ))
+            )}
+          </div>
+
+          {/* Pagination */}
+          {staffList.length > itemsPerPage && (
+            <div className="flex justify-center items-center gap-2 pt-4">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <div className="flex gap-1">
+                {Array.from(
+                  { length: Math.ceil(staffList.length / itemsPerPage) },
+                  (_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`w-10 h-10 rounded-lg border transition-all ${
+                        currentPage === i + 1
+                          ? "bg-primary text-white border-primary shadow-md"
+                          : "border-gray-200 hover:bg-gray-50 text-gray-600"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ),
+                )}
               </div>
-            ))
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(
+                      Math.ceil(staffList.length / itemsPerPage),
+                      prev + 1,
+                    ),
+                  )
+                }
+                disabled={
+                  currentPage === Math.ceil(staffList.length / itemsPerPage)
+                }
+                className="p-2 rounded-lg border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
           )}
         </div>
       )}

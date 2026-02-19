@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { HiUser, HiPlus, HiMinus, HiArrowPath } from "react-icons/hi2";
-import { formatGoogleDriveLink } from "@lib/utils";
 
 export default function OrgChart({ staffTree, getRole }) {
   const [scale, setScale] = useState(1);
@@ -256,7 +255,7 @@ function TreeNode({ node, getRole, index, total }) {
           <div className="w-24 h-24 rounded-full bg-slate-50 overflow-hidden ring-4 ring-white shadow-inner">
             {node.image ? (
               <img
-                src={formatGoogleDriveLink(node.image)}
+                src={node.image}
                 alt={node.name}
                 className="w-full h-full object-cover"
               />

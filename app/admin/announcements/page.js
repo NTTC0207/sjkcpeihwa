@@ -14,9 +14,8 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@lib/firebase";
-import { formatGoogleDriveLink } from "@lib/utils";
 import { uploadToCloudinary } from "@lib/cloudinary";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -26,6 +25,8 @@ import {
   HiTrash,
   HiMegaphone,
   HiChevronLeft,
+  HiArrowLeft,
+  HiArrowRightOnRectangle,
   HiMagnifyingGlass,
   HiCalendar,
   HiTag,
@@ -52,43 +53,43 @@ const RichTextEditor = dynamic(
 
 const BADGE_OPTIONS = [
   {
-    label: "Important",
+    label: "Penting",
     color: "bg-red-500",
     textColor: "text-red-600",
     bg: "bg-red-50",
   },
   {
-    label: "Event",
+    label: "Acara",
     color: "bg-emerald-500",
     textColor: "text-emerald-600",
     bg: "bg-emerald-50",
   },
   {
-    label: "Meeting",
+    label: "Mesyuarat",
     color: "bg-indigo-500",
     textColor: "text-indigo-600",
     bg: "bg-indigo-50",
   },
   {
-    label: "Holiday",
+    label: "Cuti",
     color: "bg-orange-500",
     textColor: "text-orange-600",
     bg: "bg-orange-50",
   },
   {
-    label: "News",
+    label: "Berita",
     color: "bg-blue-500",
     textColor: "text-blue-600",
     bg: "bg-blue-50",
   },
   {
-    label: "Notice",
+    label: "Notis",
     color: "bg-purple-500",
     textColor: "text-purple-600",
     bg: "bg-purple-50",
   },
   {
-    label: "Circular",
+    label: "Pekeliling",
     color: "bg-teal-500",
     textColor: "text-teal-600",
     bg: "bg-teal-50",
@@ -98,13 +99,13 @@ const BADGE_OPTIONS = [
 const DEPARTMENT_OPTIONS = [
   {
     id: "academic",
-    label: "Academic / Curriculum (行政与课程)",
+    label: "Akademik / Kurikulum",
     color: "bg-indigo-500",
   },
-  { id: "hem", label: "Student Affairs (学生事务)", color: "bg-emerald-500" },
+  { id: "hem", label: "Hal Ehwal Murid (HEM)", color: "bg-emerald-500" },
   {
     id: "curriculum",
-    label: "Co-Curriculum (课外活动)",
+    label: "Kokurikulum",
     color: "bg-orange-500",
   },
 ];
@@ -112,7 +113,7 @@ const DEPARTMENT_OPTIONS = [
 const EMPTY_FORM = {
   title: "",
   date: new Date().toISOString().split("T")[0],
-  badge: "Important",
+  badge: "Penting",
   badgeColor: "bg-red-500",
   department: "academic",
   summary: "",
@@ -175,7 +176,7 @@ function AnnouncementCard({ announcement, onEdit, onDelete, onPreview }) {
         <div className="w-20 h-20 shrink-0 bg-gray-50 flex items-center justify-center overflow-hidden m-3 rounded-xl">
           {announcement.image ? (
             <img
-              src={formatGoogleDriveLink(announcement.image)}
+              src={announcement.image}
               alt=""
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -205,8 +206,8 @@ function AnnouncementCard({ announcement, onEdit, onDelete, onPreview }) {
             {announcement.attachments?.length > 0 && (
               <span className="text-xs text-gray-400 flex items-center gap-1">
                 <HiPaperClip className="w-3 h-3" />
-                {announcement.attachments.length} file
-                {announcement.attachments.length > 1 ? "s" : ""}
+                {announcement.attachments.length} fail
+                {announcement.attachments.length > 1 ? "" : ""}
               </span>
             )}
           </div>
@@ -223,7 +224,7 @@ function AnnouncementCard({ announcement, onEdit, onDelete, onPreview }) {
           <button
             onClick={() => onPreview(announcement)}
             className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
-            title="Preview"
+            title="Pratonton"
           >
             <HiEye className="w-5 h-5" />
           </button>
@@ -298,7 +299,7 @@ function PreviewModal({ announcement, onClose }) {
             <div className="mt-8 pt-6 border-t border-gray-100">
               <h4 className="font-bold text-gray-700 mb-3 flex items-center gap-2">
                 <HiPaperClip className="w-4 h-4" />
-                Attachments ({announcement.attachments.length})
+                Lampiran ({announcement.attachments.length})
               </h4>
               <div className="space-y-2">
                 {announcement.attachments.map((att, i) => (
@@ -328,6 +329,10 @@ function PreviewModal({ announcement, onClose }) {
 export default function AnnouncementsAdminPage() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const router = dynamic(
+    () => import("next/navigation").then((mod) => mod.useRouter),
+    { ssr: false },
+  );
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("list"); // list | add | edit
@@ -358,6 +363,15 @@ export default function AnnouncementsAdminPage() {
     });
     return () => unsub();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      window.location.href = "/admin";
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -434,7 +448,7 @@ export default function AnnouncementsAdminPage() {
       setHasMore(snap.docs.length === 7);
     } catch (err) {
       console.error(err);
-      showToast("Failed to load announcements.", "error");
+      showToast("Gagal memuatkan pengumuman.", "error");
     } finally {
       setLoading(false);
     }
@@ -467,15 +481,15 @@ export default function AnnouncementsAdminPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Delete this announcement? This action cannot be undone."))
+    if (!confirm("Padam pengumuman ini? Tindakan ini tidak boleh dibatalkan."))
       return;
     try {
       await deleteDoc(doc(db, "announcement", id));
       setAnnouncements((prev) => prev.filter((a) => a.id !== id));
-      showToast("Announcement deleted successfully.");
+      showToast("Pengumuman berjaya dipadam.");
     } catch (err) {
       console.error(err);
-      showToast("Failed to delete announcement.", "error");
+      showToast("Gagal memadam pengumuman.", "error");
     }
   };
 
@@ -486,7 +500,10 @@ export default function AnnouncementsAdminPage() {
     const oversizedFiles = Array.from(files).filter((f) => f.size > MAX_SIZE);
 
     if (oversizedFiles.length > 0) {
-      showToast(`Some files exceed the 10MB limit and were skipped.`, "error");
+      showToast(
+        `Beberapa fail melebihi had 10MB dan telah diabaikan.`,
+        "error",
+      );
     }
 
     const validFiles = Array.from(files).filter((f) => f.size <= MAX_SIZE);
@@ -512,11 +529,11 @@ export default function AnnouncementsAdminPage() {
           ...prev,
           attachments: [...(prev.attachments || []), ...uploaded],
         }));
-        showToast(`${uploaded.length} file(s) attached successfully.`);
+        showToast(`${uploaded.length} fail berjaya dilampirkan.`);
       }
     } catch (err) {
       console.error(err);
-      showToast("Failed to upload file(s).", "error");
+      showToast("Gagal memuat naik fail.", "error");
     } finally {
       setUploadingFiles(false);
     }
@@ -528,7 +545,7 @@ export default function AnnouncementsAdminPage() {
 
     const MAX_SIZE = 10 * 1024 * 1024; // 10MB
     if (file.size > MAX_SIZE) {
-      showToast("Featured image exceeds 10MB limit.", "error");
+      showToast("Imej utama melebihi had 10MB.", "error");
       return;
     }
 
@@ -537,12 +554,12 @@ export default function AnnouncementsAdminPage() {
       const result = await uploadToCloudinary(file);
       if (result && result.url) {
         setFormData((prev) => ({ ...prev, image: result.url }));
-        showToast("Featured image uploaded successfully.");
+        showToast("Imej utama berjaya dimuat naik.");
       }
     } catch (err) {
       console.error(err);
       showToast(
-        "Failed to upload image. Please check Cloudinary configuration.",
+        "Gagal memuat naik imej. Sila semak konfigurasi Cloudinary.",
         "error",
       );
     } finally {
@@ -559,11 +576,11 @@ export default function AnnouncementsAdminPage() {
 
   const handleAddLink = () => {
     if (!linkUrl) {
-      showToast("Please enter a URL.", "error");
+      showToast("Sila masukkan URL.", "error");
       return;
     }
     if (!linkName) {
-      showToast("Please enter a display name.", "error");
+      showToast("Sila masukkan nama paparan.", "error");
       return;
     }
 
@@ -600,17 +617,17 @@ export default function AnnouncementsAdminPage() {
     setLinkUrl("");
     setLinkName("");
     setShowLinkInput(false);
-    showToast("Link attached successfully.");
+    showToast("Pautan berjaya dilampirkan.");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      showToast("Please enter a title.", "error");
+      showToast("Sila masukkan tajuk.", "error");
       return;
     }
     if (!formData.content || formData.content === "<p></p>") {
-      showToast("Please add some content.", "error");
+      showToast("Sila tambah kandungan.", "error");
       return;
     }
 
@@ -631,11 +648,11 @@ export default function AnnouncementsAdminPage() {
 
       if (view === "edit" && editingId) {
         await updateDoc(doc(db, "announcement", editingId), payload);
-        showToast("Announcement updated successfully!");
+        showToast("Pengumuman berjaya dikemas kini!");
       } else {
         payload.createdAt = new Date().toISOString();
         await addDoc(collection(db, "announcement"), payload);
-        showToast("Announcement published successfully!");
+        showToast("Pengumuman berjaya diterbitkan!");
       }
 
       setView("list");
@@ -644,7 +661,7 @@ export default function AnnouncementsAdminPage() {
       fetchAnnouncements();
     } catch (err) {
       console.error(err);
-      showToast("Failed to save announcement.", "error");
+      showToast("Gagal menyimpan pengumuman.", "error");
     } finally {
       setSaving(false);
     }
@@ -682,16 +699,16 @@ export default function AnnouncementsAdminPage() {
         <div className="text-center">
           <HiExclamationTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-800 mb-2">
-            Access Denied
+            Akses Ditolak
           </h2>
           <p className="text-gray-500 mb-6">
-            You must be logged in to access this page.
+            Anda mesti log masuk untuk mengakses halaman ini.
           </p>
           <Link
             href="/admin"
             className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-colors"
           >
-            Go to Admin Login
+            Pergi ke Log Masuk Pentadbir
           </Link>
         </div>
       </div>
@@ -734,35 +751,26 @@ export default function AnnouncementsAdminPage() {
               </Link>
               <div>
                 <h1 className="text-xl font-display font-bold">
-                  Announcements
+                  Pengurusan Pengumuman
                 </h1>
                 <p className="text-xs text-gray-300">SJK(C) Pei Hwa Machang</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-xs text-gray-300 hidden sm:block">
-                {user.email}
-              </span>
-              {view === "list" && (
-                <button
-                  onClick={() => {
-                    setFormData(EMPTY_FORM);
-                    setEditingId(null);
-                    setView("add");
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 bg-accent-yellow text-primary text-sm font-bold rounded-lg hover:bg-yellow-400 transition-all duration-200 shadow-sm"
-                >
-                  <HiPlus className="w-4 h-4" />
-                  New Announcement
-                </button>
-              )}
               <Link
                 href="/admin"
                 className="flex items-center gap-1 text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
               >
-                <HiChevronLeft className="w-4 h-4" />
-                <span>Dashboard</span>
+                <HiArrowLeft className="w-4 h-4" />
+                <span>Papan Pemuka</span>
               </Link>
+              <button
+                onClick={handleLogout}
+                className="bg-accent-red hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg shadow-red-900/20 flex items-center gap-2"
+              >
+                <HiArrowRightOnRectangle className="w-4 h-4" />
+                <span>Log Keluar</span>
+              </button>
             </div>
           </div>
         </div>
@@ -776,25 +784,26 @@ export default function AnnouncementsAdminPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {[
                 {
-                  label: "Loaded",
+                  label: "Dimuatkan",
                   value: announcements.length,
                   color: "bg-primary/10 text-primary",
                 },
                 {
-                  label: "Important (In View)",
-                  value: announcements.filter((a) => a.badge === "Important")
+                  label: "Penting (Dalam Paparan)",
+                  value: announcements.filter((a) => a.badge === "Penting")
                     .length,
                   color: "bg-red-50 text-red-700",
                 },
                 {
-                  label: "Events (In View)",
-                  value: announcements.filter((a) => a.badge === "Event")
+                  label: "Acara (Dalam Paparan)",
+                  value: announcements.filter((a) => a.badge === "Acara")
                     .length,
                   color: "bg-emerald-50 text-emerald-700",
                 },
                 {
-                  label: "News (In View)",
-                  value: announcements.filter((a) => a.badge === "News").length,
+                  label: "Berita (Dalam Paparan)",
+                  value: announcements.filter((a) => a.badge === "Berita")
+                    .length,
                   color: "bg-blue-50 text-blue-700",
                 },
               ].map((stat) => (
@@ -819,7 +828,7 @@ export default function AnnouncementsAdminPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearch}
-                  placeholder="Search announcements..."
+                  placeholder="Cari pengumuman..."
                   className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent transition-all"
                 />
               </div>
@@ -859,7 +868,7 @@ export default function AnnouncementsAdminPage() {
                               : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
                           }`}
                         >
-                          {label}
+                          {deptId === "All" ? "Semua Jabatan" : label}
                         </button>
                       );
                     },
@@ -883,13 +892,13 @@ export default function AnnouncementsAdminPage() {
                 <HiMegaphone className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-bold text-gray-500 mb-2">
                   {searchQuery || filterBadge !== "All"
-                    ? "No results found"
-                    : "No announcements yet"}
+                    ? "Tiada keputusan ditemui"
+                    : "Tiada pengumuman lagi"}
                 </h3>
                 <p className="text-sm text-gray-400 mb-6">
                   {searchQuery || filterBadge !== "All"
-                    ? "Try adjusting your search or filter."
-                    : "Create your first announcement to get started."}
+                    ? "Cuba laraskan carian atau penapis anda."
+                    : "Cipta pengumuman pertama anda untuk bermula."}
                 </p>
                 {!searchQuery && filterBadge === "All" && (
                   <button
@@ -897,15 +906,14 @@ export default function AnnouncementsAdminPage() {
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark transition-colors"
                   >
                     <HiPlus className="w-4 h-4" />
-                    Add First Announcement
+                    Tambah Pengumuman Pertama
                   </button>
                 )}
               </div>
             ) : (
               <div className="space-y-3">
                 <p className="text-xs text-gray-400 font-medium">
-                  Showing {announcements.length} announcement
-                  {announcements.length !== 1 ? "s" : ""}
+                  Memaparkan {announcements.length} pengumuman
                 </p>
                 {announcements.map((ann) => (
                   <AnnouncementCard
@@ -930,7 +938,9 @@ export default function AnnouncementsAdminPage() {
                         <HiPlus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                       )}
                       <span>
-                        {loading ? "Loading..." : "Load More Announcements"}
+                        {loading
+                          ? "Memuatkan..."
+                          : "Muat Lebih Banyak Pengumuman"}
                       </span>
                     </button>
                   </div>
@@ -947,12 +957,12 @@ export default function AnnouncementsAdminPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {view === "edit" ? "Edit Announcement" : "New Announcement"}
+                  {view === "edit" ? "Edit Pengumuman" : "Pengumuman Baru"}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
                   {view === "edit"
-                    ? "Update the announcement details below."
-                    : "Fill in the details to publish a new announcement."}
+                    ? "Kemas kini butiran pengumuman di bawah."
+                    : "Isi butiran untuk menerbitkan pengumuman baru."}
                 </p>
               </div>
               <button
@@ -960,7 +970,7 @@ export default function AnnouncementsAdminPage() {
                 className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors font-medium"
               >
                 <HiXMark className="w-4 h-4" />
-                Cancel
+                Batal
               </button>
             </div>
 
@@ -972,7 +982,7 @@ export default function AnnouncementsAdminPage() {
                   {/* Title */}
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Title <span className="text-red-500">*</span>
+                      Tajuk <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -981,7 +991,7 @@ export default function AnnouncementsAdminPage() {
                         setFormData({ ...formData, title: e.target.value })
                       }
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-base font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent transition-all placeholder:font-normal placeholder:text-gray-400"
-                      placeholder="Enter announcement title..."
+                      placeholder="Masukkan tajuk pengumuman..."
                       required
                     />
                   </div>
@@ -989,9 +999,9 @@ export default function AnnouncementsAdminPage() {
                   {/* Summary */}
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Summary{" "}
+                      Ringkasan{" "}
                       <span className="text-xs font-normal text-gray-400">
-                        (shown in list view)
+                        (dipaparkan dalam paparan senarai)
                       </span>
                     </label>
                     <textarea
@@ -1000,7 +1010,7 @@ export default function AnnouncementsAdminPage() {
                         setFormData({ ...formData, summary: e.target.value })
                       }
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent transition-all resize-none"
-                      placeholder="Brief description of this announcement..."
+                      placeholder="Penerangan ringkas mengenai pengumuman ini..."
                       rows={3}
                     />
                   </div>
@@ -1008,9 +1018,9 @@ export default function AnnouncementsAdminPage() {
                   {/* Rich Text Content */}
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <label className="block text-sm font-bold text-gray-700 mb-3">
-                      Content <span className="text-red-500">*</span>
+                      Kandungan <span className="text-red-500">*</span>
                       <span className="text-xs font-normal text-gray-400 ml-2">
-                        Supports rich text, tables, images, and more
+                        Menyokong teks kaya, jadual, imej, dan lain-lain
                       </span>
                     </label>
                     <RichTextEditor
@@ -1018,14 +1028,14 @@ export default function AnnouncementsAdminPage() {
                       onChange={(html) =>
                         setFormData({ ...formData, content: html })
                       }
-                      placeholder="Write your announcement content here. Use the toolbar to format text, insert tables, images, and links..."
+                      placeholder="Tulis kandungan pengumuman anda di sini. Gunakan bar alat untuk memformat teks, memasukkan jadual, imej, dan pautan..."
                     />
                   </div>
 
                   {/* Attachments Section */}
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Attachments
+                      Lampiran
                     </label>
 
                     {/* Attachments List */}
@@ -1082,12 +1092,12 @@ export default function AnnouncementsAdminPage() {
                           >
                             {uploadingFiles ? (
                               <span className="animate-pulse">
-                                Uploading...
+                                Memuat naik...
                               </span>
                             ) : (
                               <>
                                 <HiCloudArrowUp className="w-5 h-5" />
-                                Upload Files
+                                Muat Naik Fail
                               </>
                             )}
                           </button>
@@ -1097,30 +1107,30 @@ export default function AnnouncementsAdminPage() {
                             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 border border-dashed border-gray-300 rounded-xl text-gray-600 font-semibold hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all text-sm"
                           >
                             <HiLink className="w-5 h-5" />
-                            Add Drive Link
+                            Tambah Pautan Drive
                           </button>
                         </div>
                       ) : (
                         <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 animate-in fade-in slide-in-from-top-2">
                           <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
-                            Add External Link
+                            Tambah Pautan Luaran
                           </h4>
                           <div className="space-y-3">
                             <div>
                               <label className="block text-xs font-medium text-gray-700 mb-1">
-                                Display Name
+                                Nama Paparan
                               </label>
                               <input
                                 type="text"
                                 value={linkName}
                                 onChange={(e) => setLinkName(e.target.value)}
-                                placeholder="e.g. Activity Schedule PDF"
+                                placeholder="cth. Jadual Aktiviti PDF"
                                 className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
                               />
                             </div>
                             <div>
                               <label className="block text-xs font-medium text-gray-700 mb-1">
-                                Link URL
+                                URL Pautan
                               </label>
                               <input
                                 type="url"
@@ -1140,14 +1150,14 @@ export default function AnnouncementsAdminPage() {
                                 }}
                                 className="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
                               >
-                                Cancel
+                                Batal
                               </button>
                               <button
                                 type="button"
                                 onClick={handleAddLink}
                                 className="px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
                               >
-                                Add Link
+                                Tambah Pautan
                               </button>
                             </div>
                           </div>
@@ -1161,8 +1171,8 @@ export default function AnnouncementsAdminPage() {
                         className="hidden"
                       />
                       <p className="text-[10px] text-gray-400 text-center">
-                        Max file size: 10MB. Supported formats: PDF, DOC, JPG,
-                        PNG
+                        Saiz fail maksimum: 10MB. Format yang disokong: PDF,
+                        DOC, JPG, PNG
                       </p>
                     </div>
                   </div>
@@ -1171,7 +1181,7 @@ export default function AnnouncementsAdminPage() {
                   {/* Publish Settings */}
                   <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
                     <h3 className="text-sm font-bold text-gray-700 mb-4">
-                      Publish Settings
+                      Tetapan Penerbitan
                     </h3>
                     <div className="space-y-4">
                       {/* Date */}
@@ -1179,7 +1189,7 @@ export default function AnnouncementsAdminPage() {
                         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
                           <div className="flex items-center gap-1.5">
                             <HiCalendar className="w-3.5 h-3.5" />
-                            Date
+                            Tarikh
                           </div>
                         </label>
                         <input
@@ -1198,7 +1208,7 @@ export default function AnnouncementsAdminPage() {
                         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
                           <div className="flex items-center gap-1.5">
                             <HiMegaphone className="w-3.5 h-3.5" />
-                            Department Filter
+                            Penapis Jabatan
                           </div>
                         </label>
                         <select
@@ -1224,7 +1234,7 @@ export default function AnnouncementsAdminPage() {
                         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
                           <div className="flex items-center gap-1.5">
                             <HiTag className="w-3.5 h-3.5" />
-                            Category
+                            Kategori
                           </div>
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -1265,7 +1275,7 @@ export default function AnnouncementsAdminPage() {
                     <h3 className="text-sm font-bold text-gray-700 mb-3">
                       <div className="flex items-center gap-2">
                         <HiPhoto className="w-4 h-4" />
-                        Featured Image
+                        Imej Utama
                       </div>
                     </h3>
 
@@ -1308,19 +1318,19 @@ export default function AnnouncementsAdminPage() {
                       {uploadingImage ? (
                         <>
                           <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                          <span>Uploading...</span>
+                          <span>Memuat naik...</span>
                         </>
                       ) : (
                         <>
                           <HiCloudArrowUp className="w-5 h-5" />
                           <span>
-                            {formData.image ? "Change Image" : "Upload Image"}
+                            {formData.image ? "Tukar Imej" : "Muat Naik Imej"}
                           </span>
                         </>
                       )}
                     </button>
                     <p className="text-[10px] text-gray-400 mt-2 text-center">
-                      Recommended: 1200x630px. Max size: 10MB.
+                      Disyorkan: 1200x630px. Saiz maksimum: 10MB.
                     </p>
                   </div>
 
@@ -1340,8 +1350,8 @@ export default function AnnouncementsAdminPage() {
                         <>
                           <HiCheckCircle className="w-5 h-5" />
                           {view === "edit"
-                            ? "Update Announcement"
-                            : "Publish Announcement"}
+                            ? "Kemas Kini Pengumuman"
+                            : "Terbitkan Pengumuman"}
                         </>
                       )}
                     </button>
@@ -1350,7 +1360,7 @@ export default function AnnouncementsAdminPage() {
                       onClick={handleCancel}
                       className="w-full px-6 py-3 text-gray-600 font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors text-sm"
                     >
-                      Cancel
+                      Batal
                     </button>
                   </div>
                 </div>

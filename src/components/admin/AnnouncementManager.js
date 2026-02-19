@@ -12,7 +12,6 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { db } from "@lib/firebase";
-import { formatGoogleDriveLink } from "@lib/utils";
 import {
   HiPlus,
   HiPencil,
@@ -30,7 +29,7 @@ export default function AnnouncementManager() {
   const [formData, setFormData] = useState({
     title: "",
     date: new Date().toISOString().split("T")[0],
-    badge: "Important",
+    badge: "Penting",
     badgeColor: "bg-accent-red",
     summary: "",
     content: "",
@@ -38,11 +37,11 @@ export default function AnnouncementManager() {
   });
 
   const badgeOptions = [
-    { label: "Important", color: "bg-accent-red" },
-    { label: "Event", color: "bg-accent-green" },
-    { label: "Meeting", color: "bg-primary" },
-    { label: "Holiday", color: "bg-orange-500" },
-    { label: "News", color: "bg-blue-500" },
+    { label: "Penting", color: "bg-accent-red" },
+    { label: "Acara", color: "bg-accent-green" },
+    { label: "Mesyuarat", color: "bg-primary" },
+    { label: "Cuti", color: "bg-orange-500" },
+    { label: "Berita", color: "bg-blue-500" },
   ];
 
   useEffect(() => {
@@ -81,7 +80,7 @@ export default function AnnouncementManager() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this announcement?")) return;
+    if (!confirm("Adakah anda pasti mahu memadam pengumuman ini?")) return;
     try {
       await deleteDoc(doc(db, "announcements", id));
       setAnnouncements(announcements.filter((a) => a.id !== id));
@@ -103,7 +102,7 @@ export default function AnnouncementManager() {
       setFormData({
         title: "",
         date: new Date().toISOString().split("T")[0],
-        badge: "Important",
+        badge: "Penting",
         badgeColor: "bg-accent-red",
         summary: "",
         content: "",
@@ -126,14 +125,14 @@ export default function AnnouncementManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-display font-bold text-primary">
-          Manage Announcements
+          Urus Pengumuman
         </h2>
         {!isAdding && !editingId && (
           <button
             onClick={() => setIsAdding(true)}
             className="btn-primary flex items-center gap-2"
           >
-            <HiPlus /> Add Announcement
+            <HiPlus /> Tambah Pengumuman
           </button>
         )}
       </div>
@@ -141,13 +140,13 @@ export default function AnnouncementManager() {
       {(isAdding || editingId) && (
         <div className="card-white p-6 md:p-8 border-2 border-primary/20 shadow-xl animate-in fade-in slide-in-from-top-4">
           <h3 className="text-xl font-bold text-primary mb-6">
-            {editingId ? "Edit Announcement" : "Add New Announcement"}
+            {editingId ? "Edit Pengumuman" : "Tambah Pengumuman Baru"}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-gray-700">
-                  Title
+                  Tajuk
                 </label>
                 <input
                   type="text"
@@ -162,7 +161,7 @@ export default function AnnouncementManager() {
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-gray-700">
-                  Date
+                  Tarikh
                 </label>
                 <input
                   type="date"
@@ -179,7 +178,7 @@ export default function AnnouncementManager() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-gray-700">
-                  Badge Label
+                  Label Lencana
                 </label>
                 <select
                   value={formData.badge}
@@ -204,7 +203,7 @@ export default function AnnouncementManager() {
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-gray-700">
-                  Preview
+                  Pratonton
                 </label>
                 <div className="flex items-center h-full">
                   <span
@@ -218,7 +217,7 @@ export default function AnnouncementManager() {
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-700">
-                Summary
+                Ringkasan
               </label>
               <textarea
                 value={formData.summary}
@@ -226,14 +225,14 @@ export default function AnnouncementManager() {
                   setFormData({ ...formData, summary: e.target.value })
                 }
                 className="input-field h-20"
-                placeholder="Brief summary shown in the list..."
+                placeholder="Ringkasan ringkas yang dipaparkan dalam senarai..."
                 required
               />
             </div>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-700">
-                Content (Markdown supported)
+                Kandungan (Sokongan Markdown)
               </label>
               <textarea
                 value={formData.content}
@@ -241,28 +240,28 @@ export default function AnnouncementManager() {
                   setFormData({ ...formData, content: e.target.value })
                 }
                 className="input-field h-60 font-mono text-sm"
-                placeholder="# Detailed Content..."
+                placeholder="# Butiran Kandungan..."
                 required
               />
             </div>
 
             <div className="flex flex-col gap-2">
               <label className="text-sm font-semibold text-gray-700">
-                Featured Image URL (Google Drive supported)
+                URL Imej Utama (Sokongan Google Drive)
               </label>
               <input
                 type="text"
                 value={formData.image}
                 onChange={(e) => {
-                  const formattedUrl = formatGoogleDriveLink(e.target.value);
+                  const formattedUrl = e.target.value;
                   setFormData({ ...formData, image: formattedUrl });
                 }}
                 className="input-field"
                 placeholder="https://drive.google.com/file/d/..."
               />
               <p className="text-[10px] text-gray-400 italic">
-                Paste a Google Drive view link, and it will be converted for
-                direct display.
+                Tampal pautan paparan Google Drive, dan ia akan ditukar untuk
+                paparan terus.
               </p>
             </div>
 
@@ -275,10 +274,10 @@ export default function AnnouncementManager() {
                 }}
                 className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
               >
-                Cancel
+                Batal
               </button>
               <button type="submit" className="btn-primary-accent px-8">
-                {editingId ? "Update Announcement" : "Publish Announcement"}
+                {editingId ? "Kemas Kini Pengumuman" : "Terbitkan Pengumuman"}
               </button>
             </div>
           </form>
@@ -289,7 +288,7 @@ export default function AnnouncementManager() {
         <div className="grid gap-4">
           {announcements.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-2xl border border-dashed border-gray-300 text-gray-500">
-              No announcements found. Add one to get started.
+              Tiada pengumuman ditemui. Tambah satu untuk bermula.
             </div>
           ) : (
             announcements.map((a) => (
@@ -303,7 +302,7 @@ export default function AnnouncementManager() {
                   >
                     {a.image ? (
                       <img
-                        src={formatGoogleDriveLink(a.image)}
+                        src={a.image}
                         className="w-full h-full object-cover"
                         alt=""
                       />

@@ -15,15 +15,16 @@
     },
     "announcements": "Pengumuman",
     "manage": {
-      "academic": "Akademik",
-      "hem": "HEM",
-      "curriculum": "Kurikulum"
+      "academic": "Pentadbiran & Akademik",
+      "hem": "Hal Ehwal Murid",
+      "curriculum": "Ko-Kurikulum"
     },
     "profile": {
       "title": "Profil Sekolah",
       "anthem": "Lagu Sekolah",
       "motto": "Moto Sekolah",
       "landscape": "Landskap Sekolah",
+      "calendar": "Kalendar/Sejarah",
       "pta": "PIBG",
       "lps":"LPS"
     }
@@ -32,6 +33,16 @@
     "welcome": "Selamat Datang ke SJK(C) Pei Hwa Machang",
     "motto": "Memupuk Minda Muda, Membina Masa Depan Cerah",
     "cta": "Ketahui Lebih Lanjut"
+  },
+  "stats": {
+    "students": "Murid",
+    "staff": "Kakitangan Dedikasi",
+    "history": "Sejarah"
+  },
+  "contact": {
+    "visit": "Kunjungi Kami",
+    "call": "Telefon / Faks",
+    "email": "E-mel Kami"
   },
   "about": {
     "title": "Tentang Sekolah Kami",
@@ -121,5 +132,26 @@
     "gridView": "Paparan Grid",
     "search": "Cari ahli...",
     "noResults": "Tiada ahli ditemui mengikut kriteria anda."
+  },
+  "subjects": {
+    "bahasa_cina": "Bahasa Cina",
+    "bahasa_inggeris": "Bahasa Inggeris",
+    "bahasa_melayu": "Bahasa Melayu",
+    "matematik": "Matematik",
+    "sains": "Sains",
+    "muzik": "Muzik",
+    "pendidikan_jasmani": "Pendidikan Jasmani",
+    "pendidikan_seni": "Pendidikan Seni",
+    "pendidikan_moral": "Pendidikan Moral",
+    "pendidikan_islam": "Pendidikan Islam",
+    "pendidikan_kesihatan": "Pendidikan Kesihatan",
+    "reka_bentuk_dan_teknologi": "Reka Bentuk dan Teknologi",
+    "sejarah": "Sejarah",
+    "admin": "Admin"
+  },
+  "anthem": {
+    "title": "Lagu Sekolah",
+    "playbackInstructions": "Arahan Main",
+    "description": "Klik video di atas untuk memainkan lagu sekolah. Lagu ini merakamkan sejarah kegemilangan dan visi besar sekolah."
   }
 }

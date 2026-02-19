@@ -124,13 +124,15 @@ export default function LandingPage() {
               <p className="text-xl md:text-2xl text-gray-600 mb-8 font-medium">
                 {translations.hero.motto}
               </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="btn-primary-accent text-lg"
-              >
-                {translations.hero.cta}
-              </motion.button>
+              <Link href="/profile/history">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="btn-primary-accent text-lg"
+                >
+                  {translations.hero.cta}
+                </motion.button>
+              </Link>
             </motion.div>
 
             {/* Right: Image & Logo */}
@@ -287,22 +289,22 @@ export default function LandingPage() {
           >
             {[
               {
-                label: "Students",
+                label: translations?.stats?.students || "Students",
                 val: "100+",
                 icon: HiAcademicCap,
                 color: "bg-primary/10 text-primary",
                 delay: 0,
               },
               {
-                label: "Dedicated Staff",
+                label: translations?.stats?.staff || "Dedicated Staff",
                 val: "20+",
                 icon: HiStar,
                 color: "bg-accent-yellow/10 text-accent-yellow",
                 delay: 0.1,
               },
               {
-                label: "History",
-                val: `${historyYears} Years`,
+                label: translations?.stats?.history || "History",
+                val: `${historyYears} ${locale === "zh" ? "年" : locale === "ms" ? "Tahun" : "Years"}`,
                 icon: HiBookOpen,
                 color: "bg-accent-green/10 text-accent-green",
                 delay: 0.2,
@@ -420,7 +422,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-display font-semibold text-primary mb-1">
-                    Visit Us
+                    {translations?.contact?.visit || "Visit Us"}
                   </h3>
                   <a
                     href="https://www.google.com/maps/place/SJK(C)+Pei+Hwa/@5.7651017,102.2206205,17z/data=!3m1!4b1!4m6!3m5!1s0x31b685332f7428b9:0x9723d38c28a38913!8m2!3d5.7650964!4d102.2231954!16s%2Fg%2F122np819?entry=ttu&g_ep=EgoyMDI2MDIxMS4wIKXMDSoASAFQAw%3D%3D"
@@ -442,7 +444,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-display font-semibold text-accent-green mb-1">
-                    Call Us
+                    {translations?.contact?.call || "Call / Fax Us"}
                   </h3>
                   <p className="text-gray-600 font-medium">+60 9-9751046</p>
                 </div>
@@ -457,7 +459,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-display font-semibold text-accent-yellow mb-1">
-                    Email Us
+                    {translations?.contact?.email || "Email Us"}
                   </h3>
                   <p className="text-gray-600 font-medium">
                     dbc2185@moe.edu.my

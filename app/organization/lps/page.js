@@ -6,6 +6,21 @@ import GeneralOrgClient from "@components/organization/GeneralOrgClient";
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
+export const metadata = {
+  title: "Lembaga Pengurusan Sekolah (LPS)",
+  description:
+    "Ahli Lembaga Pengurusan Sekolah (LPS) SJK(C) Pei Hwa Machang, Kelantan. Badan pengurusan yang memastikan kecemerlangan pentadbiran dan pembangunan sekolah.",
+  alternates: {
+    canonical: "https://sjkcpeihwa.edu.my/organization/lps",
+  },
+  openGraph: {
+    title: "Lembaga Pengurusan Sekolah (LPS) | SJK(C) Pei Hwa",
+    description: "Ahli Lembaga Pengurusan Sekolah SJK(C) Pei Hwa Machang.",
+    url: "https://sjkcpeihwa.edu.my/organization/lps",
+    type: "website",
+  },
+};
+
 async function getLPSData() {
   try {
     const q = query(collection(db, "LPS"), orderBy("level", "asc"));

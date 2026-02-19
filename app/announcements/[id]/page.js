@@ -4,7 +4,6 @@ import { use, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useLanguage } from "@lib/LanguageContext";
-import { formatGoogleDriveLink } from "@lib/utils";
 import {
   HiArrowLeft,
   HiCalendar,

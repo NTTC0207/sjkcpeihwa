@@ -7,6 +7,21 @@ import OrganizationClient from "@components/organization/OrganizationClient";
 // ISR: Revalidate every 24 hours (86400 seconds)
 export const revalidate = 86400;
 
+export const metadata = {
+  title: "Carta Organisasi | Senarai Guru & Staf",
+  description:
+    "Carta organisasi dan senarai lengkap guru serta kakitangan SJK(C) Pei Hwa, Machang, Kelantan. Kenali warga pendidik kami yang berdedikasi.",
+  alternates: {
+    canonical: "https://sjkcpeihwa.edu.my/organization",
+  },
+  openGraph: {
+    title: "Carta Organisasi | SJK(C) Pei Hwa",
+    description: "Senarai guru dan kakitangan SJK(C) Pei Hwa Machang.",
+    url: "https://sjkcpeihwa.edu.my/organization",
+    type: "website",
+  },
+};
+
 async function getStaffData() {
   try {
     const q = query(collection(db, "staff"), orderBy("level", "asc"));

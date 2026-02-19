@@ -77,6 +77,10 @@ export default function Navbar({
           href: "/profile/landscape",
           label: t("nav.profile.landscape", "Campus Landscape"),
         },
+        {
+          href: "/profile/history",
+          label: t("nav.profile.calendar"),
+        },
       ],
     },
     {

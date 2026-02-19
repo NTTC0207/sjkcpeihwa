@@ -55,8 +55,8 @@ export default function AdminPage() {
     } catch (err) {
       setError(
         err.code === "auth/user-not-found" || err.code === "auth/wrong-password"
-          ? "Invalid email or password."
-          : "Failed to login. Please check your credentials.",
+          ? "Emel atau kata laluan tidak sah."
+          : "Gagal log masuk. Sila semak kelayakan anda.",
       );
     } finally {
       setLoading(false);
@@ -69,13 +69,14 @@ export default function AdminPage() {
       await signOut(auth);
       setUser(null);
     } catch (err) {
-      setError("Failed to logout");
+      setError("Gagal log keluar");
     }
   };
 
   // Migrate local data to Firestore if empty
   const migrateData = async () => {
-    if (!confirm("This will import local data to Firestore. Proceed?")) return;
+    if (!confirm("Ini akan mengimport data tempatan ke Firestore. Teruskan?"))
+      return;
     setIsMigrating(true);
     try {
       // Migrate Announcements
@@ -99,10 +100,10 @@ export default function AdminPage() {
         }
       }
 
-      alert("Data migration successful! Please refresh the sections.");
+      alert("Penghijrahan data berjaya! Sila muat semula bahagian.");
     } catch (err) {
       console.error("Migration error:", err);
-      alert("Migration failed. Check console.");
+      alert("Penghijrahan gagal. Semak konsol.");
     } finally {
       setIsMigrating(false);
     }
@@ -135,7 +136,7 @@ export default function AdminPage() {
                 </div>
                 <div>
                   <h1 className="text-xl font-display font-bold">
-                    Admin Dashboard
+                    Papan Pemuka Pentadbir
                   </h1>
                   <p className="text-xs text-gray-300">
                     SJK(C) Pei Hwa Machang
@@ -147,13 +148,13 @@ export default function AdminPage() {
                   href="/"
                   className="text-sm hover:text-accent-yellow transition-colors duration-300"
                 >
-                  ← Back to Website
+                  ← Kembali ke Laman Web
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="bg-accent-red hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg shadow-red-900/20"
                 >
-                  Logout
+                  Log Keluar
                 </button>
               </div>
             </div>
@@ -165,10 +166,10 @@ export default function AdminPage() {
           <>
             <div className="mb-10">
               <h2 className="text-3xl font-display font-bold text-primary mb-2">
-                Welcome, {user.email}
+                Selamat Datang, {user.email}
               </h2>
               <p className="text-gray-600">
-                Manage your school website content from here.
+                Urus kandungan laman web sekolah anda dari sini.
               </p>
             </div>
 
@@ -182,10 +183,10 @@ export default function AdminPage() {
                   <span className="text-2xl text-white">📢</span>
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
-                  Announcements
+                  Pengumuman
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Manage school announcements, news and important updates.
+                  Urus pengumuman sekolah, berita dan kemas kini penting.
                 </p>
               </Link>
 
@@ -197,10 +198,10 @@ export default function AdminPage() {
                   <span className="text-2xl text-primary font-bold">👤</span>
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
-                  Staff Management
+                  Pengurusan Kakitangan
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Edit teacher profiles, roles, and organization hierarchy.
+                  Edit profil guru, peranan, dan hierarki organisasi.
                 </p>
               </Link>
 
@@ -212,10 +213,10 @@ export default function AdminPage() {
                   <span className="text-2xl text-white">🏛️</span>
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
-                  LPS Management
+                  Pengurusan LPS
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Manage School Board (Lembaga Pengelola Sekolah) members.
+                  Urus ahli Lembaga Pengelola Sekolah (LPS).
                 </p>
               </Link>
 
@@ -227,10 +228,10 @@ export default function AdminPage() {
                   <span className="text-2xl text-white">🤝</span>
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
-                  PIBG Management
+                  Pengurusan PIBG
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Manage Parent-Teacher Association (PIBG) members.
+                  Urus ahli Persatuan Ibu Bapa dan Guru (PIBG).
                 </p>
               </Link>
 
@@ -239,10 +240,11 @@ export default function AdminPage() {
                   <span className="text-2xl">📅</span>
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
-                  Events (Coming Soon)
+                  Acara (Akan Datang)
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Create and manage upcoming school activities and calendar.
+                  Cipta dan urus aktiviti serta kalendar sekolah yang akan
+                  datang.
                 </p>
               </div>
 
@@ -251,85 +253,11 @@ export default function AdminPage() {
                   <span className="text-2xl">🖼️</span>
                 </div>
                 <h3 className="text-xl font-bold text-primary mb-2">
-                  Gallery (Coming Soon)
+                  Galeri (Akan Datang)
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Upload and manage school photo albums and memories.
+                  Muat naik dan urus album foto dan kenangan sekolah.
                 </p>
-              </div>
-
-              <div className="card opacity-60 grayscale cursor-not-allowed">
-                <div className="w-12 h-12 bg-gray-500 rounded-xl flex items-center justify-center mb-4">
-                  <span className="text-2xl text-white">⚙️</span>
-                </div>
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  Settings
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Configure website general settings and administration.
-                </p>
-              </div>
-
-              {/* Import Local Data functionality kept for administrative convenience */}
-              <button
-                onClick={migrateData}
-                disabled={isMigrating}
-                className="card group hover:shadow-xl transition-all duration-300 text-left border-dashed border-2 border-primary/20 bg-primary/5"
-              >
-                <div
-                  className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 shadow-sm border border-primary/10 ${isMigrating ? "animate-spin" : ""}`}
-                >
-                  <HiArrowPath className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  {isMigrating ? "Importing Data..." : "Import Local Data"}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  One-time setup: Sync local data folders with live database.
-                </p>
-              </button>
-            </div>
-
-            {/* Quick Stats Section */}
-            <div className="mt-12 card-dark p-8 rounded-[2rem] shadow-2xl overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-accent-yellow/5 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-              <h3 className="text-xl font-display font-semibold text-accent-yellow mb-8 flex items-center gap-2">
-                <span className="w-2 h-8 bg-accent-yellow rounded-full"></span>
-                Quick Statistics
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div className="text-center group">
-                  <div className="text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">
-                    12
-                  </div>
-                  <div className="text-xs uppercase tracking-widest text-gray-400 font-bold">
-                    Announcements
-                  </div>
-                </div>
-                <div className="text-center group">
-                  <div className="text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">
-                    8
-                  </div>
-                  <div className="text-xs uppercase tracking-widest text-gray-400 font-bold">
-                    Events
-                  </div>
-                </div>
-                <div className="text-center group">
-                  <div className="text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">
-                    156
-                  </div>
-                  <div className="text-xs uppercase tracking-widest text-gray-400 font-bold">
-                    Gallery Photos
-                  </div>
-                </div>
-                <div className="text-center group">
-                  <div className="text-4xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">
-                    3
-                  </div>
-                  <div className="text-xs uppercase tracking-widest text-gray-400 font-bold">
-                    Admin Users
-                  </div>
-                </div>
               </div>
             </div>
           </>
@@ -352,7 +280,7 @@ export default function AdminPage() {
             />
           </div>
           <h1 className="text-3xl font-display font-bold text-white mb-2">
-            Admin Login
+            Log Masuk Pentadbir
           </h1>
           <p className="text-primary-foreground/70">SJK(C) Pei Hwa Machang</p>
         </div>
@@ -373,7 +301,7 @@ export default function AdminPage() {
                 htmlFor="email"
                 className="block text-sm font-bold text-gray-700"
               >
-                Email Address
+                Alamat Emel
               </label>
               <input
                 type="email"
@@ -392,7 +320,7 @@ export default function AdminPage() {
                 htmlFor="password"
                 className="block text-sm font-bold text-gray-700"
               >
-                Password
+                Kata Laluan
               </label>
               <input
                 type="password"
@@ -411,7 +339,7 @@ export default function AdminPage() {
               disabled={loading}
               className="w-full btn-primary py-4 text-lg shadow-xl shadow-primary/20 disabled:opacity-50 active:scale-95 transition-transform"
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Log masuk..." : "Log Masuk"}
             </button>
           </form>
 
@@ -421,7 +349,7 @@ export default function AdminPage() {
               href="/"
               className="text-sm font-semibold text-primary hover:text-accent-yellow transition-colors duration-300"
             >
-              ← Back to Website
+              ← Kembali ke Laman Web
             </Link>
           </div>
         </div>
@@ -429,10 +357,11 @@ export default function AdminPage() {
         {/* Info Note */}
         <div className="mt-8 text-center text-white/50 text-xs py-4 px-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
           <p className="font-bold flex items-center justify-center gap-2 mb-1">
-            🔒 Secure Administrative Portal
+            🔒 Portal Pentadbiran Selamat
           </p>
           <p>
-            Strictly for authorized school personnel only. All access monitored.
+            Khusus untuk kakitangan sekolah yang diberi kuasa sahaja. Semua
+            akses dipantau.
           </p>
         </div>
       </div>

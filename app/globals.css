@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @source "../src/**/*.{js,ts,jsx,tsx}";
-
-
 
 @theme {
   /* Primary school brand colors */
@@ -25,20 +23,41 @@
   --animate-bounce-gentle: bounceGentle 2s infinite;
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
   @keyframes slideDown {
-    from { transform: translateY(-10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
   @keyframes slideUp {
-    from { transform: translateY(10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
   @keyframes bounceGentle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 }
 
@@ -51,8 +70,13 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     font-weight: 600;
   }
@@ -73,7 +97,7 @@
   .btn-primary:active {
     @apply scale-95;
   }
-  
+
   .btn-primary-accent {
     background-color: var(--color-primary);
     color: white;
@@ -84,7 +108,7 @@
     color: var(--color-neutral-text);
     @apply shadow-lg scale-105;
   }
-  
+
   .btn-secondary {
     background-color: white;
     color: var(--color-primary);
@@ -96,7 +120,7 @@
     color: white;
     @apply shadow-lg scale-105;
   }
-  
+
   /* Card styles */
   .card {
     background-color: white;
@@ -105,7 +129,7 @@
   .card:hover {
     @apply shadow-xl -translate-y-1;
   }
-  
+
   .card-dark {
     background-color: var(--color-primary-dark);
     color: white;
@@ -114,22 +138,22 @@
   .card-dark:hover {
     @apply shadow-xl -translate-y-1;
   }
-  
+
   /* Section styles */
   .section {
     @apply py-16 px-4 md:px-8 lg:px-16;
   }
-  
+
   .section-title {
     color: var(--color-primary);
     font-family: var(--font-display);
     @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-center;
   }
-  
+
   .section-subtitle {
     @apply text-lg md:text-xl text-gray-600 text-center mb-12 max-w-3xl mx-auto;
   }
-  
+
   /* Container styles */
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
@@ -188,7 +212,10 @@ html {
   @apply bg-gray-50 border border-gray-200 px-4 py-2 text-left font-bold text-primary;
 }
 .markdown-content td {
-  @apply border border-gray-200 px-4 py-2 text-gray-700;
+  @apply border border-gray-200 px-4 py-2 text-gray-700 align-middle;
+}
+.markdown-content td img {
+  @apply w-20 h-24 object-cover rounded-lg shadow-sm mx-auto;
 }
 .markdown-content strong {
   @apply font-bold text-gray-900;
@@ -225,7 +252,8 @@ html {
   border: 1px solid #e5e7eb;
 }
 
-.prose th, .prose td {
+.prose th,
+.prose td {
   border: 1px solid #e5e7eb;
   padding: 0.5rem 0.75rem;
   text-align: left;
@@ -238,10 +266,9 @@ html {
 
 /* Scrollbar Hide Utility */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
-

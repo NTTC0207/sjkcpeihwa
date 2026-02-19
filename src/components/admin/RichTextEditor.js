@@ -134,8 +134,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         },
       }),
       Placeholder.configure({
-        placeholder:
-          placeholder || "Start writing your announcement content...",
+        placeholder: placeholder || "Mula menulis kandungan pengumuman anda...",
       }),
     ],
     content: content || "",
@@ -245,7 +244,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
       }
     } catch (error) {
       console.error("Upload failed:", error);
-      alert("Failed to upload. Please try again.");
+      alert("Gagal memuat naik. Sila cuba lagi.");
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -262,14 +261,14 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
-          title="Undo"
+          title="Batal Perbuatan"
         >
           <HiArrowUturnLeft className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
-          title="Redo"
+          title="Ulang Perbuatan"
         >
           <HiArrowUturnRight className="w-4 h-4" />
         </ToolbarButton>
@@ -284,7 +283,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
               editor.chain().focus().toggleHeading({ level }).run()
             }
             active={editor.isActive("heading", { level })}
-            title={`Heading ${level}`}
+            title={`Tajuk ${level}`}
           >
             <span className="font-bold text-xs">H{level}</span>
           </ToolbarButton>
@@ -296,42 +295,42 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive("bold")}
-          title="Bold"
+          title="Tebal"
         >
           <HiBold className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           active={editor.isActive("italic")}
-          title="Italic"
+          title="Condong"
         >
           <HiItalic className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           active={editor.isActive("underline")}
-          title="Underline"
+          title="Garis Bawah"
         >
           <MdFormatUnderlined className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleStrike().run()}
           active={editor.isActive("strike")}
-          title="Strikethrough"
+          title="Garis Tengah"
         >
           <MdFormatStrikethrough className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHighlight().run()}
           active={editor.isActive("highlight")}
-          title="Highlight"
+          title="Serlah"
         >
           <MdHighlight className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleCode().run()}
           active={editor.isActive("code")}
-          title="Inline Code"
+          title="Kod Baris"
         >
           <HiCodeBracket className="w-4 h-4" />
         </ToolbarButton>
@@ -349,7 +348,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
             }
             value={editor.getAttributes("textStyle").color || "#000000"}
             className="w-4 h-4 p-0 border-none bg-transparent cursor-pointer rounded overflow-hidden"
-            title="Font Color"
+            title="Warna Font"
           />
         </div>
 
@@ -359,28 +358,28 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
           active={editor.isActive({ textAlign: "left" })}
-          title="Align Left"
+          title="Jajar Kiri"
         >
           <MdFormatAlignLeft className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("center").run()}
           active={editor.isActive({ textAlign: "center" })}
-          title="Align Center"
+          title="Jajar Tengah"
         >
           <MdFormatAlignCenter className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("right").run()}
           active={editor.isActive({ textAlign: "right" })}
-          title="Align Right"
+          title="Jajar Kanan"
         >
           <MdFormatAlignRight className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("justify").run()}
           active={editor.isActive({ textAlign: "justify" })}
-          title="Justify"
+          title="Imbang"
         >
           <MdFormatAlignJustify className="w-4 h-4" />
         </ToolbarButton>
@@ -391,27 +390,27 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           active={editor.isActive("bulletList")}
-          title="Bullet List"
+          title="Senarai Bullet"
         >
           <HiListBullet className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           active={editor.isActive("orderedList")}
-          title="Ordered List"
+          title="Senarai Bernombor"
         >
           <HiQueueList className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           active={editor.isActive("blockquote")}
-          title="Blockquote"
+          title="Petikan"
         >
           <MdFormatQuote className="w-4 h-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          title="Horizontal Rule"
+          title="Garis Melintang"
         >
           <HiMinus className="w-4 h-4" />
         </ToolbarButton>
@@ -422,7 +421,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => setShowLinkInput(!showLinkInput)}
           active={editor.isActive("link") || showLinkInput}
-          title="Insert Link"
+          title="Masukkan Pautan"
         >
           <HiLink className="w-4 h-4" />
         </ToolbarButton>
@@ -432,7 +431,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
           <ToolbarButton
             onClick={() => setShowImageInput(!showImageInput)}
             active={showImageInput}
-            title="Insert Image (URL)"
+            title="Masukkan Imej (URL)"
           >
             <HiPhoto className="w-4 h-4" />
           </ToolbarButton>
@@ -440,7 +439,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
             type="button"
             onClick={() => imageInputRef.current?.click()}
             disabled={uploading}
-            title="Upload Image"
+            title="Muat Naik Imej"
             className={`p-1.5 rounded-md text-sm transition-all duration-150 text-gray-600 hover:bg-gray-100 hover:text-primary ${uploading ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <HiArrowUpTray className="w-4 h-4" />
@@ -451,7 +450,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          title="Attach File"
+          title="Lampirkan Fail"
         >
           <HiPaperClip className="w-4 h-4" />
         </ToolbarButton>
@@ -495,7 +494,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
             onClick={setLink}
             className="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Insert
+            Masukkan
           </button>
           <button
             type="button"
@@ -505,7 +504,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
             }}
             className="px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-300 transition-colors"
           >
-            Remove
+            Alih Keluar
           </button>
         </div>
       )}
@@ -527,14 +526,14 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
             onClick={addImage}
             className="px-3 py-1.5 bg-green-600 text-white text-xs font-semibold rounded-lg hover:bg-green-700 transition-colors"
           >
-            Insert
+            Masukkan
           </button>
           <button
             type="button"
             onClick={() => setShowImageInput(false)}
             className="px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-300 transition-colors"
           >
-            Cancel
+            Batal
           </button>
         </div>
       )}
@@ -545,8 +544,8 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
       {/* Word Count */}
       <div className="bg-gray-50 border-t border-gray-100 px-4 py-1.5 flex justify-end">
         <span className="text-[10px] text-gray-400">
-          {editor.storage.characterCount?.words?.() ?? 0} words ·{" "}
-          {editor.getText().length} characters
+          {editor.storage.characterCount?.words?.() ?? 0} patah perkataan ·{" "}
+          {editor.getText().length} aksara
         </span>
       </div>
 

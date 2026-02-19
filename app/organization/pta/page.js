@@ -6,6 +6,21 @@ import GeneralOrgClient from "@components/organization/GeneralOrgClient";
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
+export const metadata = {
+  title: "Persatuan Ibu Bapa & Guru (PTA / PIBG)",
+  description:
+    "Ahli Persatuan Ibu Bapa dan Guru (PIBG) SJK(C) Pei Hwa Machang, Kelantan. Kerjasama antara ibu bapa dan guru demi kecemerlangan pelajar.",
+  alternates: {
+    canonical: "https://sjkcpeihwa.edu.my/organization/pta",
+  },
+  openGraph: {
+    title: "PIBG / PTA | SJK(C) Pei Hwa",
+    description: "Persatuan Ibu Bapa dan Guru SJK(C) Pei Hwa Machang.",
+    url: "https://sjkcpeihwa.edu.my/organization/pta",
+    type: "website",
+  },
+};
+
 async function getPTAData() {
   try {
     const q = query(collection(db, "PTA"), orderBy("level", "asc"));

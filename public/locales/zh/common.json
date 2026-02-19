@@ -24,6 +24,7 @@
       "anthem": "校歌",
       "motto": "校训",
       "landscape": "校园景观",
+      "calendar": "校历/历史",
       "pta": "家教与教师协会",
       "lps":"董事部"
     }
@@ -32,6 +33,16 @@
     "welcome": "欢迎来到马章培华国民型华文小学",
     "motto": "培育幼小心灵，建设光明未来",
     "cta": "了解更多"
+  },
+  "stats": {
+    "students": "学生人数",
+    "staff": "教职员",
+    "history": "办学历史"
+  },
+  "contact": {
+    "visit": "寻找我们",
+    "call": "电话 / 传真",
+    "email": "电子邮件"
   },
   "about": {
     "title": "关于我们的学校",
@@ -121,5 +132,26 @@
     "gridView": "列表视图",
     "search": "搜索成员...",
     "noResults": "未找到匹配条件的成员。"
+  },
+  "subjects": {
+    "bahasa_cina": "华语",
+    "bahasa_inggeris": "英语",
+    "bahasa_melayu": "国语",
+    "matematik": "数学",
+    "sains": "科学",
+    "muzik": "音乐",
+    "pendidikan_jasmani": "体育",
+    "pendidikan_seni": "美术",
+    "pendidikan_moral": "道德教育",
+    "pendidikan_islam": "伊斯兰教育",
+    "pendidikan_kesihatan": "健康教育",
+    "reka_bentuk_dan_teknologi": "设计与工艺",
+    "sejarah": "历史",
+    "admin": "行政"
+  },
+  "anthem": {
+    "title": "校歌",
+    "playbackInstructions": "播放说明",
+    "description": "点击上方视频播放培华学校校歌。校歌记录了学校的辉煌历史与宏伟愿景。"
   }
 }

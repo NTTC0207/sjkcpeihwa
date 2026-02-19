@@ -69,7 +69,7 @@ export default function AdminLPSPage() {
               </Link>
               <div>
                 <h1 className="text-xl font-display font-bold">
-                  LPS Management
+                  Pengurusan LPS
                 </h1>
                 <p className="text-xs text-gray-300">SJK(C) Pei Hwa Machang</p>
               </div>
@@ -80,14 +80,14 @@ export default function AdminLPSPage() {
                 className="flex items-center gap-1 text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
               >
                 <HiArrowLeft className="w-4 h-4" />
-                <span>Dashboard</span>
+                <span>Papan Pemuka</span>
               </Link>
               <button
                 onClick={handleLogout}
                 className="bg-accent-red hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-lg shadow-red-900/20 flex items-center gap-2"
               >
                 <HiArrowRightOnRectangle className="w-4 h-4" />
-                <span>Logout</span>
+                <span>Log Keluar</span>
               </button>
             </div>
           </div>
@@ -102,14 +102,14 @@ export default function AdminLPSPage() {
             className="flex items-center gap-2 text-primary font-bold mb-4 hover:text-primary-dark transition-colors group w-fit"
           >
             <HiChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            Back to Dashboard
+            Kembali ke Papan Pemuka
           </Link>
         </div>
 
         {/* Staff Table Component */}
         <StaffTableManager
           collectionName="LPS"
-          title="LPS Member"
+          title="Ahli LPS"
           showSubjects={false}
         />
       </main>

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { HiUser } from "react-icons/hi2";
-import { formatGoogleDriveLink } from "@lib/utils";
+import { useLanguage } from "@lib/LanguageContext";
 
 export default function StaffCard({
   staff,
@@ -8,6 +8,8 @@ export default function StaffCard({
   index,
   showSubjects = true,
 }) {
+  const { translations } = useLanguage();
+  const tSubjects = translations?.subjects || {};
   const hasSubjects = staff.subject && staff.subject.length > 0;
 
   return (
@@ -28,7 +30,7 @@ export default function StaffCard({
           <div className="w-full h-full rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
             {staff.image ? (
               <img
-                src={formatGoogleDriveLink(staff.image)}
+                src={staff.image}
                 alt={staff.name}
                 className="w-full h-full object-cover"
               />
@@ -71,7 +73,7 @@ export default function StaffCard({
                   key={s}
                   className="text-[10px] font-medium bg-primary/5 text-primary px-2.5 py-1 rounded-lg border border-primary/10"
                 >
-                  {s}
+                  {tSubjects[s] || s}
                 </span>
               ))}
             </div>

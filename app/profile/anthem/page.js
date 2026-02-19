@@ -31,7 +31,7 @@ export default function SchoolAnthemPage() {
     { time: 60, text: "能牺牲能奋斗" },
     { time: 64, text: "前进莫彷徨" },
     { time: 68, text: "振山河， 守四方" },
-    { time: 72, text: "兴名族， 刷文化" },
+    { time: 72, text: "兴民族， 刷文化" },
     { time: 75.5, text: "增我培华光！" },
   ];
 
@@ -104,9 +104,9 @@ export default function SchoolAnthemPage() {
                 <FaPlayCircle className="text-2xl text-accent-yellow" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-800 mb-1">播放说明</h3>
+                <h3 className="font-bold text-gray-800 mb-1">{translations.anthem.playbackInstructions}</h3>
                 <p className="text-sm text-gray-600">
-                  点击上方视频播放培华学校校歌。校歌记录了学校的辉煌历史与宏伟愿景。
+                 {translations.anthem.description}
                 </p>
               </div>
             </div>

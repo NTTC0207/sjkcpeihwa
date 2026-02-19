@@ -1,0 +1,336 @@
+[
+  {
+    "id": "1938-1941",
+    "year": "1938 - 1941",
+    "title": "创校初期",
+    "description": "马章培华华小创立与战前发展阶段。",
+    "content": "马章培华华小肇源于1938年。初期是以私塾的形式成立，由一间树胶店之书记林纪良兼职教职。\n\n1939年9月28日，当地热心民族教育人士李增辑、杨丕力、李迁乔、徐菊祥、欧善伍、欧世端等以每月十五元之租金，于马章旧街场租下一间两层楼之旧亚答店屋，创办培华学校；公推李增辑为首任董事长（任期：1939–1941），聘黄益东掌校。当时学生有40余名，分三班上课。每名学生每月学费则靠当地侨商以十元 or 二十元不等之月捐弥补，清贫子弟可申请免费就学。\n\n1941年学校庆祝创校二周年。同年12月8日，日本侵略马来亚，学校停办，校产荡然无存。",
+    "chairmanList": [
+      {
+        "term": "1",
+        "name": "李增辑先生",
+        "image": "/people/chairman/chairman1.avif",
+        "year": "1939 – 1941"
+      }
+    ],
+    "principalList": [
+      {
+        "term": "1",
+        "name": "黄东益先生",
+        "image": "/people/headmaster/Headmaster_1.avif",
+        "year": "1939 – 1941"
+      }
+    ],
+    "ptaList": []
+  },
+  {
+    "id": "1945-1959",
+    "year": "1945 - 1959",
+    "title": "战后复办与发展",
+    "description": "二战后复校与接受政府津贴时期。",
+    "content": "1945年日本战败后，学校于1946年2月在原校址复办。张安鍇担任复办后首任校长，学生40余人。\n\n1949年李迁乔再任董事长（任期：1949–1976）。1951年学生增至60余人。\n\n1954年7月30日，新建四间教室校舍落成。\n\n1957年学校接受政府津贴，改名“培华标准型华文小学”。1958年学生增至130名，并获教育部拨款增建教室。",
+    "chairmanList": [
+      {
+        "term": "1",
+        "name": "杨丕力先生",
+        "image": "/people/chairman/chairman2.avif",
+        "year": "1948"
+      },
+      {
+        "term": "2",
+        "name": "李迁乔先生",
+        "image": "/people/chairman/chairman3.avif",
+        "year": "1946 – 1947, 1949-1976"
+      }
+    ],
+    "principalList": [
+      {
+        "term": "1",
+        "name": "张安鍇先生",
+        "image": "/people/headmaster/Headmaster_2.avif",
+        "year": "1946"
+      },
+      {
+        "term": "2",
+        "name": "吴忠诚先生",
+        "image": "",
+        "year": "1947-1948"  
+      },
+      {
+        "term": "3",
+        "name": "江正深先生",
+        "image": "/people/headmaster/Headmaster_4.avif",
+        "year": "1949-1950"  
+      },
+      {
+        "term": "4",
+        "name": "陈子文先生",
+        "image": "",
+        "year": "1951"  
+      },
+        {
+        "term": "5",
+        "name": "欧瑞和先生",
+        "image": "",
+        "year": "1952"  
+      },
+         {
+        "term": "6",
+        "name": "张安锴先生",
+        "image": "/people/headmaster/Headmaster_7.avif",
+        "year": "1953-1970"  
+      }
+    ],
+    "ptaList": []
+  },
+  {
+    "id": "1960-1979",
+    "year": "1960 - 1979",
+    "title": "改制与扩建时期",
+    "description": "新教育法令实施后学校扩展与迁校筹备阶段。",
+    "content": "1961年新教育法令实施后，学校改制为“培华国民型华文小学校”。\n\n1962年学生增至250余人，增建二间教室与一间储藏室. 1964年建成篮球场。\n\n1971年开办董事部幼稚班。\n\n1979年学生增至270余人，原有校舍拥挤，董事会申请迁校，并成功列入马来西亚第三个五年计划建校项目。",
+    "chairmanList": [
+        {
+        "term": "1",
+        "name": "李迁乔先生",
+        "image": "/people/chairman/chairman3.avif",
+        "year": "1946 – 1947, 1949-1976"
+      },
+        {
+        "term": "2",
+        "name": "欧世端先生",
+        "image": "/people/chairman/chairman4.avif",
+        "year": "1977-1985"
+      }
+    ],
+    "principalList": [
+      {
+        "term": "1",
+        "name": "张安锴先生",
+        "image": "/people/headmaster/Headmaster_7.avif",
+        "year": "1953-1970"  
+      },
+      {
+        "term": "2",
+        "name": "陈宝川先生",
+        "image": "/people/headmaster/Headmaster_8.avif",
+        "year": "1971-1972"  
+      },
+      {
+        "term": "3",
+        "name": "张萍先生",
+        "image": "/people/headmaster/Headmaster_9.avif",
+        "year": "1973-1976"  
+      },
+       {
+        "term": "4",
+        "name": "黄顺富先生",
+        "image": "/people/headmaster/Headmaster_10.avif",
+        "year": "1977-1979"  
+      }
+    ],
+    "ptaList": [
+       {
+        "term": "1",
+        "name": "张景德先生",
+        "image": "/people/pibg/pibg_1.avif",
+        "year": "1973-1974, 1977-1982"  
+      },
+       {
+        "term": "2",
+        "name": "黄英杉先生",
+        "image": "",
+        "year": "1975-1976"  
+      }
+    ]
+  },
+  {
+    "id": "1980-1999",
+    "year": "1980 - 1999",
+    "title": "迁校与现代化建设",
+    "description": "新校舍启用与校园基础设施全面提升阶段。",
+    "content": "1982年新校舍竣工并完成迁校，新校舍为双层楼建筑，共八间教室及大型食堂。\n\n1985年起进行多项校园建设，包括科学园、羽球场、停车棚等设施。\n\n1993年成立培华校友会。\n\n1995年完成雨盖篮球场第一阶段工程。\n\n1997至1999年期间，获得多项政府及社会拨款，用于维修与提升校园设施。",
+    "chairmanList": [
+      {
+        "term": "1",
+        "name": "欧世端先生",
+        "image": "/people/chairman/chairman4.avif",
+        "year": "1977-1985"
+      },
+       {
+        "term": "2",
+        "name": "黄英星先生",
+        "image": "/people/chairman/chairman5.avif",
+        "year": "1985-1991"
+      },
+        {
+        "term": "3",
+        "name": "李霜霖先生",
+        "image": "/people/chairman/chairman6.avif",
+        "year": "1992-2004"
+      }
+    ],
+    "principalList": [
+      {
+        "term": "1",
+        "name": "赵长安先生",
+        "image": "/people/headmaster/Headmaster_11.avif",
+        "year": "1980-1984"
+      },
+      {
+        "term": "2",
+        "name": "张文远先生",
+        "image": "/people/headmaster/Headmaster_12.avif",
+        "year": "1984-1989"
+      },
+       {
+        "term": "3",
+        "name": "萧晋成先生",
+        "image": "/people/headmaster/Headmaster_13.avif",
+        "year": "1989-2011"
+      }
+    ],
+    "ptaList": [
+       {
+        "term": "1",
+        "name": "张景德先生",
+        "image": "/people/pibg/pibg_1.avif",
+        "year": "1973-1974, 1977-1982"  
+      },
+      {
+        "term": "2",
+        "name": "黄英星先生",
+        "image": "/people/pibg/pibg_4.avif",
+        "year": "1983-1986"  
+      },
+       {
+        "term": "3",
+        "name": "颜金殿先生",
+        "image": "",
+        "year": "1987-1988"
+      },
+       {
+        "term": "4",
+        "name": "周平光先生",
+        "image": "",
+        "year": "1989"
+      },
+      {
+        "term": "5",
+        "name": "李霜霖先生",
+        "image": "/people/pibg/pibg_7.avif",
+        "year": "1990"
+      },
+      {
+        "term": "6",
+        "name": "吕良思先生",
+        "image": "/people/pibg/pibg_8.avif",
+        "year": "1991-1996"
+      },
+      {
+        "term": "7",
+        "name": "李庚樵先生",
+        "image": "/people/pibg/pibg_9.avif",
+        "year": "1997-2003"
+      }
+    ]
+  },
+  {
+    "id": "2000-2010",
+    "year": "2000 - 2010",
+    "title": "迈入新世纪发展",
+    "description": "大型筹款活动与校园硬体建设提升阶段。",
+    "content": "2000年举办创校60周年校庆晚宴，筹获逾20万令吉。\n\n2002年至2004年完成雨盖篮球场第二及第三阶段工程。\n\n2007年政府学前教育班正式开课。\n\n2009年旧食堂改建为图书馆。\n\n2010年举办71周年筹款晚宴，筹获约8万令吉作为学校发展基金。",
+    "chairmanList": [
+           {
+        "term": "1",
+        "name": "李霜霖先生",
+        "image": "/people/chairman/chairman6.avif",
+        "year": "1992-2004"
+      },
+        {
+        "term": "2",
+        "name": "吕良思先生",
+        "image": "/people/chairman/chairman7.avif",
+        "year": "2004-2012"
+      }
+    ],
+    "principalList": [
+      {
+        "term": "1",
+        "name": "萧晋成先生",
+        "image": "/people/headmaster/Headmaster_13.avif",
+        "year": "1989-2011"
+      }
+    ],
+    "ptaList": [
+      {
+        "term": "1",
+        "name": "李庚樵先生",
+        "image": "/people/pibg/pibg_9.avif",
+        "year": "1997-2003"
+      },
+      {
+        "term": "2",
+        "name": "李春遴先生",
+        "image": "/people/pibg/pibg_10.avif",
+        "year": "2004-2007"
+      },
+      {
+        "term": "3",
+        "name": "陈庆海先生",
+        "image": "/people/pibg/pibg_11.avif",
+        "year": "2008"
+      },
+      {
+        "term": "4",
+        "name": "张彩蓉女士 ",
+        "image": "/people/pibg/pibg_12.avif",
+        "year": "2009-2024"
+      }
+    ]
+  },
+  {
+    "id": "2011-2013",
+    "year": "2011 - 2013",
+    "title": "近年发展与领导更替",
+    "description": "校长更替与校园持续提升阶段。",
+    "content": "2011年萧晋成校长退休，学校获选为爱心学校。\n\n2012年杨绪平当选董事长（2012年至今），持续提升校园设施。\n\n2013年建设教师停车篷及雨盖走廊，学校行政与校务运作稳健发展。",
+    "chairmanList": [
+   {
+        "term": "1",
+        "name": "杨绪平先生",
+        "image": "/people/chairman/chairman8.avif",
+        "year": "2012-2025"
+      }
+    ],
+    "principalList": [
+             {
+        "term": "1",
+        "name": "杜雪晶女士",
+        "image": "/people/headmaster/Headmaster_14.avif",
+        "year": "2011-2012"
+      },
+      {
+        "term": "2",
+        "name": "李彩玉女士",
+        "image": "/people/headmaster/Headmaster_15.avif",
+        "year": "2012"
+      },
+      {
+        "term": "3",
+        "name": "张玉慧女士",
+        "image": "/people/headmaster/Headmaster_16.avif",
+        "year": "2013-2019"
+      }
+    ],
+    "ptaList": [
+      {
+        "term": "1",
+        "name": "张彩蓉女士 ",
+        "image": "/people/pibg/pibg_12.avif",
+        "year": "2009-2024"
+      }
+    ]
+  }
+]

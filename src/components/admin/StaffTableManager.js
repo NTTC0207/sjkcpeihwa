@@ -12,7 +12,6 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { db } from "@lib/firebase";
-import { formatGoogleDriveLink } from "@lib/utils";
 import { uploadToCloudinary } from "@lib/cloudinary";
 import {
   HiPlus,
@@ -35,6 +34,7 @@ export default function StaffTableManager({
   title = "Staff",
   showSubjects = true,
 }) {
+  const [msSubjects, setMsSubjects] = useState({});
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,18 +49,30 @@ export default function StaffTableManager({
     name_zh: "",
     role_ms: "Guru",
     role_zh: "老师",
-    category: "Teacher",
+    category: "Pentadbiran",
     subject: [],
     level: 2,
     parentId: "",
-    image: null,
+    image:
+      "",
   });
-
-  const categories = ["Management", "Teacher", "Admin"];
 
   useEffect(() => {
     fetchStaff();
+    loadMsSubjects();
   }, []);
+
+  const loadMsSubjects = async () => {
+    try {
+      const response = await fetch("/locales/ms/common.json");
+      if (response.ok) {
+        const data = await response.json();
+        setMsSubjects(data.subjects || {});
+      }
+    } catch (err) {
+      console.error("Error loading MS subjects:", err);
+    }
+  };
 
   const fetchStaff = async () => {
     setLoading(true);
@@ -91,7 +103,11 @@ export default function StaffTableManager({
         subject: staff.subject || [],
         level: staff.level ?? 2,
         parentId: staff.parentId || "",
-        image: staff.image || null,
+        image: staff.image
+          ? typeof staff.image === "object"
+            ? staff.image.url
+            : staff.image
+          : "https://res.cloudinary.com/dp9y0utxj/image/upload/v1771484785/school_uploads/muwef2nlkjbeqdyce1vv.avif",
       });
     } else {
       setEditingStaff(null);
@@ -104,7 +120,8 @@ export default function StaffTableManager({
         subject: [],
         level: 2,
         parentId: "",
-        image: null,
+        image:
+          "",
       });
     }
     setIsModalOpen(true);
@@ -126,14 +143,14 @@ export default function StaffTableManager({
       fetchStaff();
     } catch (error) {
       console.error("Error saving staff:", error);
-      alert("Error saving staff information.");
+      alert("Ralat menyimpan maklumat kakitangan.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this staff member?")) return;
+    if (!confirm("Adakah anda pasti mahu memadam kakitangan ini?")) return;
     setLoading(true);
     try {
       await deleteDoc(doc(db, collectionName, id));
@@ -162,11 +179,13 @@ export default function StaffTableManager({
     try {
       const uploadData = new FormData();
       uploadData.append("file", file);
-      const url = await uploadToCloudinary(uploadData);
-      setFormData((prev) => ({ ...prev, image: url }));
+      const result = await uploadToCloudinary(uploadData);
+      if (result && result.url) {
+        setFormData((prev) => ({ ...prev, image: result.url }));
+      }
     } catch (err) {
       console.error(err);
-      alert("Failed to upload image. Please check Cloudinary configuration.");
+      alert("Gagal memuat naik imej. Sila semak konfigurasi Cloudinary.");
     } finally {
       setUploadingImage(false);
     }
@@ -192,26 +211,11 @@ export default function StaffTableManager({
             <HiMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
-              placeholder="Search by name or role..."
+              placeholder="Cari mengikut nama..."
               className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-          </div>
-          <div className="relative">
-            <HiFunnel className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <select
-              className="pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm appearance-none"
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-            >
-              <option value="All">All Categories</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
         <button
@@ -219,7 +223,7 @@ export default function StaffTableManager({
           className="btn-primary flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
         >
           <HiPlus className="w-5 h-5" />
-          <span>Add New {title}</span>
+          <span>Tambah {title} Baru</span>
         </button>
       </div>
 
@@ -230,24 +234,24 @@ export default function StaffTableManager({
             <thead>
               <tr className="bg-gray-50/50 border-b border-gray-100">
                 <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">
-                  Staff Info
+                  Maklumat Kakitangan
                 </th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">
-                  Roles
+                  Jawatan
                 </th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">
-                  Category
+                  Kategori
                 </th>
                 {showSubjects && (
                   <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider">
-                    Subjects
+                    Mata Pelajaran
                   </th>
                 )}
                 <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider text-center">
-                  Level
+                  Tahap
                 </th>
                 <th className="px-6 py-4 text-sm font-bold text-gray-700 uppercase tracking-wider text-right">
-                  Actions
+                  Tindakan
                 </th>
               </tr>
             </thead>
@@ -258,7 +262,7 @@ export default function StaffTableManager({
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                       <p className="text-gray-500 font-medium">
-                        Loading staff records...
+                        Memuatkan rekod kakitangan...
                       </p>
                     </div>
                   </td>
@@ -269,7 +273,7 @@ export default function StaffTableManager({
                     colSpan="6"
                     className="px-6 py-12 text-center text-gray-500 italic"
                   >
-                    No staff members found matching your criteria.
+                    Tiada kakitangan ditemui yang sepadan dengan kriteria anda.
                   </td>
                 </tr>
               ) : (
@@ -283,7 +287,11 @@ export default function StaffTableManager({
                         <div className="w-12 h-12 rounded-full bg-primary/5 flex items-center justify-center overflow-hidden border border-primary/10 shrink-0">
                           {staff.image ? (
                             <img
-                              src={formatGoogleDriveLink(staff.image)}
+                              src={
+                                typeof staff.image === "object"
+                                  ? staff.image.url
+                                  : staff.image
+                              }
                               alt={staff.name}
                               className="w-full h-full object-cover"
                             />
@@ -324,7 +332,13 @@ export default function StaffTableManager({
                               : "bg-accent-green/10 text-green-700"
                         }`}
                       >
-                        {staff.category}
+                        {staff.category === "Management"
+                          ? "Pengurusan"
+                          : staff.category === "Teacher"
+                            ? "Guru"
+                            : staff.category === "Admin"
+                              ? "Pentadbiran"
+                              : staff.category}
                       </span>
                     </td>
                     {showSubjects && (
@@ -335,7 +349,7 @@ export default function StaffTableManager({
                               key={sub}
                               className="px-2 py-0.5 bg-gray-100 rounded text-[10px] font-medium text-gray-600"
                             >
-                              {sub}
+                              {msSubjects[sub] || sub}
                             </span>
                           ))}
                         </div>
@@ -375,8 +389,8 @@ export default function StaffTableManager({
 
       {/* Modal Tooltip / Info */}
       <div className="text-xs text-gray-400 text-center italic">
-        * Level 0: Headmaster | Level 1: Vice Principals | Level 2+: Staff &
-        Teachers
+        * Level 0: Guru Besar | Level 1: Guru Penolong Kanan | Level 2+:
+        Kakitangan
       </div>
 
       {/* Add/Edit Modal */}
@@ -388,11 +402,11 @@ export default function StaffTableManager({
               <div>
                 <h3 className="text-2xl font-display font-bold">
                   {editingStaff
-                    ? `Edit ${title} Details`
-                    : `Register New ${title}`}
+                    ? `Edit Butiran ${title}`
+                    : `Daftar ${title} Baru`}
                 </h3>
                 <p className="text-primary-foreground/70 text-sm">
-                  Update and manage school personnel information
+                  Kemas kini dan urus maklumat kakitangan sekolah
                 </p>
               </div>
               <button
@@ -413,12 +427,12 @@ export default function StaffTableManager({
                 {/* Basic Identification */}
                 <section className="space-y-4">
                   <h4 className="text-xs uppercase tracking-widest font-bold text-gray-400 border-b border-gray-100 pb-2">
-                    Identification
+                    Pengenalan
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Full Name (EN/MS)
+                        Nama Penuh (En)
                       </label>
                       <input
                         type="text"
@@ -433,7 +447,7 @@ export default function StaffTableManager({
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Chinese Name (中文姓名)
+                        Nama Cina (中文姓名)
                       </label>
                       <input
                         type="text"
@@ -451,12 +465,12 @@ export default function StaffTableManager({
                 {/* Role Details */}
                 <section className="space-y-4">
                   <h4 className="text-xs uppercase tracking-widest font-bold text-gray-400 border-b border-gray-100 pb-2">
-                    Position & Hierarchy
+                    Jawatan & Hierarki
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Role (MS)
+                        Jawatan (Malay)
                       </label>
                       <input
                         type="text"
@@ -469,7 +483,7 @@ export default function StaffTableManager({
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Role (ZH)
+                        Jawatan (中)
                       </label>
                       <input
                         type="text"
@@ -486,7 +500,7 @@ export default function StaffTableManager({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Administrative Category
+                        Kategori Pentadbiran
                       </label>
                       <input
                         type="text"
@@ -501,7 +515,7 @@ export default function StaffTableManager({
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Organization Level (0-9)
+                        Tahap Organisasi (0-9)
                       </label>
                       <input
                         type="number"
@@ -519,7 +533,7 @@ export default function StaffTableManager({
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Reports To (Parent)
+                        Melapor Kepada (Induk)
                       </label>
                       <select
                         className="w-full px-4 py-3 bg-neutral-bg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none appearance-none"
@@ -528,7 +542,7 @@ export default function StaffTableManager({
                           setFormData({ ...formData, parentId: e.target.value })
                         }
                       >
-                        <option value="">None (Top Level)</option>
+                        <option value="">Tiada (Tahap Atas)</option>
                         {staffList
                           .filter(
                             (s) =>
@@ -549,7 +563,7 @@ export default function StaffTableManager({
                 {showSubjects && (
                   <section className="space-y-4">
                     <h4 className="text-xs uppercase tracking-widest font-bold text-gray-400 border-b border-gray-100 pb-2">
-                      Subjects Assigned
+                      Mata Pelajaran Ditugaskan
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {subjects.map((sub) => (
@@ -563,7 +577,7 @@ export default function StaffTableManager({
                               : "bg-gray-100 text-gray-500 hover:bg-gray-200"
                           }`}
                         >
-                          {sub}
+                          {msSubjects[sub] || sub}
                         </button>
                       ))}
                     </div>
@@ -573,13 +587,17 @@ export default function StaffTableManager({
                 {/* Media */}
                 <section className="space-y-4">
                   <h4 className="text-xs uppercase tracking-widest font-bold text-gray-400 border-b border-gray-100 pb-2">
-                    Profile Image
+                    Imej Profil
                   </h4>
                   <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
                     <div className="w-20 h-20 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-300 overflow-hidden shrink-0 shadow-sm">
                       {formData.image ? (
                         <img
-                          src={formData.image}
+                          src={
+                            typeof formData.image === "object"
+                              ? formData.image.url
+                              : formData.image
+                          }
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -603,19 +621,19 @@ export default function StaffTableManager({
                         {uploadingImage ? (
                           <>
                             <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                            <span>Uploading...</span>
+                            <span>Memuat naik...</span>
                           </>
                         ) : (
                           <>
                             <HiCloudArrowUp className="w-5 h-5" />
                             <span>
-                              {formData.image ? "Change Photo" : "Upload Photo"}
+                              {formData.image ? "Tukar Foto" : "Muat Naik Foto"}
                             </span>
                           </>
                         )}
                       </button>
                       <p className="text-[10px] text-gray-400 mt-2 ml-1 italic">
-                        Photos are stored securely on Cloudinary.
+                        Foto disimpan dengan selamat di Cloudinary.
                       </p>
                     </div>
                   </div>
@@ -630,7 +648,7 @@ export default function StaffTableManager({
                 onClick={() => setIsModalOpen(false)}
                 className="px-6 py-3 rounded-xl text-gray-600 font-bold hover:bg-gray-200 transition-colors"
               >
-                Cancel
+                Batal
               </button>
               <button
                 type="submit"
@@ -643,7 +661,7 @@ export default function StaffTableManager({
                 ) : (
                   <HiCheckCircle className="w-5 h-5" />
                 )}
-                <span>{editingStaff ? "Save Changes" : "Create Record"}</span>
+                <span>{editingStaff ? "Simpan Perubahan" : "Cipta Rekod"}</span>
               </button>
             </div>
           </div>
