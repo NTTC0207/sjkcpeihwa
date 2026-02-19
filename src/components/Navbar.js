@@ -124,8 +124,8 @@ export default function Navbar({
   ];
 
   const languages = [
-    { code: "zh", label: "中文", name: "中文" },
     { code: "ms", label: "BM", name: "Malay" },
+    { code: "zh", label: "中文", name: "中文" },
   ];
 
   // Handle outside click to close dropdowns
@@ -177,7 +177,7 @@ export default function Navbar({
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             {navLinks.map((link) => (
               <div key={link.label} className="relative group">
                 {link.children ? (
@@ -242,7 +242,7 @@ export default function Navbar({
             ))}
 
             {/* Language Switcher Dropdown */}
-            <div className="flex items-center border-l pl-4">
+            <div className="flex items-center border-l pl-2">
               <div className="relative group">
                 <select
                   value={currentLocale}
