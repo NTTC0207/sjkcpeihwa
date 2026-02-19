@@ -91,7 +91,10 @@
     "filterYear": "按年份筛选",
     "allYears": "所有年份",
     "readMore": "阅读全文",
-    "noAnnouncements": "该年份未找到任何公告。"
+    "noAnnouncements": "该年份未找到任何公告。",
+    "sortBy": "排序方式",
+    "latestToOldest": "最新发布",
+    "oldestToLatest": "最早发布"
   },
   "footer": {
     "contact": "联系我们",

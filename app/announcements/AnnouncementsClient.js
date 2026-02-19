@@ -10,6 +10,7 @@ import {
   HiArrowRight,
   HiCalendar,
   HiChevronDown,
+  HiArrowsUpDown,
 } from "react-icons/hi2";
 import {
   collection,
@@ -73,6 +74,7 @@ export default function AnnouncementsClient({
     (initialAnnouncements || []).length === 5,
   );
   const [selectedYear, setSelectedYear] = useState("all");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   // Local cache for avoiding redundant reads
   const [dataCache, setDataCache] = useState({
@@ -118,11 +120,7 @@ export default function AnnouncementsClient({
 
     try {
       let q;
-      const constraints = [
-        orderBy("date", "desc"),
-        orderBy("__name__", "desc"),
-        limit(5),
-      ];
+      const constraints = [orderBy("date", "desc"), limit(5)];
 
       if (targetCategory) {
         constraints.unshift(where("department", "==", targetCategory));
@@ -218,6 +216,10 @@ export default function AnnouncementsClient({
     } else {
       fetchAnnouncements(false, newCat);
     }
+  };
+
+  const handleSortChange = () => {
+    setSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
   };
 
   // Sync state if props change (e.g. Navigation from another link)
@@ -331,31 +333,45 @@ export default function AnnouncementsClient({
             </div>
           </div>
 
-          {/* Filter */}
           <div className="max-w-4xl mx-auto mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                {translations.announcements.filterYear}
-              </span>
-              <div className="relative inline-block w-48">
-                <select
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
-                >
-                  <option value="all">
-                    {translations.announcements.allYears}
-                  </option>
-                  {availableYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+                  {translations.announcements.filterYear}
+                </span>
+                <div className="relative inline-block w-48">
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
+                  >
+                    <option value="all">
+                      {translations.announcements.allYears}
                     </option>
-                  ))}
-                </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
-                  <HiChevronDown className="w-5 h-5" />
+                    {availableYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
+                    <HiChevronDown className="w-5 h-5" />
+                  </div>
                 </div>
               </div>
+
+              {/* Sort Toggle */}
+              <button
+                onClick={handleSortChange}
+                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-2xl text-primary font-bold hover:shadow-md transition-all active:scale-95"
+              >
+                <HiArrowsUpDown className="w-4 h-4" />
+                <span className="text-sm">
+                  {sortOrder === "desc"
+                    ? translations.announcements.latestToOldest
+                    : translations.announcements.oldestToLatest}
+                </span>
+              </button>
             </div>
 
             <div className="text-sm text-gray-400 font-medium">
@@ -376,6 +392,14 @@ export default function AnnouncementsClient({
               .filter((a) =>
                 selectedYear === "all" ? true : a.date.startsWith(selectedYear),
               )
+              .sort((a, b) => {
+                if (sortOrder === "desc") {
+                  return (
+                    b.date.localeCompare(a.date) || b.id.localeCompare(a.id)
+                  );
+                }
+                return a.date.localeCompare(b.date) || a.id.localeCompare(b.id);
+              })
               .map((announcement) => (
                 <div
                   key={announcement.id}

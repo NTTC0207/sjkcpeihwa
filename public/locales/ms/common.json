@@ -91,7 +91,10 @@
     "filterYear": "Tapis mengikut Tahun",
     "allYears": "Semua Tahun",
     "readMore": "Baca Selengkapnya",
-    "noAnnouncements": "Tiada pengumuman ditemui untuk tahun ini."
+    "noAnnouncements": "Tiada pengumuman ditemui untuk tahun ini.",
+    "sortBy": "Susun ikut",
+    "latestToOldest": "Terbaharu",
+    "oldestToLatest": "Terlama"
   },
   "footer": {
     "contact": "Hubungi Kami",
