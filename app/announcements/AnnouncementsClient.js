@@ -380,7 +380,7 @@ export default function AnnouncementsClient({
                       <div className="mt-auto flex items-center justify-between">
                         <div className="flex items-center text-primary font-bold text-sm tracking-tight group-hover:gap-1 transition-all">
                           <span className="border-b-2 border-primary/0 group-hover:border-primary/20 transition-all">
-                            Read Full Announcement
+                            {translations?.announcements?.readMore}
                           </span>
                           <HiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                         </div>
