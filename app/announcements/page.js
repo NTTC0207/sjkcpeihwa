@@ -15,7 +15,7 @@ export const revalidate = 604800;
 /**
  * Announcements Page with ISR (Incremental Static Regeneration)
  * Initial data is fetched on the server for speed and SEO.
- * Subsequent pagination and filtering are handled by the client component.
+ * Subsequent pagination and filtering arthee handled by the client component.
  */
 export default async function AnnouncementsPage({ searchParams }) {
   const params = await searchParams;
@@ -23,7 +23,11 @@ export default async function AnnouncementsPage({ searchParams }) {
 
   let initialAnnouncements = [];
   try {
-    const constraints = [orderBy("date", "desc"), limit(5)];
+    const constraints = [
+      orderBy("date", "desc"),
+      orderBy("__name__", "desc"),
+      limit(5),
+    ];
     if (category) {
       constraints.unshift(where("department", "==", category));
     }
@@ -41,7 +45,6 @@ export default async function AnnouncementsPage({ searchParams }) {
 
   return (
     <AnnouncementsClient
-      key={category || "all"}
       initialAnnouncements={initialAnnouncements}
       initialCategory={category}
     />

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
+// Animations removed for performance
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useLanguage } from "@lib/LanguageContext";
 import {
   HiMegaphone,
@@ -14,6 +14,8 @@ import {
 import {
   collection,
   getDocs,
+  getDoc,
+  doc,
   query,
   orderBy,
   where,
@@ -56,17 +58,31 @@ export default function AnnouncementsClient({
 }) {
   const { translations, locale } = useLanguage();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category") || initialCategory || null;
-  const categoryMeta = category ? CATEGORY_META[category] : null;
+
+  // Use state for instant UI response, sync with URL manually
+  const [activeCategory, setActiveCategory] = useState(initialCategory || null);
+  const categoryMeta = activeCategory ? CATEGORY_META[activeCategory] : null;
 
   const [announcements, setAnnouncements] = useState(
     initialAnnouncements || [],
   );
-  const [loading, setLoading] = useState(!initialAnnouncements);
+  const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [lastDoc, setLastDoc] = useState(null);
-  const [hasMore, setHasMore] = useState(initialAnnouncements?.length === 5);
+  const [hasMore, setHasMore] = useState(
+    (initialAnnouncements || []).length === 5,
+  );
   const [selectedYear, setSelectedYear] = useState("all");
+
+  // Local cache for avoiding redundant reads
+  const [dataCache, setDataCache] = useState({
+    [initialCategory || "all"]: {
+      items: initialAnnouncements || [],
+      lastDoc: null,
+      hasMore: (initialAnnouncements || []).length === 5,
+    },
+  });
+
   const [availableYears, setAvailableYears] = useState(() => {
     // Initial years from server data
     const levels = (initialAnnouncements || [])
@@ -86,89 +102,158 @@ export default function AnnouncementsClient({
     return value || fallback;
   };
 
-  const fetchAnnouncements = async (isLoadMore = false) => {
+  const fetchAnnouncements = async (isLoadMore = false, catOverride = null) => {
+    const targetCategory = catOverride !== null ? catOverride : activeCategory;
+    const cacheKey = targetCategory || "all";
+
     if (isLoadMore) {
       setLoadingMore(true);
     } else {
       setLoading(true);
-      setAnnouncements([]);
-      setLastDoc(null);
+      if (!isLoadMore) {
+        setAnnouncements([]);
+        setLastDoc(null);
+      }
     }
 
     try {
       let q;
-      const constraints = [orderBy("date", "desc"), limit(5)];
+      const constraints = [
+        orderBy("date", "desc"),
+        orderBy("__name__", "desc"),
+        limit(5),
+      ];
 
-      if (category) {
-        constraints.unshift(where("department", "==", category));
+      if (targetCategory) {
+        constraints.unshift(where("department", "==", targetCategory));
       }
 
-      if (isLoadMore && lastDoc) {
-        constraints.push(startAfter(lastDoc));
+      let currentLastDoc = lastDoc;
+
+      if (isLoadMore) {
+        if (currentLastDoc) {
+          constraints.push(startAfter(currentLastDoc));
+        } else if (announcements.length > 0) {
+          const lastItem = announcements[announcements.length - 1];
+          const docRef = doc(db, "announcement", lastItem.id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            currentLastDoc = docSnap;
+            constraints.push(startAfter(docSnap));
+          }
+        }
       }
 
       q = query(collection(db, "announcement"), ...constraints);
-
       const querySnapshot = await getDocs(q);
+
+      // Protection: if user switched while fetching
+      const isStillRelevant =
+        catOverride !== null
+          ? catOverride === targetCategory
+          : activeCategory === targetCategory;
+
       const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
       const data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
-      if (isLoadMore) {
-        setAnnouncements((prev) => [...prev, ...data]);
-      } else {
-        setAnnouncements(data);
+      const newItems = isLoadMore ? [...announcements, ...data] : data;
+
+      if (isStillRelevant && !isLoadMore) {
+        setAnnouncements(newItems);
+        setLastDoc(lastVisible);
+        setHasMore(data.length === 5);
+      } else if (isStillRelevant && isLoadMore) {
+        setAnnouncements(newItems);
+        setLastDoc(lastVisible);
+        setHasMore(data.length === 5);
       }
 
-      setLastDoc(lastVisible);
-      setHasMore(data.length === 5);
-
-      const years = [
-        ...new Set(
-          [...(isLoadMore ? announcements : []), ...data]
-            .map((a) => a.date?.split("-")[0])
-            .filter(Boolean),
-        ),
-      ];
-      const currentYear = new Date().getFullYear().toString();
-      if (!years.includes(currentYear)) {
-        years.push(currentYear);
-      }
-      years.sort((a, b) => b - a);
-      setAvailableYears(years);
+      // Always update cache
+      setDataCache((prev) => ({
+        ...prev,
+        [cacheKey]: {
+          items: newItems,
+          lastDoc: lastVisible,
+          hasMore: data.length === 5,
+        },
+      }));
     } catch (error) {
       console.error("Error fetching announcements:", error);
     } finally {
-      setLoading(false);
+      if (catOverride === null || catOverride === activeCategory) {
+        setLoading(false);
+      }
       setLoadingMore(false);
     }
   };
 
-  // Only fetch if we don't have initial data
-  // Since we use 'key' in page.js, this component will remount on category change
-  useEffect(() => {
-    if (!initialAnnouncements || initialAnnouncements.length === 0) {
-      fetchAnnouncements();
+  const updateYearsFromData = (data) => {
+    const years = [
+      ...new Set(data.map((a) => a.date?.split("-")[0]).filter(Boolean)),
+    ];
+    const today = new Date().getFullYear().toString();
+    if (!years.includes(today)) years.push(today);
+    setAvailableYears(years.sort((a, b) => b - a));
+  };
+
+  const handleCategoryChange = (newCat) => {
+    if (newCat === activeCategory) return;
+
+    // Instant URL and State update
+    const url = newCat ? `/announcements?category=${newCat}` : "/announcements";
+    window.history.pushState({ category: newCat }, "", url);
+    setActiveCategory(newCat);
+    setSelectedYear("all");
+
+    const cacheKey = newCat || "all";
+    if (dataCache[cacheKey]) {
+      const cached = dataCache[cacheKey];
+      setAnnouncements(cached.items);
+      setLastDoc(cached.lastDoc);
+      setHasMore(cached.hasMore);
+      updateYearsFromData(cached.items);
+    } else {
+      fetchAnnouncements(false, newCat);
     }
-  }, []);
-
-  const staggerContainer = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
   };
 
-  const itemFadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.5 },
-  };
+  // Sync state if props change (e.g. Navigation from another link)
+  useEffect(() => {
+    if (initialCategory !== activeCategory) {
+      // Only update if we aren't already loading something or if it's a fresh entry
+      handleCategoryChange(initialCategory || null);
+    } else if (announcements.length === 0 && !loading) {
+      // Deep check to ensure we have data on initial load if props were empty
+      if (initialAnnouncements?.length > 0) {
+        setAnnouncements(initialAnnouncements);
+        setHasMore(initialAnnouncements.length === 5);
+        updateYearsFromData(initialAnnouncements);
+      } else {
+        fetchAnnouncements();
+      }
+    }
+  }, [initialCategory, initialAnnouncements]);
+
+  // Handle browser back/forward
+  useEffect(() => {
+    const handlePop = () => {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get("category");
+      handleCategoryChange(cat);
+    };
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, [dataCache, activeCategory]);
+
+  // Sync years when announcements change
+  useEffect(() => {
+    updateYearsFromData(announcements);
+  }, [announcements]);
+
+  // Animations removed for performance
 
   if (loading && announcements.length === 0) {
     return (
@@ -183,20 +268,16 @@ export default function AnnouncementsClient({
       <main className="pt-32 pb-24">
         <div className="container-custom">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
-          >
+          <div className="text-center mb-16">
             {/* Category breadcrumb */}
             {categoryMeta && (
               <div className="flex items-center justify-center gap-2 mb-4">
-                <Link
-                  href="/announcements"
+                <button
+                  onClick={() => handleCategoryChange(null)}
                   className="text-sm text-gray-400 hover:text-primary transition-colors"
                 >
                   {translations.announcements.title}
-                </Link>
+                </button>
                 <span className="text-gray-300">/</span>
                 <span
                   className={`text-sm font-semibold ${categoryMeta.textColor}`}
@@ -222,10 +303,10 @@ export default function AnnouncementsClient({
 
             {/* Category filter tabs */}
             <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-              <Link
-                href="/announcements"
+              <button
+                onClick={() => handleCategoryChange(null)}
                 className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                  !category
+                  !activeCategory
                     ? "bg-primary text-white shadow-md shadow-primary/20"
                     : "bg-white text-gray-500 border border-gray-200 hover:border-primary/40 hover:text-primary"
                 }`}
@@ -233,30 +314,25 @@ export default function AnnouncementsClient({
                 {translations.announcements.allYears
                   ? tNav("announcements.title", "All")
                   : "All"}
-              </Link>
+              </button>
               {Object.values(CATEGORY_META).map((cat) => (
-                <Link
+                <button
                   key={cat.key}
-                  href={`/announcements?category=${cat.key}`}
+                  onClick={() => handleCategoryChange(cat.key)}
                   className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                    category === cat.key
+                    activeCategory === cat.key
                       ? `${cat.color} text-white shadow-md`
                       : `bg-white border border-gray-200 ${cat.textColor} hover:border-current`
                   }`}
                 >
                   {tNav(cat.labelKey, cat.fallback)}
-                </Link>
+                </button>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Filter */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-4xl mx-auto mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4"
-          >
+          <div className="max-w-4xl mx-auto mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
                 {translations.announcements.filterYear}
@@ -292,24 +368,17 @@ export default function AnnouncementsClient({
               }{" "}
               {translations.announcements.title}
             </div>
-          </motion.div>
+          </div>
 
           {/* Listing */}
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="grid gap-6 max-w-4xl mx-auto"
-          >
+          <div className="grid gap-6 max-w-4xl mx-auto">
             {announcements
               .filter((a) =>
                 selectedYear === "all" ? true : a.date.startsWith(selectedYear),
               )
               .map((announcement) => (
-                <motion.div
+                <div
                   key={announcement.id}
-                  variants={itemFadeIn}
-                  whileHover={{ y: -4 }}
                   className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group"
                 >
                   <Link
@@ -387,17 +456,13 @@ export default function AnnouncementsClient({
                       </div>
                     </div>
                   </Link>
-                </motion.div>
+                </div>
               ))}
 
             {announcements.filter((a) =>
               selectedYear === "all" ? true : a.date.startsWith(selectedYear),
             ).length === 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200"
-              >
+              <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                 <div className="w-16 h-16 bg-neutral-bg rounded-full flex items-center justify-center mx-auto mb-4">
                   <HiCalendar className="w-8 h-8 text-gray-300" />
                 </div>
@@ -405,16 +470,12 @@ export default function AnnouncementsClient({
                   {translations.announcements.noAnnouncements ||
                     "No announcements found for this year"}
                 </h3>
-              </motion.div>
+              </div>
             )}
 
             {/* Load More Button */}
             {hasMore && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-center mt-12"
-              >
+              <div className="flex justify-center mt-12">
                 <button
                   onClick={() => fetchAnnouncements(true)}
                   disabled={loadingMore}
@@ -432,9 +493,9 @@ export default function AnnouncementsClient({
                     </>
                   )}
                 </button>
-              </motion.div>
+              </div>
             )}
-          </motion.div>
+          </div>
         </div>
       </main>
     </div>
