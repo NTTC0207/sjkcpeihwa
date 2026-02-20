@@ -3,6 +3,7 @@
 import { LanguageProvider, useLanguage } from "../lib/LanguageContext";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import CookieNotice from "../components/CookieNotice";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -39,6 +40,7 @@ function LayoutContent({ children }) {
       />
       {children}
       <Footer translations={translations} />
+      <CookieNotice />
     </>
   );
 }

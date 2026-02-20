@@ -5,7 +5,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
-  const [locale, setLocale] = useState("en");
+  const [locale, setLocale] = useState("ms");
   const [translations, setTranslations] = useState(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -30,7 +30,7 @@ export function LanguageProvider({ children }) {
         if (locale !== "zh") {
           console.log("Falling back to 'zh' translations");
           try {
-            const fallbackResponse = await fetch("/locales/zh/common.json");
+            const fallbackResponse = await fetch("/locales/ms/common.json");
             if (fallbackResponse.ok) {
               const fallbackData = await fallbackResponse.json();
               setTranslations(fallbackData);

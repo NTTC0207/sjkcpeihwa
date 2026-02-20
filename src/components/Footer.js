@@ -166,7 +166,7 @@ export default function Footer({ translations }) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-600 mt-8 pt-6 text-center">
+        <div className="border-t border-gray-600 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-center">
           <p className="text-sm text-gray-400">
             {translations?.footer?.copyright
               ? translations.footer.copyright.replace(
@@ -175,6 +175,12 @@ export default function Footer({ translations }) {
                 )
               : `© ${new Date().getFullYear()} SJK(C) Pei Hwa Machang. All rights reserved.`}
           </p>
+          <Link
+            href="/privacy"
+            className="text-sm text-gray-400 hover:text-accent-yellow transition-colors duration-300 underline underline-offset-2"
+          >
+            Dasar Privasi · 隐私政策 · Privacy Policy
+          </Link>
         </div>
       </div>
     </footer>
