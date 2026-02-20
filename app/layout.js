@@ -87,6 +87,9 @@ export const metadata = {
     apple: "/apple-touch-icon.png",
   },
   category: "education",
+  verification: {
+    google: "IjHr8sJ7bUL3F_A49Vat-6dCO--y9aHSlA6wS21KVuQ",
+  },
 };
 
 export const viewport = {
