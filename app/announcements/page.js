@@ -1,11 +1,4 @@
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@lib/firebase";
 import AnnouncementsClient from "./AnnouncementsClient";
 
@@ -14,24 +7,26 @@ export const revalidate = 604800;
 
 /**
  * Announcements Page with ISR (Incremental Static Regeneration)
- * Initial data is fetched on the server for speed and SEO.
- * Subsequent pagination and filtering arthee handled by the client component.
+ *
+ * IMPORTANT: We intentionally do NOT read `searchParams` here.
+ * Reading searchParams in a Next.js Server Component opts the page into
+ * dynamic (SSR) rendering, which disables ISR caching entirely.
+ *
+ * Strategy:
+ *  - Server fetches the latest 20 announcements (no category filter) and
+ *    caches them for 7 days via ISR.
+ *  - Category filtering and pagination are handled 100% on the client side,
+ *    using the cached data first, then fetching from Firebase only if required.
  */
-export default async function AnnouncementsPage({ searchParams }) {
-  const params = await searchParams;
-  const category = params?.category || null;
-
+export default async function AnnouncementsPage() {
   let initialAnnouncements = [];
   try {
-    const constraints = [
+    const q = query(
+      collection(db, "announcement"),
       orderBy("date", "desc"),
       orderBy("__name__", "desc"),
-      limit(5),
-    ];
-    if (category) {
-      constraints.unshift(where("department", "==", category));
-    }
-    const q = query(collection(db, "announcement"), ...constraints);
+      limit(20),
+    );
     const querySnapshot = await getDocs(q);
     initialAnnouncements = querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -39,14 +34,13 @@ export default async function AnnouncementsPage({ searchParams }) {
     }));
   } catch (error) {
     console.error("Error fetching initial announcements for ISR:", error);
-    // Fallback to empty if fetch fails during build/regeneration
     initialAnnouncements = [];
   }
 
   return (
     <AnnouncementsClient
       initialAnnouncements={initialAnnouncements}
-      initialCategory={category}
+      initialCategory={null}
     />
   );
 }
