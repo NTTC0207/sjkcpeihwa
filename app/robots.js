@@ -12,7 +12,7 @@ export default function robots() {
         disallow: "/",
       },
     ],
-    sitemap: "https://sjkcpeihwa.edu.my/sitemap.xml",
-    host: "https://sjkcpeihwa.edu.my",
+    sitemap: "https://sjkcpeihwa.vercel.app/sitemap.xml",
+    host: "https://sjkcpeihwa.vercel.app",
   };
 }
