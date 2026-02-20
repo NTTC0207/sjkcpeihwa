@@ -223,6 +223,9 @@ html {
 .markdown-content em {
   @apply italic;
 }
+.markdown-content iframe {
+  @apply w-full rounded-2xl shadow-inner border-0 my-8 bg-white;
+}
 
 /* Fallback prose styles for RichTextEditor and Preview */
 .prose ul {

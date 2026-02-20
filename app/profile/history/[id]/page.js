@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FaArrowLeft, FaCalendarAlt, FaDownload, FaUser } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 import historyData from "@/src/data/history.json";
 
 const LeadershipTable = ({ title, list }) => {
@@ -142,7 +143,10 @@ export default function HistoryDetailPage({ params }) {
             className="bg-white rounded-[2.5rem] p-8 md:p-16 shadow-xl border border-gray-50 space-y-12"
           >
             <div className="markdown-content">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+              >
                 {item.content}
               </ReactMarkdown>
             </div>

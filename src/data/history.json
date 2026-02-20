@@ -394,5 +394,36 @@
       "year": "2009-2024"
     }
   ]
+},
+{
+  "id": "2018-2020",
+  "year": "2018-2020",
+  "title": "携手同行，迈向新里程的三年",
+  "description": "经历发展调整、校庆盛典与疫情考验，师生与董家教齐心协力，在传承与突破中守护教育初心。",
+  "content": "<iframe src=\"/folder/20182020ph.pdf\" width=\"100%\" height=\"1000px\" title=\"SJK(C) Pei Hwa History 2018-2020\"></iframe>",
+  "chairmanList": [
+    {
+      "term": "1",
+      "name": "杨绪平先生",
+      "image": "/people/chairman/chairman8.avif",
+      "year": "2012-2025"
+    }
+  ],
+  "principalList": [
+    {
+      "term": "1",
+      "name": "张玉慧女士",
+      "image": "/people/headmaster/Headmaster_16.avif",
+      "year": "2013-2019"
+    }
+  ],
+  "ptaList": [
+    {
+      "term": "1",
+      "name": "张綵容女士",
+      "image": "/people/pibg/pibg_12.avif",
+      "year": "2009-2024"
+    }
+  ]
 }
 ]

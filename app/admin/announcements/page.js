@@ -116,6 +116,11 @@ const BADGE_OPTIONS = [
 
 const DEPARTMENT_OPTIONS = [
   {
+    id: "all",
+    label: "Semua",
+    color: "bg-gray-500",
+  },
+  {
     id: "academic",
     label: "Akademik / Kurikulum",
     color: "bg-indigo-500",
@@ -133,7 +138,7 @@ const EMPTY_FORM = {
   date: new Date().toISOString().split("T")[0],
   badge: "Penting",
   badgeColor: "bg-red-500",
-  department: "academic",
+  department: "all",
   summary: "",
   content: "",
   image: "",
