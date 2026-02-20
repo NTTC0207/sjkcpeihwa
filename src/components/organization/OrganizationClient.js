@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@lib/LanguageContext";
 import {
   subjects as localSubjects,
@@ -16,42 +16,46 @@ import { useOrgView } from "@hooks/useOrgView";
 
 export default function OrganizationClient({ initialStaffData }) {
   const { translations, locale } = useLanguage();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [view, setView] = useOrgView("chart");
 
   // Use initial data from server
   const staffData = initialStaffData;
 
-  // States for filtering - synced with URL search query
-  const searchTerm = searchParams.get("search") || "";
-  const selectedSubject = searchParams.get("subject") || "All";
-  const selectedCategory = searchParams.get("category") || "All";
-
-  // Filter setters that update the URL
-  const updateQuery = useCallback(
-    (key, value, replace = true) => {
-      const params = new URLSearchParams(searchParams.toString());
-      if (value && value !== "All") {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-      const queryString = params.toString();
-      const url = queryString ? `?${queryString}` : window.location.pathname;
-
-      if (replace) {
-        router.replace(url, { scroll: false });
-      } else {
-        router.push(url, { scroll: false });
-      }
-    },
-    [router, searchParams],
+  // States for filtering - local state to avoid unnecessary Firestore requests
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search") || "",
+  );
+  const [selectedSubject, setSelectedSubject] = useState(
+    searchParams.get("subject") || "All",
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || "All",
   );
 
-  const setSearchTerm = (val) => updateQuery("search", val, true);
-  const setSelectedSubject = (val) => updateQuery("subject", val, false);
-  const setSelectedCategory = (val) => updateQuery("category", val, false);
+  // Sync state to URL without triggering server-side re-render
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (searchTerm) params.set("search", searchTerm);
+    else params.delete("search");
+
+    if (selectedSubject !== "All") params.set("subject", selectedSubject);
+    else params.delete("subject");
+
+    if (selectedCategory !== "All") params.set("category", selectedCategory);
+    else params.delete("category");
+
+    const queryString = params.toString();
+    const newUrl = `${window.location.pathname}${queryString ? `?${queryString}` : ""}`;
+
+    // Use replaceState to update URL without triggering Next.js routing/data fetch
+    window.history.replaceState(
+      { ...window.history.state, as: newUrl, url: newUrl },
+      "",
+      newUrl,
+    );
+  }, [searchTerm, selectedSubject, selectedCategory]);
 
   const getLocalizedRole = (staff) => {
     if (locale === "zh") return staff.role_zh;
@@ -72,12 +76,20 @@ export default function OrganizationClient({ initialStaffData }) {
 
   // Filter staff data
   const filteredStaff = useMemo(() => {
+    const searchLower = searchTerm.toLowerCase();
+
     return staffData.filter((staff) => {
-      const matchesSearch =
-        staff.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (staff.name_zh && staff.name_zh.includes(searchTerm)) ||
-        (staff.role &&
-          staff.role.toLowerCase().includes(searchTerm.toLowerCase()));
+      const nameMatch =
+        (staff.name && staff.name.toLowerCase().includes(searchLower)) ||
+        (staff.name_zh && staff.name_zh.includes(searchTerm));
+
+      const roleMatch =
+        (staff.role && staff.role.toLowerCase().includes(searchLower)) ||
+        (staff.role_ms && staff.role_ms.toLowerCase().includes(searchLower)) ||
+        (staff.role_zh && staff.role_zh.includes(searchTerm));
+
+      const matchesSearch = nameMatch || roleMatch;
+
       const matchesSubject =
         selectedSubject === "All" ||
         (staff.subject && staff.subject.includes(selectedSubject));
