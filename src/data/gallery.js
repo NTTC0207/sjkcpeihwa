@@ -1,8 +1,8 @@
 export const galleryData = [
   {
     id: "entrance",
-    title: "School Entrance & Office",
-    description: "The main entrance and office building of SJK(C) Pei Hwa.",
+    title: "美丽的校园",
+    description: "欢迎来到我们的校园！这里有舒适的课室、整洁的食堂、丰富的图书馆和宽敞的体育馆。在校园里，我们学习知识、锻炼身体、培养品德，快乐成长。",
     images: [
       {
         src: "/gallery/frontview.avif",
@@ -32,8 +32,8 @@ export const galleryData = [
   },
   {
    id: "classroom",
-   title: "Classroom",
-   description: "Classroom",
+   title: "教室",
+   description: "让每一节课都充满收获，让课室成为智慧的空间。",
    images: [
     {
       src: "https://media.istockphoto.com/id/1410950079/photo/modern-style-classroom-in-the-morning-3d-render.jpg?s=612x612&w=0&k=20&c=aSL4boHjFd8sKdfnTQmPdfXd9hIpK4gKKpw8_TXDeoE=",
@@ -44,7 +44,7 @@ export const galleryData = [
   {
     id: "multi-purpose-hall",
     title: "培华体育馆",
-    description: "multi-purpose-hall",
+    description: "这里是我们流汗和成长的地方！跑一跑、跳一跳，身体更健康 💪运动让我们更强壮，合作让我们更团结！",
     images: [
       {
         src: "/gallery/hall.avif",
@@ -59,7 +59,7 @@ export const galleryData = [
   {
     id: "canteen",
     title: "静雅閣",
-    description: "canteen",
+    description: "静雅阁是同学们用餐与休息的地方。我们在这里享用营养餐点，补充能量，快乐学习",
     images: [
       {
         src: "/gallery/canteen.avif",
@@ -69,8 +69,8 @@ export const galleryData = [
   },
   {
     id: "kindergarten",
-    title: "Kindergarten",
-    description: "kindergarten",
+    title: "学前教育班",
+    description: "学前教育班是孩子迈向小学的重要阶段。在这里，孩子们通过游戏、唱歌、画画和故事学习，培养良好的生活习惯与学习兴趣。",
     images: [
       {
         src: "/gallery/kindergarten.avif",
@@ -81,7 +81,7 @@ export const galleryData = [
   {
     id: "library",
     title: "蔡尤明局申书轩阁",
-    description: "Our well-equipped library and its surroundings.",
+    description: "让书香充满校园，让知识点亮未来",
     images: [
       {
         src: "/gallery/outside-library.avif",
@@ -96,7 +96,7 @@ export const galleryData = [
   {
     id: "zhizhuyuan",
     title: "智竹园",
-    description: "zhizhuyuan",
+    description: "孔子爷爷告诉我们：“学而时习之，不亦说乎？”多读书，多学习，每天进步一点点，未来一定更精彩 ✨",
     images: [
       {
         src: "/gallery/zhizhuyuan.avif",
@@ -107,7 +107,7 @@ export const galleryData = [
    {
     id: "hydroponics",
     title: "耕❤️苑",
-    description: "Our school's modern hydroponics farming project.",
+    description: "我们利用水和营养液来种菜，不需要泥土。让我们一起体验环保又科技化的种植方式！",
     images: [
       {
         src: "/gallery/hydroponik-desc.avif",

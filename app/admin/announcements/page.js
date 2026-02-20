@@ -94,6 +94,24 @@ const BADGE_OPTIONS = [
     textColor: "text-teal-600",
     bg: "bg-teal-50",
   },
+  {
+    label: "Kunjung Khidmat Bantu",
+    color: "bg-amber-500",
+    textColor: "text-amber-600",
+    bg: "bg-amber-50",
+  },
+  {
+    label: "Kerja-kerja Baik Pulih",
+    color: "bg-orange-500",
+    textColor: "text-orange-600",
+    bg: "bg-orange-50",
+  },
+  {
+    label: "Bangunan Baru",
+    color: "bg-sky-500",
+    textColor: "text-sky-600",
+    bg: "bg-sky-50",
+  },
 ];
 
 const DEPARTMENT_OPTIONS = [
@@ -1123,7 +1141,7 @@ export default function AnnouncementsAdminPage() {
                             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 border border-dashed border-gray-300 rounded-xl text-gray-600 font-semibold hover:border-indigo-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all text-sm"
                           >
                             <HiLink className="w-5 h-5" />
-                            Tambah Pautan Drive
+                            Tambah Pautan Google Drive
                           </button>
                         </div>
                       ) : (

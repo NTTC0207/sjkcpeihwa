@@ -11,7 +11,7 @@
     "organization": {
       "title": "Organisasi",
       "chart": "Carta Organisasi",
-      "staff": "Guru dan Staff"
+      "staff": "Kakitangan Sekolah"
     },
     "announcements": "Pengumuman",
     "manage": {
@@ -24,7 +24,7 @@
       "anthem": "Lagu Sekolah",
       "motto": "Moto Sekolah",
       "landscape": "Landskap Sekolah",
-      "calendar": "Kalendar/Sejarah",
+      "calendar": "Sejarah Sekolah",
       "pta": "PIBG",
       "lps":"LPS"
     }
@@ -98,11 +98,13 @@
   },
   "footer": {
     "contact": "Hubungi Kami",
-    "address": "123 Jalan Pendidikan, Daerah Pembelajaran",
+    "address": "18500 Machang, Kelantan, Malaysia",
     "phone": "Telefon: +60 9-9751046",
     "email": "E-mel: dbc2185@moe.edu.my",
     "quickLinks": "Pautan Pantas",
     "followUs": "Ikuti Kami",
+    "hours": "Waktu Persekolahan",
+    "days": "Ahad - Khamis: 7:30 AM - 1:00 PM",
     "copyright": "© {{year}} SJK(C) Pei Hwa Machang. Hak cipta terpelihara."
   },
   "organization": {

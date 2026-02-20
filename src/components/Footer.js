@@ -17,9 +17,19 @@ import { HiArrowRight, HiMail } from "react-icons/hi";
 export default function Footer({ translations }) {
   const quickLinks = [
     { href: "/", label: translations?.nav?.home || "Home" },
-    { href: "#about", label: translations?.nav?.about || "About" },
-    { href: "#programs", label: translations?.nav?.programs || "Programs" },
-    { href: "#contact", label: translations?.nav?.contact || "Contact" },
+    {
+      href: "/profile/history",
+      label: translations?.nav?.profile?.calendar || "School History",
+    },
+    {
+      href: "/announcements",
+      label: translations?.nav?.announcements || "Announcements",
+    },
+    {
+      href: "/organization?view=chart",
+      label: translations?.nav?.organization?.chart || "Organization Chart",
+    },
+    { href: "/#contact", label: translations?.nav?.contact || "Contact Us" },
   ];
 
   const socialLinks = [
@@ -145,9 +155,11 @@ export default function Footer({ translations }) {
               ))}
             </div>
             <div className="mt-6">
-              <p className="text-sm text-gray-300 mb-2">School Hours:</p>
+              <p className="text-sm text-gray-300 mb-2">
+                {translations?.footer?.hours || "School Hours:"}
+              </p>
               <p className="text-sm text-gray-400">
-                Mon - Fri: 7:30 AM - 1:30 PM
+                {translations?.footer?.days || "Sun - Thu: 7:30 AM - 1:30 PM"}
               </p>
             </div>
           </div>

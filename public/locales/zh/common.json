@@ -11,7 +11,7 @@
     "organization": {
       "title": "行政与组织",
       "chart": "学校组织架构",
-      "staff": "教师及行政人员"
+      "staff": "教职员"
     },
     "announcements": "最新公告",
     "manage":{
@@ -24,7 +24,7 @@
       "anthem": "校歌",
       "motto": "校训",
       "landscape": "校园景观",
-      "calendar": "校历/历史",
+      "calendar": "校史",
       "pta": "家教与教师协会",
       "lps":"董事部"
     }
@@ -103,6 +103,8 @@
     "email": "电邮：dbc2185@moe.edu.my",
     "quickLinks": "快速链接",
     "followUs": "关注我们",
+    "hours": "学校开放时间",
+    "days": "周日至周四: 7:30 AM - 1:00 PM",
     "copyright": "© {{year}} 马章培华国民型华文小学。版权所有。"
   },
   "organization": {

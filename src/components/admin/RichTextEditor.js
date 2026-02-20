@@ -1,6 +1,7 @@
 "use client";
 
 import { useEditor, EditorContent } from "@tiptap/react";
+import { Node, mergeAttributes } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { Image } from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
@@ -36,7 +37,72 @@ import {
   MdFormatQuote,
   MdHighlight,
   MdFormatColorText,
+  MdPostAdd,
 } from "react-icons/md";
+
+const Iframe = Node.create({
+  name: "iframe",
+  group: "block",
+  selectable: true,
+  draggable: true,
+  atom: true,
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+      },
+      width: {
+        default: "100%",
+      },
+      height: {
+        default: "400",
+      },
+      frameborder: {
+        default: "0",
+      },
+      allowfullscreen: {
+        default: "true",
+      },
+      allow: {
+        default:
+          "autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share",
+      },
+      style: {
+        default: "border:none;overflow:hidden",
+      },
+      scrolling: {
+        default: "no",
+      },
+    };
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: "iframe",
+        getAttrs: (node) => ({
+          src: node.getAttribute("src"),
+          width: node.getAttribute("width"),
+          height: node.getAttribute("height"),
+          frameborder: node.getAttribute("frameborder"),
+          allowfullscreen: node.getAttribute("allowfullscreen"),
+          allow: node.getAttribute("allow"),
+          style: node.getAttribute("style"),
+          scrolling: node.getAttribute("scrolling"),
+        }),
+      },
+    ];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "div",
+      { class: "iframe-container" },
+      ["iframe", mergeAttributes(HTMLAttributes)],
+    ];
+  },
+});
 
 const CustomImage = Image.extend({
   addAttributes() {
@@ -66,20 +132,36 @@ const CustomLink = Link.extend({
   },
 });
 
+const Tooltip = ({ text, children, disabled }) => {
+  if (!text || disabled) return children;
+  return (
+    <div className="relative group flex items-center justify-center">
+      {children}
+      <div className="absolute bottom-full mb-2.5 hidden group-hover:flex flex-col items-center z-[100] pointer-events-none">
+        <div className="relative z-50 bg-slate-900/95 backdrop-blur-sm text-white text-[10px] font-semibold px-2.5 py-1.5 rounded-lg shadow-2xl whitespace-nowrap border border-white/10 animate-in fade-in zoom-in-95 slide-in-from-bottom-1 duration-200">
+          {text}
+        </div>
+        <div className="w-2 h-2 -mt-1 rotate-45 bg-slate-900/95 border-r border-b border-white/10" />
+      </div>
+    </div>
+  );
+};
+
 const ToolbarButton = ({ onClick, active, disabled, title, children }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    title={title}
-    className={`p-1.5 rounded-md text-sm transition-all duration-150 ${
-      active
-        ? "bg-primary text-white shadow-sm"
-        : "text-gray-600 hover:bg-gray-100 hover:text-primary"
-    } ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
-  >
-    {children}
-  </button>
+  <Tooltip text={title} disabled={disabled}>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`p-1.5 rounded-md text-sm transition-all duration-150 ${
+        active
+          ? "bg-primary text-white shadow-sm"
+          : "text-gray-600 hover:bg-gray-100 hover:text-primary"
+      } ${disabled ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+    >
+      {children}
+    </button>
+  </Tooltip>
 );
 
 const Divider = () => <div className="w-px h-5 bg-gray-200 mx-1 self-center" />;
@@ -89,6 +171,8 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [showImageInput, setShowImageInput] = useState(false);
+  const [embedCode, setEmbedCode] = useState("");
+  const [showEmbedInput, setShowEmbedInput] = useState(false);
 
   const [uploading, setUploading] = useState(false);
   const [activeAttachments, setActiveAttachments] = useState(new Set());
@@ -133,6 +217,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
           class: "max-w-full rounded-lg my-4 shadow-sm cursor-pointer",
         },
       }),
+      Iframe,
       Placeholder.configure({
         placeholder: placeholder || "Mula menulis kandungan pengumuman anda...",
       }),
@@ -199,6 +284,39 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
     setShowImageInput(false);
   }, [editor, imageUrl]);
 
+  const addEmbed = useCallback(() => {
+    if (!embedCode) return;
+
+    // Check if it's a full iframe tag or just a URL
+    if (embedCode.trim().startsWith("<iframe")) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(embedCode, "text/html");
+      const iframe = doc.querySelector("iframe");
+
+      if (iframe) {
+        const attrs = {
+          src: iframe.getAttribute("src"),
+          width: iframe.getAttribute("width") || "100%",
+          height: iframe.getAttribute("height") || "400",
+          frameborder: iframe.getAttribute("frameborder") || "0",
+          allowfullscreen: iframe.getAttribute("allowfullscreen") || "true",
+          allow: iframe.getAttribute("allow"),
+          style: iframe.getAttribute("style"),
+          scrolling: iframe.getAttribute("scrolling") || "no",
+        };
+        editor.chain().focus().insertContent({ type: "iframe", attrs }).run();
+      } else {
+        alert("Kod benam tidak sah. Pastikan anda memasukkan tag <iframe>.");
+      }
+    } else {
+      // If it looks like a URL, try to wrap it in a default iframe or just abort
+      alert("Sila masukkan kod <iframe> yang sah.");
+    }
+
+    setEmbedCode("");
+    setShowEmbedInput(false);
+  }, [editor, embedCode]);
+
   const handleFileUpload = async (event, type = "image") => {
     const file = event.target.files[0];
     if (!file) return;
@@ -252,11 +370,12 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
   };
 
   if (!editor) return null;
+  const isColorActive = editor.getAttributes("textStyle").color;
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white">
+    <div className="border border-gray-200 rounded-xl shadow-sm bg-white overflow-visible">
       {/* Toolbar */}
-      <div className="bg-gray-50 border-b border-gray-200 p-2 flex flex-wrap items-center gap-0.5">
+      <div className="bg-gray-50 border-b border-gray-200 p-2 flex flex-wrap items-center gap-0.5 rounded-t-xl overflow-visible">
         {/* Undo / Redo */}
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
@@ -323,7 +442,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHighlight().run()}
           active={editor.isActive("highlight")}
-          title="Serlah"
+          title="Serlahkan Teks"
         >
           <MdHighlight className="w-4 h-4" />
         </ToolbarButton>
@@ -337,19 +456,25 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
 
         {/* Font Color */}
         <div className="flex items-center gap-1 px-1.5 h-8">
-          <label htmlFor="fontColor" className="cursor-pointer">
-            <MdFormatColorText className="w-4 h-4 text-gray-600" />
-          </label>
-          <input
-            id="fontColor"
-            type="color"
-            onInput={(e) =>
-              editor.chain().focus().setColor(e.target.value).run()
-            }
-            value={editor.getAttributes("textStyle").color || "#000000"}
-            className="w-4 h-4 p-0 border-none bg-transparent cursor-pointer rounded overflow-hidden"
-            title="Warna Font"
-          />
+          <Tooltip text="Warna Teks">
+            <div className="flex items-center gap-1">
+              <label htmlFor="fontColor" className="cursor-pointer">
+                <MdFormatColorText
+                  className="w-4 h-4 transition-colors"
+                  style={{ color: isColorActive || "#4b5563" }}
+                />
+              </label>
+              <input
+                id="fontColor"
+                type="color"
+                onInput={(e) =>
+                  editor.chain().focus().setColor(e.target.value).run()
+                }
+                value={isColorActive || "#000000"}
+                className="w-4 h-4 p-0 border-none bg-transparent cursor-pointer rounded overflow-hidden"
+              />
+            </div>
+          </Tooltip>
         </div>
 
         <Divider />
@@ -379,7 +504,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         <ToolbarButton
           onClick={() => editor.chain().focus().setTextAlign("justify").run()}
           active={editor.isActive({ textAlign: "justify" })}
-          title="Imbang"
+          title="Jajar Penuh"
         >
           <MdFormatAlignJustify className="w-4 h-4" />
         </ToolbarButton>
@@ -431,28 +556,38 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
           <ToolbarButton
             onClick={() => setShowImageInput(!showImageInput)}
             active={showImageInput}
-            title="Masukkan Imej (URL)"
+            title="Imej (melalui URL)"
           >
             <HiPhoto className="w-4 h-4" />
           </ToolbarButton>
-          <button
-            type="button"
-            onClick={() => imageInputRef.current?.click()}
-            disabled={uploading}
-            title="Muat Naik Imej"
-            className={`p-1.5 rounded-md text-sm transition-all duration-150 text-gray-600 hover:bg-gray-100 hover:text-primary ${uploading ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
-          >
-            <HiArrowUpTray className="w-4 h-4" />
-          </button>
+          <Tooltip text="Muat Naik Imej">
+            <button
+              type="button"
+              onClick={() => imageInputRef.current?.click()}
+              disabled={uploading}
+              className={`p-1.5 rounded-md text-sm transition-all duration-150 text-gray-600 hover:bg-gray-100 hover:text-primary ${uploading ? "opacity-30 cursor-not-allowed" : "cursor-pointer"}`}
+            >
+              <HiArrowUpTray className="w-4 h-4" />
+            </button>
+          </Tooltip>
         </div>
 
         {/* File Attachment */}
         <ToolbarButton
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          title="Lampirkan Fail"
+          title="Lampirkan Fail (PDF/Dokumen)"
         >
           <HiPaperClip className="w-4 h-4" />
+        </ToolbarButton>
+
+        {/* Embed */}
+        <ToolbarButton
+          onClick={() => setShowEmbedInput(!showEmbedInput)}
+          active={showEmbedInput}
+          title="Benamkan Kiriman (FB/Video/Iframe)"
+        >
+          <MdPostAdd className="w-4 h-4" />
         </ToolbarButton>
 
         {/* Hidden inputs for uploads */}
@@ -538,11 +673,40 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
         </div>
       )}
 
+      {/* Embed Input */}
+      {showEmbedInput && (
+        <div className="bg-purple-50 border-b border-purple-100 px-3 py-2 flex items-center gap-2">
+          <MdPostAdd className="w-4 h-4 text-purple-500 shrink-0" />
+          <input
+            type="text"
+            value={embedCode}
+            onChange={(e) => setEmbedCode(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addEmbed()}
+            placeholder="Tampal kod <iframe> di sini (cth: dari Facebook atau YouTube)"
+            className="flex-1 text-sm px-3 py-1.5 rounded-lg border border-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-300 bg-white"
+          />
+          <button
+            type="button"
+            onClick={addEmbed}
+            className="px-3 py-1.5 bg-purple-600 text-white text-xs font-semibold rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Benamkan
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowEmbedInput(false)}
+            className="px-3 py-1.5 bg-gray-200 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Batal
+          </button>
+        </div>
+      )}
+
       {/* Editor Content */}
       <EditorContent editor={editor} />
 
       {/* Word Count */}
-      <div className="bg-gray-50 border-t border-gray-100 px-4 py-1.5 flex justify-end">
+      <div className="bg-gray-50 border-t border-gray-100 px-4 py-1.5 flex justify-end rounded-b-xl">
         <span className="text-[10px] text-gray-400">
           {editor.storage.characterCount?.words?.() ?? 0} patah perkataan ·{" "}
           {editor.getText().length} aksara
@@ -635,6 +799,25 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
           font-weight: 600;
           margin: 0.75rem 0 0.375rem;
           color: #4b5563;
+        }
+        .iframe-container {
+          position: relative;
+          width: 100%;
+          margin: 1.5rem 0;
+          display: flex;
+          justify-content: center;
+          background: #f9fafb;
+          border-radius: 8px;
+          padding: 1rem;
+          border: 1px dashed #e5e7eb;
+        }
+        .iframe-container iframe {
+          max-width: 100%;
+          border-radius: 4px;
+        }
+        .ProseMirror-selectednode.iframe-container {
+          outline: 3px solid #3b82f6;
+          border-style: solid;
         }
       `}</style>
     </div>
