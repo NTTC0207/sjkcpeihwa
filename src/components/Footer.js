@@ -159,7 +159,7 @@ export default function Footer({ translations }) {
                 {translations?.footer?.hours || "School Hours:"}
               </p>
               <p className="text-sm text-gray-400">
-                {translations?.footer?.days || "Sun - Thu: 7:30 AM - 1:30 PM"}
+                {translations?.footer?.days || "Sun - Thu: 7:30 AM - 4:30 PM"}
               </p>
             </div>
           </div>
