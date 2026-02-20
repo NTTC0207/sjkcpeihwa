@@ -88,8 +88,9 @@ export default function AnnouncementsClient({
   const [selectedYear, setSelectedYear] = useState("all");
 
   // Local cache — avoids redundant Firebase reads on category revisits
+  // Always seed under "all" because server always fetches without category filter (ISR)
   const dataCacheRef = useRef({
-    [initialCategory || "all"]: {
+    all: {
       items: initialAnnouncements || [],
       lastDoc: null,
       hasMore: (initialAnnouncements || []).length === INITIAL_LIMIT,
@@ -100,10 +101,6 @@ export default function AnnouncementsClient({
     buildYearList(initialAnnouncements || []),
   );
 
-  // Track whether the initial prop sync has run so we don't re-trigger it
-  const initialSyncDone = useRef(false);
-
-  // Stable reference to activeCategory for callbacks that close over it
   const activeCategoryRef = useRef(activeCategory);
   useEffect(() => {
     activeCategoryRef.current = activeCategory;
@@ -248,24 +245,38 @@ export default function AnnouncementsClient({
     [fetchAnnouncements],
   );
 
-  // Sync with server props on first mount only — avoids re-runs when props change reference
+  // ─── React to URL ?category= changes ─────────────────────────────────────
+  // This fires on:
+  //   (a) first mount — applies the category from the URL (e.g. navbar link)
+  //   (b) every Next.js navigation that changes searchParams (navbar, back/forward)
+  // Using searchParams (from useSearchParams) means we never rely on the
+  // always-null initialCategory prop the server passes for ISR.
   useEffect(() => {
-    if (initialSyncDone.current) return;
-    initialSyncDone.current = true;
+    const urlCategory = searchParams.get("category") || null;
 
-    if (initialCategory !== activeCategoryRef.current) {
-      handleCategoryChange(initialCategory || null);
-    } else if (announcements.length === 0 && !loading) {
-      if (initialAnnouncements?.length > 0) {
-        setAnnouncements(initialAnnouncements);
-        setHasMore(initialAnnouncements.length === INITIAL_LIMIT);
-        setAvailableYears(buildYearList(initialAnnouncements));
-      } else {
-        fetchAnnouncements();
+    if (urlCategory === activeCategoryRef.current) {
+      // Same category — just make sure we have data displayed (first mount)
+      if (announcements.length === 0 && !loading) {
+        const cacheKey = urlCategory || "all";
+        const cached = dataCacheRef.current[cacheKey];
+        if (cached && cached.items.length > 0) {
+          setAnnouncements(cached.items);
+          setLastDoc(cached.lastDoc);
+          setHasMore(cached.hasMore);
+          setAvailableYears(buildYearList(cached.items));
+        } else {
+          fetchAnnouncements(false, urlCategory);
+        }
       }
+      return;
     }
+
+    // Category changed — apply it (handleCategoryChange reads cache or fetches)
+    handleCategoryChange(urlCategory);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
+  // NOTE: intentionally omitting handleCategoryChange & fetchAnnouncements from
+  // deps — both are stable useCallback refs; adding them would cause double-fires.
 
   // Handle browser back/forward — stable: no deps that change frequently
   useEffect(() => {
