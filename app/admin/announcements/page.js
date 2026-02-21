@@ -42,6 +42,8 @@ import {
   HiCloudArrowUp,
 } from "react-icons/hi2";
 
+import RevalidateButton from "@components/admin/RevalidateButton";
+
 // Dynamically import RichTextEditor to avoid SSR issues
 const RichTextEditor = dynamic(
   () => import("@components/admin/RichTextEditor"),
@@ -819,6 +821,10 @@ export default function AnnouncementsAdminPage() {
           </div>
         </div>
       </nav>
+
+      <div className="container-custom mt-6">
+        <RevalidateButton path="/announcements" label="Pengumuman" />
+      </div>
 
       <div className="container-custom py-8">
         {/* ─── LIST VIEW ─── */}

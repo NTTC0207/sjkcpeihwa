@@ -9,7 +9,13 @@ import {
   deleteDoc,
   doc,
   query,
+  where,
   orderBy,
+  limit,
+  startAfter,
+  getCountFromServer,
+  or,
+  and,
 } from "firebase/firestore";
 import { db } from "@lib/firebase";
 import { uploadToCloudinary } from "@lib/cloudinary";
@@ -18,6 +24,7 @@ import {
   HiPencil,
   HiTrash,
   HiChevronLeft,
+  HiChevronRight,
   HiMagnifyingGlass,
   HiFunnel,
   HiUserCircle,
@@ -42,11 +49,16 @@ export default function StaffTableManager({
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [viewMode, setViewMode] = useState("table"); // 'table' or 'visual'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [pageCursors, setPageCursors] = useState({ 1: null });
+  const itemsPerPage = 7;
   const imageInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -64,7 +76,7 @@ export default function StaffTableManager({
   useEffect(() => {
     fetchStaff();
     loadMsSubjects();
-  }, []);
+  }, [collectionName]);
 
   const loadMsSubjects = async () => {
     try {
@@ -205,9 +217,13 @@ export default function StaffTableManager({
   };
 
   const filteredStaff = staffList.filter((s) => {
+    const term = searchTerm.toLowerCase().trim();
+
+    // Fuzzy search: check if term is contained ANYWHERE in EN or ZH name
     const matchesSearch =
-      s.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.name_zh?.includes(searchTerm);
+      !term ||
+      s.name?.toLowerCase().includes(term) ||
+      s.name_zh?.includes(term);
 
     const matchesCategory =
       filterCategory === "All" ||
@@ -220,6 +236,17 @@ export default function StaffTableManager({
     return matchesSearch && matchesCategory;
   });
 
+  const totalPages = Math.ceil(filteredStaff.length / itemsPerPage);
+
+  const paginatedStaff = filteredStaff.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  const handlePageChange = (pageNum) => {
+    setCurrentPage(pageNum);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Actions */}
@@ -230,10 +257,21 @@ export default function StaffTableManager({
             <input
               type="text"
               placeholder="Cari mengikut nama..."
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-24 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all shadow-sm"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setSearchTerm(searchInput);
+                }
+              }}
             />
+            <button
+              onClick={() => setSearchTerm(searchInput)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-4 py-1.5 rounded-lg text-sm font-bold hover:bg-primary-dark transition-colors"
+            >
+              Cari
+            </button>
           </div>
         </div>
         <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-xl">
@@ -321,7 +359,7 @@ export default function StaffTableManager({
                     </td>
                   </tr>
                 ) : (
-                  filteredStaff.map((staff) => (
+                  paginatedStaff.map((staff) => (
                     <tr
                       key={staff.id}
                       className="hover:bg-gray-50/50 transition-colors group"
@@ -332,9 +370,10 @@ export default function StaffTableManager({
                             {staff.image ? (
                               <img
                                 src={
-                                  typeof staff.image === "object"
-                                    ? staff.image.url
-                                    : staff.image
+                                  staff.image?.url ||
+                                  (typeof staff.image === "string"
+                                    ? staff.image
+                                    : "")
                                 }
                                 alt={staff.name}
                                 className="w-full h-full object-cover"
@@ -351,7 +390,7 @@ export default function StaffTableManager({
                               {staff.name}
                             </div>
                             <div className="text-xs text-gray-400 font-mono uppercase tracking-tighter">
-                              ID: {staff.id.substring(0, 8)}...
+                              ID: {staff.id?.substring(0, 8)}...
                             </div>
                           </div>
                         </div>
@@ -445,6 +484,83 @@ export default function StaffTableManager({
               </tbody>
             </table>
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-sm text-gray-500">
+                Menunjukkan{" "}
+                <span className="font-bold text-primary">
+                  {(currentPage - 1) * itemsPerPage + 1}
+                </span>{" "}
+                hingga{" "}
+                <span className="font-bold text-primary">
+                  {Math.min(
+                    currentPage * itemsPerPage,
+                    viewMode === "table" ? totalItems : filteredStaff.length,
+                  )}
+                </span>{" "}
+                daripada{" "}
+                <span className="font-bold text-primary">
+                  {viewMode === "table" ? totalItems : filteredStaff.length}
+                </span>{" "}
+                rekod
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1 || loading}
+                  className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all"
+                >
+                  <HiChevronLeft className="w-5 h-5" />
+                </button>
+
+                <div className="flex items-center gap-1">
+                  {[...Array(totalPages)].map((_, i) => {
+                    const pageNum = i + 1;
+                    if (
+                      pageNum === 1 ||
+                      pageNum === totalPages ||
+                      (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
+                    ) {
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          disabled={loading}
+                          className={`w-10 h-10 rounded-lg text-sm font-bold transition-all ${
+                            currentPage === pageNum
+                              ? "bg-primary text-white shadow-lg shadow-primary/20"
+                              : "bg-white border border-gray-200 text-gray-600 hover:border-primary hover:text-primary"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    } else if (
+                      pageNum === currentPage - 2 ||
+                      pageNum === currentPage + 2
+                    ) {
+                      return (
+                        <span key={pageNum} className="px-1 text-gray-400">
+                          ...
+                        </span>
+                      );
+                    }
+                    return null;
+                  })}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages || loading}
+                  className="p-2 rounded-lg border border-gray-200 bg-white text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:border-primary hover:text-primary transition-all"
+                >
+                  <HiChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <StaffVisualManager

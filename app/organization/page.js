@@ -4,8 +4,8 @@ import { staffData as localStaffData } from "@lib/staffData";
 import { Suspense } from "react";
 import OrganizationClient from "@components/organization/OrganizationClient";
 
-// ISR: Revalidate every 24 hours (86400 seconds)
-export const revalidate = 86400;
+// ISR: Revalidate every 7 days (60*60*24*7)
+export const revalidate = 604800;
 
 export const metadata = {
   title: "Carta Organisasi | Senarai Guru & Staf",

@@ -11,6 +11,7 @@ import {
   HiArrowLeft,
 } from "react-icons/hi2";
 import StaffTableManager from "@components/admin/StaffTableManager";
+import RevalidateButton from "@components/admin/RevalidateButton";
 
 export default function AdminPTAPage() {
   const [user, setUser] = useState(null);
@@ -93,6 +94,10 @@ export default function AdminPTAPage() {
           </div>
         </div>
       </nav>
+
+      <div className="container-custom mt-6">
+        <RevalidateButton path="/organization/pta" label="Pengurusan PIBG" />
+      </div>
 
       {/* Main Content */}
       <main className="container-custom py-8">

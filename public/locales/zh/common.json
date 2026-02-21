@@ -8,6 +8,7 @@
     "contact": "联系我们",
     "admin": "管理员",
     "falsafah": "原则",
+    "penghargaan": "荣誉榜",
     "organization": {
       "title": "行政与组织",
       "chart": "学校组织架构",
@@ -26,7 +27,8 @@
       "landscape": "校园景观",
       "calendar": "校史",
       "pta": "家教与教师协会",
-      "lps":"董事部"
+      "lps":"董事部",
+      "penghargaan": "荣誉榜"
     }
   },
   "hero": {
@@ -163,5 +165,30 @@
     "title": "校歌",
     "playbackInstructions": "播放说明",
     "description": "点击上方视频播放培华学校校歌。校歌记录了学校的辉煌历史与宏伟愿景。"
+  },
+  "penghargaan": {
+    "title": "荣誉榜",
+    "subtitle": "表扬马章培华国民型华文小学学生在各领域的卓越表现与成就。",
+    "categoryLabel": "类别",
+    "yearLabel": "年份",
+    "all": "全部",
+    "allYears": "所有年份",
+    "viewDetails": "查看详情",
+    "noRecords": "未找到任何荣誉记录。",
+    "tryAgain": "请尝试筛选其他年份或类别。",
+    "categories": {
+      "all": "全部",
+      "Akademik": "学术",
+      "Sukan": "体育",
+      "Ko-Kurikulum": "课外活动",
+      "Seni & Kebudayaan": "艺术与文化",
+      "Lain-lain": "其他"
+    },
+    "backToList": "返回列表",
+    "viewMore": "查看更多荣誉记录",
+    "shareLinkCopied": "链接已复制到剪贴板！",
+    "summaryLabel": "摘要",
+    "recipientLabel": "获奖者 / 涉及学生",
+    "noDetails": "无更多详情。"
   }
 }

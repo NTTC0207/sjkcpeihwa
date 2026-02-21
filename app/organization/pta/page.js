@@ -3,8 +3,8 @@ import { db } from "@lib/firebase";
 import { Suspense } from "react";
 import GeneralOrgClient from "@components/organization/GeneralOrgClient";
 
-// ISR: Revalidate every 24 hours
-export const revalidate = 86400;
+// ISR: Revalidate every 7 days (60*60*24*7)
+export const revalidate = 604800;
 
 export const metadata = {
   title: "Persatuan Ibu Bapa & Guru (PTA / PIBG)",

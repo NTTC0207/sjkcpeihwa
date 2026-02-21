@@ -11,6 +11,7 @@ import {
   HiArrowLeft,
 } from "react-icons/hi2";
 import StaffTableManager from "@components/admin/StaffTableManager";
+import RevalidateButton from "@components/admin/RevalidateButton";
 
 export default function AdminLPSPage() {
   const [user, setUser] = useState(null);
@@ -93,6 +94,10 @@ export default function AdminLPSPage() {
           </div>
         </div>
       </nav>
+
+      <div className="container-custom mt-6">
+        <RevalidateButton path="/organization/lps" label="Pengurusan LPS" />
+      </div>
 
       {/* Main Content */}
       <main className="container-custom py-8">

@@ -8,6 +8,7 @@
     "contact": "Hubungi Kami",
     "admin": "Pentadbir",
     "falsafah": "Falsafah",
+    "penghargaan": "Penghargaan",
     "organization": {
       "title": "Organisasi",
       "chart": "Carta Organisasi",
@@ -26,7 +27,8 @@
       "landscape": "Landskap Sekolah",
       "calendar": "Sejarah Sekolah",
       "pta": "PIBG",
-      "lps":"LPS"
+      "lps":"LPS",
+      "penghargaan": "Penghargaan"
     }
   },
   "hero": {
@@ -163,5 +165,30 @@
     "title": "Lagu Sekolah",
     "playbackInstructions": "Arahan Main",
     "description": "Klik video di atas untuk memainkan lagu sekolah. Lagu ini merakamkan sejarah kegemilangan dan visi besar sekolah."
+  },
+  "penghargaan": {
+    "title": "Penghargaan",
+    "subtitle": "Meraikan kecemerlangan dan kejayaan murid-murid SJK(C) Pei Hwa dalam pelbagai bidang.",
+    "categoryLabel": "Kategori",
+    "yearLabel": "Tahun",
+    "all": "Semua",
+    "allYears": "Semua Tahun",
+    "viewDetails": "Lihat Butiran",
+    "noRecords": "Tiada rekod penghargaan ditemui.",
+    "tryAgain": "Sila cuba tapis mengikut tahun atau kategori lain.",
+    "categories": {
+      "all": "Semua",
+      "Akademik": "Akademik",
+      "Sukan": "Sukan",
+      "Ko-Kurikulum": "Ko-Kurikulum",
+      "Seni & Kebudayaan": "Seni & Kebudayaan",
+      "Lain-lain": "Lain-lain"
+    },
+    "backToList": "Kembali ke Senarai",
+    "viewMore": "Lihat Lebih Banyak Penghargaan",
+    "shareLinkCopied": "Pautan disalin ke papan klip!",
+    "summaryLabel": "Ringkasan",
+    "recipientLabel": "Penerima / Murid terlibat",
+    "noDetails": "Tiada butiran tambahan."
   }
 }

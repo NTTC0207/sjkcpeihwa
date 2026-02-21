@@ -15,10 +15,15 @@ export async function POST(request) {
     // Trigger revalidation for the specified path
     revalidatePath(path);
 
-    // Also revalidate the layout if needed, or specific sub-paths
-    // For announcements, we mostly care about the main listing
+    // Also revalidate sub-paths if needed
     if (path === "/announcements") {
       revalidatePath("/announcements/[id]", "page");
+    } else if (path === "/organization") {
+      revalidatePath("/organization/lps", "page");
+      revalidatePath("/organization/pta", "page");
+    } else if (path === "/penghargaan") {
+      // If there's a detail page for penghargaan, add it here
+      // For now, revalidate the main list
     }
 
     return NextResponse.json({
