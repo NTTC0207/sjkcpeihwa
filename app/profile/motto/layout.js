@@ -10,13 +10,14 @@ export const metadata = {
     "prinsip sekolah",
   ],
   alternates: {
-    canonical: "https://sjkcpeihwa.edu.my/profile/motto",
+    canonical: "https://sjkcpeihwa.vercel.app/profile/motto",
   },
   openGraph: {
     title: "校训与原则 | SJK(C) Pei Hwa",
     description:
       "Matlamat dan prinsip SJK(C) Pei Hwa Machang — Berakhlak Mulia, Berilmu, dan Perpaduan.",
-    url: "https://sjkcpeihwa.edu.my/profile/motto",
+    url: "https://sjkcpeihwa.vercel.app/profile/motto",
+    siteName: "SJK(C) Pei Hwa",
     type: "website",
   },
 };

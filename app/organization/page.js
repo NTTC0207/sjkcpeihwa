@@ -12,12 +12,13 @@ export const metadata = {
   description:
     "Carta organisasi dan senarai lengkap guru serta kakitangan SJK(C) Pei Hwa, Machang, Kelantan. Kenali warga pendidik kami yang berdedikasi.",
   alternates: {
-    canonical: "https://sjkcpeihwa.edu.my/organization",
+    canonical: "https://sjkcpeihwa.vercel.app/organization",
   },
   openGraph: {
     title: "Carta Organisasi | SJK(C) Pei Hwa",
     description: "Senarai guru dan kakitangan SJK(C) Pei Hwa Machang.",
-    url: "https://sjkcpeihwa.edu.my/organization",
+    url: "https://sjkcpeihwa.vercel.app/organization",
+    siteName: "SJK(C) Pei Hwa",
     type: "website",
   },
 };

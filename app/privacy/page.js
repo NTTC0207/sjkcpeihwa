@@ -4,6 +4,13 @@ export const metadata = {
   title: "Dasar Privasi | Privacy Policy | 隐私政策",
   description:
     "Dasar Privasi SJK(C) Pei Hwa Machang – maklumat tentang penggunaan kuki dan Google Analytics.",
+  openGraph: {
+    title: "Dasar Privasi | SJK(C) Pei Hwa",
+    description: "Dasar Privasi rasmi SJK(C) Pei Hwa Machang.",
+    url: "https://sjkcpeihwa.vercel.app/privacy",
+    siteName: "SJK(C) Pei Hwa",
+    type: "website",
+  },
 };
 
 const sections = [
@@ -129,7 +136,8 @@ export default function PrivacyPage() {
       {/* Hero Banner */}
       <div
         style={{
-          background: "linear-gradient(135deg, #123469 0%, #1a4993 60%, #1a4993 100%)",
+          background:
+            "linear-gradient(135deg, #123469 0%, #1a4993 60%, #1a4993 100%)",
           padding: "64px 24px 48px",
           textAlign: "center",
           position: "relative",
@@ -139,15 +147,23 @@ export default function PrivacyPage() {
         {/* Decorative circles */}
         <div
           style={{
-            position: "absolute", top: "-60px", right: "-60px",
-            width: "220px", height: "220px", borderRadius: "50%",
+            position: "absolute",
+            top: "-60px",
+            right: "-60px",
+            width: "220px",
+            height: "220px",
+            borderRadius: "50%",
             background: "rgba(254,193,7,0.08)",
           }}
         />
         <div
           style={{
-            position: "absolute", bottom: "-40px", left: "-40px",
-            width: "160px", height: "160px", borderRadius: "50%",
+            position: "absolute",
+            bottom: "-40px",
+            left: "-40px",
+            width: "160px",
+            height: "160px",
+            borderRadius: "50%",
             background: "rgba(255,255,255,0.05)",
           }}
         />
@@ -232,14 +248,27 @@ export default function PrivacyPage() {
                 >
                   {section.title}
                 </h2>
-                <p style={{ color: "#93c5fd", fontSize: "12px", margin: "2px 0 0" }}>
+                <p
+                  style={{
+                    color: "#93c5fd",
+                    fontSize: "12px",
+                    margin: "2px 0 0",
+                  }}
+                >
                   {section.lastUpdated}
                 </p>
               </div>
             </div>
 
             {/* Policy Items */}
-            <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: "20px" }}>
+            <div
+              style={{
+                padding: "24px 28px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+              }}
+            >
               {section.items.map((item) => (
                 <div key={item.heading}>
                   <h3

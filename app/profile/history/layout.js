@@ -10,13 +10,14 @@ export const metadata = {
     "SJKC Pei Hwa Machang 1939",
   ],
   alternates: {
-    canonical: "https://sjkcpeihwa.edu.my/profile/history",
+    canonical: "https://sjkcpeihwa.vercel.app/profile/history",
   },
   openGraph: {
     title: "校史 | SJK(C) Pei Hwa",
     description:
       "Perjalanan sejarah SJK(C) Pei Hwa dari 1939 hingga kini di Machang, Kelantan.",
-    url: "https://sjkcpeihwa.edu.my/profile/history",
+    url: "https://sjkcpeihwa.vercel.app/profile/history",
+    siteName: "SJK(C) Pei Hwa",
     type: "website",
   },
 };

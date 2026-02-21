@@ -14,6 +14,12 @@ export const metadata = {
   },
   description:
     "Laman web rasmi SJK(C) Pei Hwa (培华国民型华文小学), Machang, Kelantan. Memupuk minda muda melalui kecemerlangan pendidikan, pembinaan karakter, dan warisan budaya.",
+  applicationName: "SJK(C) Pei Hwa",
+  appleWebApp: {
+    capable: true,
+    title: "SJK(C) Pei Hwa",
+    statusBarStyle: "default",
+  },
   keywords: [
     "SJKC Pei Hwa",
     "SJKC Pei Hwa Machang",
@@ -102,7 +108,7 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }) {
-  const jsonLd = {
+  const schoolJsonLd = {
     "@context": "https://schema.org",
     "@type": "ElementarySchool",
     name: "SJK(C) Pei Hwa",
@@ -148,12 +154,24 @@ export default function RootLayout({ children }) {
     sameAs: ["https://sjkcpeihwa.vercel.app"],
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "SJK(C) Pei Hwa",
+    alternateName: ["培华国民型华文小学", "SJKC Pei Hwa"],
+    url: "https://sjkcpeihwa.vercel.app",
+  };
+
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schoolJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body className="antialiased">

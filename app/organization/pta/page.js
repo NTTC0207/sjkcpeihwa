@@ -11,12 +11,13 @@ export const metadata = {
   description:
     "Ahli Persatuan Ibu Bapa dan Guru (PIBG) SJK(C) Pei Hwa Machang, Kelantan. Kerjasama antara ibu bapa dan guru demi kecemerlangan pelajar.",
   alternates: {
-    canonical: "https://sjkcpeihwa.edu.my/organization/pta",
+    canonical: "https://sjkcpeihwa.vercel.app/organization/pta",
   },
   openGraph: {
     title: "PIBG / PTA | SJK(C) Pei Hwa",
     description: "Persatuan Ibu Bapa dan Guru SJK(C) Pei Hwa Machang.",
-    url: "https://sjkcpeihwa.edu.my/organization/pta",
+    url: "https://sjkcpeihwa.vercel.app/organization/pta",
+    siteName: "SJK(C) Pei Hwa",
     type: "website",
   },
 };
