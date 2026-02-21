@@ -11,7 +11,8 @@ export default async function PenghargaanPage() {
     const q = query(
       collection(db, "penghargaan"),
       orderBy("date", "desc"),
-      limit(50),
+      orderBy("__name__", "desc"),
+      limit(20),
     );
     const querySnapshot = await getDocs(q);
     initialAwards = querySnapshot.docs.map((doc) => ({

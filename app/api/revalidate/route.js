@@ -22,8 +22,7 @@ export async function POST(request) {
       revalidatePath("/organization/lps", "page");
       revalidatePath("/organization/pta", "page");
     } else if (path === "/penghargaan") {
-      // If there's a detail page for penghargaan, add it here
-      // For now, revalidate the main list
+      revalidatePath("/penghargaan/[id]", "page");
     }
 
     return NextResponse.json({

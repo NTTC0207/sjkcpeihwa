@@ -1,19 +1,32 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLanguage } from "@lib/LanguageContext";
 import {
   HiTrophy,
   HiCalendar,
   HiChevronDown,
-  HiChevronRight,
   HiAcademicCap,
   HiUserGroup,
   HiStar,
   HiArrowRight,
 } from "react-icons/hi2";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  query,
+  orderBy,
+  where,
+  limit,
+  startAfter,
+} from "firebase/firestore";
+import { db } from "@lib/firebase";
 
+// Category metadata for display
 const CATEGORY_META = {
   Akademik: {
     key: "Akademik",
@@ -62,27 +75,64 @@ const CATEGORY_META = {
   },
 };
 
+// INITIAL_LIMIT: how many items the server fetches for ISR
+const INITIAL_LIMIT = 20;
+// LOAD_MORE_LIMIT: how many items to fetch per "load more" click
+const LOAD_MORE_LIMIT = 5;
+
+// Helper: extract year list from awards data
+function buildYearList(data) {
+  const years = [
+    ...new Set(data.map((a) => a.date?.split("-")[0]).filter(Boolean)),
+  ];
+  const today = new Date().getFullYear().toString();
+  if (!years.includes(today)) years.push(today);
+  return years.sort((a, b) => b - a);
+}
+
 export default function PenghargaanClient({ initialAwards }) {
   const { translations, locale } = useLanguage();
+  const searchParams = useSearchParams();
+
+  const [activeCategory, setActiveCategory] = useState(null);
+  const categoryMeta = activeCategory ? CATEGORY_META[activeCategory] : null;
+
+  const [awards, setAwards] = useState(initialAwards || []);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [lastDoc, setLastDoc] = useState(null);
+  const [hasMore, setHasMore] = useState(
+    (initialAwards || []).length === INITIAL_LIMIT,
+  );
   const [selectedYear, setSelectedYear] = useState("all");
-  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const years = useMemo(() => {
-    const y = [
-      ...new Set(initialAwards.map((a) => a.date?.split("-")[0])),
-    ].filter(Boolean);
-    return y.sort((a, b) => b - a);
-  }, [initialAwards]);
+  // Local cache — avoids redundant Firebase reads on category revisits
+  const dataCacheRef = useRef({
+    all: {
+      items: initialAwards || [],
+      lastDoc: null,
+      hasMore: (initialAwards || []).length === INITIAL_LIMIT,
+    },
+  });
 
-  const filteredAwards = useMemo(() => {
-    return initialAwards.filter((a) => {
-      const matchYear =
-        selectedYear === "all" || a.date?.startsWith(selectedYear);
-      const matchCat =
-        selectedCategory === "all" || a.category === selectedCategory;
-      return matchYear && matchCat;
-    });
-  }, [initialAwards, selectedYear, selectedCategory]);
+  const [availableYears, setAvailableYears] = useState(() =>
+    buildYearList(initialAwards || []),
+  );
+
+  const activeCategoryRef = useRef(activeCategory);
+  useEffect(() => {
+    activeCategoryRef.current = activeCategory;
+  }, [activeCategory]);
+
+  const awardsRef = useRef(awards);
+  useEffect(() => {
+    awardsRef.current = awards;
+  }, [awards]);
+
+  const lastDocRef = useRef(lastDoc);
+  useEffect(() => {
+    lastDocRef.current = lastDoc;
+  }, [lastDoc]);
 
   const t = useCallback(
     (key, fallback) => {
@@ -94,8 +144,158 @@ export default function PenghargaanClient({ initialAwards }) {
     [translations],
   );
 
-  const categoryMeta =
-    selectedCategory !== "all" ? CATEGORY_META[selectedCategory] : null;
+  const fetchAwards = useCallback(
+    async (isLoadMore = false, catOverride = null) => {
+      const targetCategory =
+        catOverride !== null ? catOverride : activeCategoryRef.current;
+      const cacheKey = targetCategory || "all";
+
+      if (isLoadMore) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+        setAwards([]);
+        setLastDoc(null);
+        lastDocRef.current = null;
+      }
+
+      try {
+        const batchSize = isLoadMore ? LOAD_MORE_LIMIT : INITIAL_LIMIT;
+        const constraints = [
+          orderBy("date", "desc"),
+          orderBy("__name__", "desc"),
+          limit(batchSize),
+        ];
+
+        if (targetCategory) {
+          constraints.unshift(where("category", "==", targetCategory));
+        }
+
+        if (isLoadMore) {
+          let cursor = lastDocRef.current;
+          if (!cursor && awardsRef.current.length > 0) {
+            const lastItem = awardsRef.current[awardsRef.current.length - 1];
+            const docRef = doc(db, "penghargaan", lastItem.id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              cursor = docSnap;
+              lastDocRef.current = docSnap;
+            }
+          }
+          if (cursor) constraints.push(startAfter(cursor));
+        }
+
+        const q = query(collection(db, "penghargaan"), ...constraints);
+        const querySnapshot = await getDocs(q);
+
+        if (
+          activeCategoryRef.current !== targetCategory &&
+          catOverride === null
+        ) {
+          return;
+        }
+
+        const lastVisible =
+          querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+        const data = querySnapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const newItems = isLoadMore ? [...awardsRef.current, ...data] : data;
+        const more = data.length === batchSize;
+
+        setAwards(newItems);
+        setLastDoc(lastVisible);
+        setHasMore(more);
+        lastDocRef.current = lastVisible;
+
+        dataCacheRef.current[cacheKey] = {
+          items: newItems,
+          lastDoc: lastVisible,
+          hasMore: more,
+        };
+
+        if (!isLoadMore) {
+          setAvailableYears(buildYearList(newItems));
+        }
+      } catch (error) {
+        console.error("Error fetching awards:", error);
+      } finally {
+        if (!isLoadMore) setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [],
+  );
+
+  const handleCategoryChange = useCallback(
+    (newCat) => {
+      if (newCat === activeCategoryRef.current) return;
+
+      const url = newCat ? `/penghargaan?category=${newCat}` : "/penghargaan";
+      window.history.pushState({ category: newCat }, "", url);
+      setActiveCategory(newCat);
+      setSelectedYear("all");
+      activeCategoryRef.current = newCat;
+
+      const cacheKey = newCat || "all";
+      const cached = dataCacheRef.current[cacheKey];
+      if (cached) {
+        setAwards(cached.items);
+        setLastDoc(cached.lastDoc);
+        setHasMore(cached.hasMore);
+        lastDocRef.current = cached.lastDoc;
+        setAvailableYears(buildYearList(cached.items));
+      } else {
+        fetchAwards(false, newCat);
+      }
+    },
+    [fetchAwards],
+  );
+
+  useEffect(() => {
+    const urlCategory = searchParams.get("category") || null;
+
+    if (urlCategory === activeCategoryRef.current) {
+      if (awards.length === 0 && !loading) {
+        const cacheKey = urlCategory || "all";
+        const cached = dataCacheRef.current[cacheKey];
+        if (cached && cached.items.length > 0) {
+          setAwards(cached.items);
+          setLastDoc(cached.lastDoc);
+          setHasMore(cached.hasMore);
+          setAvailableYears(buildYearList(cached.items));
+        } else {
+          fetchAwards(false, urlCategory);
+        }
+      }
+      return;
+    }
+
+    handleCategoryChange(urlCategory);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  useEffect(() => {
+    const handlePop = () => {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get("category");
+      handleCategoryChange(cat);
+    };
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, [handleCategoryChange]);
+
+  const filteredAwards = useMemo(() => {
+    return selectedYear === "all"
+      ? awards
+      : awards.filter((a) => a.date?.startsWith(selectedYear));
+  }, [awards, selectedYear]);
+
+  if (loading && awards.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-bg">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-bg">
@@ -107,7 +307,7 @@ export default function PenghargaanClient({ initialAwards }) {
             {categoryMeta && (
               <div className="flex items-center justify-center gap-2 mb-4">
                 <button
-                  onClick={() => setSelectedCategory("all")}
+                  onClick={() => handleCategoryChange(null)}
                   className="text-sm text-gray-400 hover:text-primary transition-colors"
                 >
                   {t("penghargaan.title", "Penghargaan")}
@@ -141,9 +341,9 @@ export default function PenghargaanClient({ initialAwards }) {
             {/* Category filter tabs */}
             <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
               <button
-                onClick={() => setSelectedCategory("all")}
+                onClick={() => handleCategoryChange(null)}
                 className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                  selectedCategory === "all"
+                  !activeCategory
                     ? "bg-primary text-white shadow-md shadow-primary/20"
                     : "bg-white text-gray-500 border border-gray-200 hover:border-primary/40 hover:text-primary"
                 }`}
@@ -153,9 +353,9 @@ export default function PenghargaanClient({ initialAwards }) {
               {Object.values(CATEGORY_META).map((cat) => (
                 <button
                   key={cat.key}
-                  onClick={() => setSelectedCategory(cat.key)}
+                  onClick={() => handleCategoryChange(cat.key)}
                   className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                    selectedCategory === cat.key
+                    activeCategory === cat.key
                       ? `${cat.color} text-white shadow-md`
                       : `bg-white border border-gray-200 ${cat.textColor} hover:border-current`
                   }`}
@@ -182,7 +382,7 @@ export default function PenghargaanClient({ initialAwards }) {
                     <option value="all">
                       {t("penghargaan.allYears", "Semua Tahun")}
                     </option>
-                    {years.map((y) => (
+                    {availableYears.map((y) => (
                       <option key={y} value={y}>
                         {y}
                       </option>
@@ -209,7 +409,6 @@ export default function PenghargaanClient({ initialAwards }) {
                 locale={locale}
                 translations={translations}
                 t={t}
-                awardId={award.id}
               />
             ))}
 
@@ -224,12 +423,28 @@ export default function PenghargaanClient({ initialAwards }) {
                     "Tiada rekod penghargaan ditemui.",
                   )}
                 </h3>
-                <p className="text-gray-400 mt-2">
-                  {t(
-                    "penghargaan.tryAgain",
-                    "Sila cuba tapis mengikut tahun atau kategori lain.",
+              </div>
+            )}
+
+            {/* Load More Button */}
+            {hasMore && (
+              <div className="flex justify-center mt-12">
+                <button
+                  onClick={() => fetchAwards(true)}
+                  disabled={loadingMore}
+                  className="group relative flex items-center gap-3 px-8 py-4 bg-white border-2 border-primary/10 rounded-2xl text-primary font-bold hover:border-primary/30 hover:bg-neutral-bg transition-all duration-300 disabled:opacity-50"
+                >
+                  {loadingMore ? (
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <span>
+                        {t("penghargaan.viewMore", "Muat Lagi Penghargaan")}
+                      </span>
+                      <HiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </>
                   )}
-                </p>
+                </button>
               </div>
             )}
           </div>
@@ -239,7 +454,7 @@ export default function PenghargaanClient({ initialAwards }) {
   );
 }
 
-const AwardCard = ({ award, locale, translations, t, awardId }) => {
+const AwardCard = ({ award, locale, translations, t }) => {
   const monthLabel = useMemo(() => {
     if (!award.date) return "";
     return new Date(award.date).toLocaleString(
@@ -254,7 +469,10 @@ const AwardCard = ({ award, locale, translations, t, awardId }) => {
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-      <div className="flex flex-col md:flex-row gap-0">
+      <Link
+        href={`/penghargaan/${award.id}`}
+        className="flex flex-col md:flex-row gap-0"
+      >
         {/* Thumbnail Area */}
         <div className="w-full md:w-56 h-48 md:h-auto shrink-0 overflow-hidden bg-neutral-bg relative">
           {award.image ? (
@@ -271,14 +489,12 @@ const AwardCard = ({ award, locale, translations, t, awardId }) => {
             <div
               className={`w-full h-full flex flex-col items-center justify-center bg-slate-50 relative overflow-hidden group-hover:opacity-90 transition-opacity duration-500`}
             >
-              {/* School Name Watermark */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] rotate-12 -translate-y-4">
                 <span className="text-6xl font-black whitespace-nowrap tracking-tighter">
                   培华 • 培华 • 培华
                 </span>
               </div>
 
-              {/* Date Block */}
               <div className="relative z-10 flex flex-col items-center bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-50 group-hover:scale-110 group-hover:shadow-md transition-all duration-500">
                 <span className="text-primary font-black text-3xl leading-none">
                   {dayLabel}
@@ -288,7 +504,6 @@ const AwardCard = ({ award, locale, translations, t, awardId }) => {
                 </span>
               </div>
 
-              {/* Category Icon Watermark */}
               <div className="absolute bottom-3 right-3 opacity-10 -rotate-12 transition-transform duration-500 group-hover:scale-110">
                 {categoryMeta.icon}
               </div>
@@ -336,18 +551,15 @@ const AwardCard = ({ award, locale, translations, t, awardId }) => {
           </div>
 
           <div className="mt-auto flex items-center justify-between">
-            <Link
-              href={`/penghargaan/${awardId}`}
-              className="flex items-center text-primary font-bold text-sm tracking-tight group/btn hover:gap-1 transition-all"
-            >
+            <div className="flex items-center text-primary font-bold text-sm tracking-tight group/btn hover:gap-1 transition-all">
               <span className="border-b-2 border-primary/0 group-hover/btn:border-primary/20 transition-all">
                 {t("penghargaan.viewDetails", "Lihat Butiran")}
               </span>
               <HiArrowRight className="ml-2 group-hover/btn:translate-x-1 transition-transform" />
-            </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

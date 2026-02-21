@@ -1,11 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HiArrowPath } from "react-icons/hi2";
 
 export default function RevalidateButton({ path, label = "Laman Utama" }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(null);
+
+  const storageKey = `last_revalidate_${path.replace(/\//g, "_")}`;
+
+  useEffect(() => {
+    const savedTime = localStorage.getItem(storageKey);
+    if (savedTime) {
+      setLastRefreshed(savedTime);
+    }
+  }, [storageKey]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -17,7 +26,17 @@ export default function RevalidateButton({ path, label = "Laman Utama" }) {
       });
       const data = await response.json();
       if (data.revalidated) {
-        setLastRefreshed(new Date().toLocaleTimeString());
+        const timeString = new Date().toLocaleString("ms-MY", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        });
+        setLastRefreshed(timeString);
+        localStorage.setItem(storageKey, timeString);
         alert(`Laman ${label} telah dikemas kini untuk semua pelawat!`);
       }
     } catch (error) {
@@ -37,11 +56,20 @@ export default function RevalidateButton({ path, label = "Laman Utama" }) {
         <p className="text-sm text-gray-500">
           Klik butang ini untuk memastikan semua pelawat melihat maklumat
           terbaru di laman <strong>{label}</strong> dengan segera.
-          {lastRefreshed && (
-            <span className="ml-2 text-accent-green font-medium">
-              (Terakhir dikemas kini: {lastRefreshed})
+          <span className="block mt-1 text-xs">
+            <span className="font-medium text-gray-600">
+              Terakhir dikemas kini:{" "}
             </span>
-          )}
+            {lastRefreshed ? (
+              <span className="text-accent-green font-bold">
+                {lastRefreshed}
+              </span>
+            ) : (
+              <span className="text-gray-400 italic">
+                Belum pernah (Klik segarkan)
+              </span>
+            )}
+          </span>
         </p>
       </div>
       <button
