@@ -28,10 +28,15 @@ async function getLPSData() {
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      return querySnapshot.docs.map((doc) => ({
+      const data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+      // Sort by level (primary) and order (secondary)
+      return data.sort((a, b) => {
+        if (a.level !== b.level) return (a.level || 0) - (b.level || 0);
+        return (a.order || 0) - (b.order || 0);
+      });
     }
     return [];
   } catch (error) {

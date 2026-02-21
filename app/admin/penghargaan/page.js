@@ -87,6 +87,22 @@ const CATEGORY_META = {
   },
 };
 
+const MONTH_OPTIONS = [
+  { id: "All", label: "Semua Bulan" },
+  { id: "01", label: "Januari" },
+  { id: "02", label: "Februari" },
+  { id: "03", label: "Mac" },
+  { id: "04", label: "April" },
+  { id: "05", label: "Mei" },
+  { id: "06", label: "Jun" },
+  { id: "07", label: "Julai" },
+  { id: "08", label: "Ogos" },
+  { id: "09", label: "September" },
+  { id: "10", label: "Oktober" },
+  { id: "11", label: "November" },
+  { id: "12", label: "Disember" },
+];
+
 const EMPTY_FORM = {
   title: "",
   date: new Date().toISOString().split("T")[0],
@@ -288,6 +304,7 @@ export default function PenghargaanAdminPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterYear, setFilterYear] = useState("All");
+  const [filterMonth, setFilterMonth] = useState("All");
   const [toast, setToast] = useState(null);
   const [previewAward, setPreviewAward] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -446,9 +463,11 @@ export default function PenghargaanAdminPage() {
       const matchCategory =
         filterCategory === "All" || a.category === filterCategory;
       const matchYear = filterYear === "All" || a.date?.startsWith(filterYear);
-      return matchSearch && matchCategory && matchYear;
+      const matchMonth =
+        filterMonth === "All" || a.date?.split("-")[1] === filterMonth;
+      return matchSearch && matchCategory && matchYear && matchMonth;
     });
-  }, [awards, searchQuery, filterCategory, filterYear]);
+  }, [awards, searchQuery, filterCategory, filterYear, filterMonth]);
 
   // Auth Guard
   if (authLoading)
@@ -604,6 +623,19 @@ export default function PenghargaanAdminPage() {
                     {availableYears.map((y) => (
                       <option key={y} value={y}>
                         {y}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+                  <select
+                    value={filterMonth}
+                    onChange={(e) => setFilterMonth(e.target.value)}
+                    className="bg-transparent text-xs font-bold text-gray-400 px-3 py-1.5 outline-none cursor-pointer appearance-none uppercase tracking-wider"
+                  >
+                    {MONTH_OPTIONS.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.label}
                       </option>
                     ))}
                   </select>

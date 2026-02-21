@@ -99,7 +99,9 @@
     "noAnnouncements": "该年份未找到任何公告。",
     "sortBy": "排序方式",
     "latestToOldest": "最新发布",
-    "oldestToLatest": "最早发布"
+    "oldestToLatest": "最早发布",
+    "filterMonth": "按月份筛选",
+    "allMonths": "所有月份"
   },
   "footer": {
     "contact": "联系我们",
@@ -178,6 +180,8 @@
     "allYears": "所有年份",
     "viewDetails": "查看详情",
     "noRecords": "未找到任何荣誉记录。",
+    "filterMonth": "按月份筛选",
+    "allMonths": "所有月份",
     "tryAgain": "请尝试筛选其他年份或类别。",
     "categories": {
       "all": "全部",

@@ -86,6 +86,25 @@ export default function AnnouncementsClient({
     (initialAnnouncements || []).length === INITIAL_LIMIT,
   );
   const [selectedYear, setSelectedYear] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState("all");
+
+  const months = useMemo(
+    () => [
+      { value: "01", label: locale === "zh" ? "一月" : "Januari" },
+      { value: "02", label: locale === "zh" ? "二月" : "Februari" },
+      { value: "03", label: locale === "zh" ? "三月" : "Mac" },
+      { value: "04", label: locale === "zh" ? "四月" : "April" },
+      { value: "05", label: locale === "zh" ? "五月" : "Mei" },
+      { value: "06", label: locale === "zh" ? "六月" : "Jun" },
+      { value: "07", label: locale === "zh" ? "七月" : "Julai" },
+      { value: "08", label: locale === "zh" ? "八月" : "Ogos" },
+      { value: "09", label: locale === "zh" ? "九月" : "September" },
+      { value: "10", label: locale === "zh" ? "十月" : "Oktober" },
+      { value: "11", label: locale === "zh" ? "十一月" : "November" },
+      { value: "12", label: locale === "zh" ? "十二月" : "Disember" },
+    ],
+    [locale],
+  );
 
   // Local cache — avoids redundant Firebase reads on category revisits
   // Always seed under "all" because server always fetches without category filter (ISR)
@@ -290,13 +309,16 @@ export default function AnnouncementsClient({
   }, [handleCategoryChange]); // handleCategoryChange is stable (useCallback with empty deps chain)
 
   // Compute filtered list once — avoid triple inline filter in JSX
-  const filteredAnnouncements = useMemo(
-    () =>
-      selectedYear === "all"
-        ? announcements
-        : announcements.filter((a) => a.date?.startsWith(selectedYear)),
-    [announcements, selectedYear],
-  );
+  const filteredAnnouncements = useMemo(() => {
+    let items = announcements;
+    if (selectedYear !== "all") {
+      items = items.filter((a) => a.date?.startsWith(selectedYear));
+    }
+    if (selectedMonth !== "all") {
+      items = items.filter((a) => a.date?.split("-")[1] === selectedMonth);
+    }
+    return items;
+  }, [announcements, selectedYear, selectedMonth]);
 
   if (loading && announcements.length === 0) {
     return (
@@ -376,27 +398,56 @@ export default function AnnouncementsClient({
 
           <div className="max-w-4xl mx-auto mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                  {translations.announcements.filterYear}
-                </span>
-                <div className="relative inline-block w-48">
-                  <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
-                  >
-                    <option value="all">
-                      {translations.announcements.allYears}
-                    </option>
-                    {availableYears.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
+              <div className="flex flex-wrap items-center gap-6">
+                {/* Year Filter */}
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+                    {translations.announcements.filterYear}
+                  </span>
+                  <div className="relative inline-block w-40">
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => setSelectedYear(e.target.value)}
+                      className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
+                    >
+                      <option value="all">
+                        {translations.announcements.allYears}
                       </option>
-                    ))}
-                  </select>
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
-                    <HiChevronDown className="w-5 h-5" />
+                      {availableYears.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
+                      <HiChevronDown className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Month Filter */}
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
+                    {translations.announcements.filterMonth}
+                  </span>
+                  <div className="relative inline-block w-40">
+                    <select
+                      value={selectedMonth}
+                      onChange={(e) => setSelectedMonth(e.target.value)}
+                      className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
+                    >
+                      <option value="all">
+                        {translations.announcements.allMonths}
+                      </option>
+                      {months.map((m) => (
+                        <option key={m.value} value={m.value}>
+                          {m.label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">
+                      <HiChevronDown className="w-5 h-5" />
+                    </div>
                   </div>
                 </div>
               </div>

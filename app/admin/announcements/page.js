@@ -135,6 +135,22 @@ const DEPARTMENT_OPTIONS = [
   },
 ];
 
+const MONTH_OPTIONS = [
+  { id: "All", label: "Semua Bulan" },
+  { id: "01", label: "Januari" },
+  { id: "02", label: "Februari" },
+  { id: "03", label: "Mac" },
+  { id: "04", label: "April" },
+  { id: "05", label: "Mei" },
+  { id: "06", label: "Jun" },
+  { id: "07", label: "Julai" },
+  { id: "08", label: "Ogos" },
+  { id: "09", label: "September" },
+  { id: "10", label: "Oktober" },
+  { id: "11", label: "November" },
+  { id: "12", label: "Disember" },
+];
+
 const EMPTY_FORM = {
   title: "",
   date: new Date().toISOString().split("T")[0],
@@ -368,6 +384,7 @@ export default function AnnouncementsAdminPage() {
   const [filterBadge, setFilterBadge] = useState("All");
   const [filterDepartment, setFilterDepartment] = useState("All");
   const [filterYear, setFilterYear] = useState("All");
+  const [filterMonth, setFilterMonth] = useState("All");
   const [lastDoc, setLastDoc] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [previewAnn, setPreviewAnn] = useState(null);
@@ -405,7 +422,7 @@ export default function AnnouncementsAdminPage() {
       setLastDoc(null);
       fetchAnnouncements();
     }
-  }, [user, filterBadge, filterDepartment, filterYear]);
+  }, [user, filterBadge, filterDepartment, filterYear, filterMonth]);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -422,8 +439,22 @@ export default function AnnouncementsAdminPage() {
       }
 
       if (filterYear !== "All") {
-        constraints.push(where("date", ">=", `${filterYear}-01-01`));
-        constraints.push(where("date", "<=", `${filterYear}-12-31`));
+        if (filterMonth !== "All") {
+          const lastDay = new Date(
+            parseInt(filterYear),
+            parseInt(filterMonth),
+            0,
+          ).getDate();
+          constraints.push(
+            where("date", ">=", `${filterYear}-${filterMonth}-01`),
+          );
+          constraints.push(
+            where("date", "<=", `${filterYear}-${filterMonth}-${lastDay}`),
+          );
+        } else {
+          constraints.push(where("date", ">=", `${filterYear}-01-01`));
+          constraints.push(where("date", "<=", `${filterYear}-12-31`));
+        }
       }
 
       constraints.push(orderBy("date", "desc"));
@@ -726,7 +757,12 @@ export default function AnnouncementsAdminPage() {
     const matchBadge = filterBadge === "All" || a.badge === filterBadge;
     const matchDepartment =
       filterDepartment === "All" || a.department === filterDepartment;
-    return matchSearch && matchBadge && matchDepartment;
+    const matchYear = filterYear === "All" || a.date?.startsWith(filterYear);
+    const matchMonth =
+      filterMonth === "All" || a.date?.split("-")[1] === filterMonth;
+    return (
+      matchSearch && matchBadge && matchDepartment && matchYear && matchMonth
+    );
   });
 
   // Auth loading
@@ -915,6 +951,20 @@ export default function AnnouncementsAdminPage() {
                     {availableYears.map((y) => (
                       <option key={y} value={y}>
                         {y}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+                  <select
+                    value={filterMonth}
+                    onChange={(e) => setFilterMonth(e.target.value)}
+                    className="bg-transparent text-xs font-semibold text-gray-500 px-2 py-1 outline-none cursor-pointer"
+                  >
+                    {MONTH_OPTIONS.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.label}
                       </option>
                     ))}
                   </select>

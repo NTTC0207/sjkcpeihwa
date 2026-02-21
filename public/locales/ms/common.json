@@ -99,7 +99,9 @@
     "noAnnouncements": "Tiada pengumuman ditemui untuk tahun ini.",
     "sortBy": "Susun ikut",
     "latestToOldest": "Terbaharu",
-    "oldestToLatest": "Terlama"
+    "oldestToLatest": "Terlama",
+    "filterMonth": "Tapis mengikut Bulan",
+    "allMonths": "Semua Bulan"
   },
   "footer": {
     "contact": "Hubungi Kami",
@@ -178,6 +180,8 @@
     "allYears": "Semua Tahun",
     "viewDetails": "Lihat Butiran",
     "noRecords": "Tiada rekod penghargaan ditemui.",
+    "filterMonth": "Tapis mengikut Bulan",
+    "allMonths": "Semua Bulan",
     "tryAgain": "Sila cuba tapis mengikut tahun atau kategori lain.",
     "categories": {
       "all": "Semua",

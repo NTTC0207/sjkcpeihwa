@@ -60,7 +60,12 @@ export default function StaffManager() {
         id: doc.id,
         ...doc.data(),
       }));
-      setStaffList(data);
+      // Sort by level (primary) and order (secondary)
+      const sortedData = data.sort((a, b) => {
+        if (a.level !== b.level) return (a.level || 0) - (b.level || 0);
+        return (a.order || 0) - (b.order || 0);
+      });
+      setStaffList(sortedData);
     } catch (error) {
       console.error("Error fetching staff:", error);
     } finally {
