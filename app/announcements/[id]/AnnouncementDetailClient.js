@@ -37,7 +37,7 @@ export default function AnnouncementDetailClient({ announcement }) {
               className="inline-flex items-center text-primary font-bold hover:text-primary-dark transition-colors"
             >
               <HiArrowLeft className="mr-2" />
-              Back to Announcements
+              {translations.penghargaan.backToList}
             </Link>
           </motion.div>
 
@@ -141,7 +141,7 @@ export default function AnnouncementDetailClient({ announcement }) {
               className="flex justify-center"
             >
               <Link href="/announcements" className="btn-primary-accent">
-                View More Announcements
+                {translations.penghargaan.viewMore}
               </Link>
             </motion.div>
           </div>

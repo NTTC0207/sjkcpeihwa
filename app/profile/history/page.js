@@ -28,8 +28,7 @@ export default function HistoryPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed"
           >
-            Journey through the legacy of SJK(C) Pei Hwa, from its humble
-            beginnings to its modern excellence.
+           {translations.history?.subtitle}
           </motion.p>
         </header>
 

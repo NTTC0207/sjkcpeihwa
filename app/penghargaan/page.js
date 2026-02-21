@@ -3,7 +3,7 @@ import { db } from "@lib/firebase";
 import PenghargaanClient from "./PenghargaanClient";
 
 // ISR: Revalidate every 7 days (60*60*24*7)
-export const revalidate = 604800;
+export const revalidate = false;
 
 export default async function PenghargaanPage() {
   let initialAwards = [];

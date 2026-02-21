@@ -12,9 +12,16 @@ import historyData from "@/src/data/history.json";
 const LeadershipTable = ({ title, list }) => {
   if (!list || list.length === 0) return null;
 
+  const hasCurrent = list.some((p) => p.year?.includes("至今"));
+  const hasPrevious = list.some((p) => p.year && !p.year.includes("至今"));
+  const displayTitle =
+    hasCurrent && hasPrevious && title === "历任校长"
+      ? "历任校长与现任校长"
+      : title;
+
   return (
     <div className="markdown-content border-t border-gray-100 pt-8">
-      <h3 className="text-xl font-bold mb-6 text-primary">{title}</h3>
+      <h3 className="text-xl font-bold mb-6 text-primary">{displayTitle}</h3>
       <div className="overflow-x-auto">
         <table className="w-full border-collapse mb-6">
           <thead>

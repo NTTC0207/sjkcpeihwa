@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import OrganizationClient from "@components/organization/OrganizationClient";
 
 // ISR: Revalidate every 7 days (60*60*24*7)
-export const revalidate = 604800;
+export const revalidate = false;
 
 export const metadata = {
   title: "Carta Organisasi | Senarai Guru & Staf",
