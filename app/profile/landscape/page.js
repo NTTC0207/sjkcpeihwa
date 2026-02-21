@@ -49,17 +49,17 @@ const Carousel = ({ images, onImageClick }) => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/30 backdrop-blur-xl p-3 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-4 group-hover:translate-x-0 border border-white/20 shadow-xl"
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/20 md:bg-white/10 hover:bg-white/30 backdrop-blur-xl p-2 md:p-3 rounded-full text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-x-0 md:-translate-x-4 md:group-hover:translate-x-0 border border-white/20 shadow-xl z-10"
             aria-label="Previous image"
           >
-            <IoChevronBack size={20} />
+            <IoChevronBack size={18} className="md:w-5 md:h-5" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/30 backdrop-blur-xl p-3 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0 border border-white/20 shadow-xl"
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/20 md:bg-white/10 hover:bg-white/30 backdrop-blur-xl p-2 md:p-3 rounded-full text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-x-0 md:translate-x-4 md:group-hover:translate-x-0 border border-white/20 shadow-xl z-10"
             aria-label="Next image"
           >
-            <IoChevronForward size={20} />
+            <IoChevronForward size={18} className="md:w-5 md:h-5" />
           </button>
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2.5 z-10">
@@ -144,12 +144,12 @@ export default function LandscapePage() {
       <div className="container-custom">
         {/* Header Section */}
         <header className="text-center mb-20">
-        <motion.div
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-           <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4">
               {tTitle}
             </h1>
             <div className="w-20 h-1.5 bg-accent-yellow mx-auto rounded-full mb-6"></div>

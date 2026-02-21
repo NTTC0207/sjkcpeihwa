@@ -247,6 +247,18 @@ export default function StaffTableManager({
     setCurrentPage(pageNum);
   };
 
+  const getStaffDisplayName = (id) => {
+    const s = staffList.find((item) => item.id === id);
+    if (!s) return id;
+    return `${s.name_zh ? `[${s.name_zh}] ` : ""}${s.name}`;
+  };
+
+  const availableParents = staffList.filter(
+    (s) =>
+      s.id !== editingStaff?.id && // Can't be own parent
+      !(formData.parentIds || []).includes(s.id), // Not already selected
+  );
+
   return (
     <div className="space-y-6">
       {/* Header Actions */}
@@ -724,23 +736,74 @@ export default function StaffTableManager({
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold text-gray-700 ml-1">
-                        Parent IDs (Satu baris setiap satu ID)
+                        Report to
                       </label>
-                      <textarea
-                        className="w-full px-4 py-3 bg-neutral-bg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none"
-                        value={(formData.parentIds || []).join("\n")}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            parentIds: e.target.value
-                              .split("\n")
-                              .map((id) => id.trim())
-                              .filter((id) => id),
-                          })
-                        }
-                        placeholder="Masukkan ID induk di sini..."
-                        rows={3}
-                      />
+                      <div className="space-y-3">
+                        {/* List of selected parents */}
+                        <div className="flex flex-wrap gap-2">
+                          {(formData.parentIds || []).length > 0 ? (
+                            (formData.parentIds || []).map((pId) => (
+                              <div
+                                key={pId}
+                                className="flex items-center gap-2 pl-3 pr-2 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-xs font-bold animate-in zoom-in duration-200"
+                              >
+                                <span>{getStaffDisplayName(pId)}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData({
+                                      ...formData,
+                                      parentIds: formData.parentIds.filter(
+                                        (id) => id !== pId,
+                                      ),
+                                    });
+                                  }}
+                                  className="p-1 hover:bg-primary/20 rounded-lg transition-colors text-primary"
+                                  title="Gugurkan Induk"
+                                >
+                                  <HiTrash className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-xs text-gray-400 italic py-1">
+                              Tiada induk dipilih.
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Dropdown to add */}
+                        <div className="relative">
+                          <select
+                            className="w-full px-4 py-3 bg-neutral-bg border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer text-sm font-medium"
+                            value=""
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                setFormData({
+                                  ...formData,
+                                  parentIds: [
+                                    ...(formData.parentIds || []),
+                                    e.target.value,
+                                  ],
+                                });
+                              }
+                            }}
+                          >
+                            <option value="" disabled>
+                              + Tambah Induk (Pilih Nama)
+                            </option>
+                            {availableParents.map((s) => (
+                              <option key={s.id} value={s.id}>
+                                {s.name_zh ? `[${s.name_zh}] ` : ""}
+                                {s.name} ({s.role_ms})
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                            <HiPlus className="w-5 h-5" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </section>
