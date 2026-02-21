@@ -37,7 +37,7 @@ export const metadata = {
     "吉兰丹华小",
     "马章华小",
     "马章培华华小",
-    "马章培华小学"
+    "马章培华小学",
   ],
   authors: [{ name: "SJK(C) Pei Hwa" }],
   creator: "SJK(C) Pei Hwa",
@@ -102,7 +102,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#4F46E5",
+  themeColor: "#2a589c",
   width: "device-width",
   initialScale: 1,
 };
