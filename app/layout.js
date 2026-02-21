@@ -16,6 +16,8 @@ export const metadata = {
     "Laman web rasmi SJK(C) Pei Hwa (培华国民型华文小学), Machang, Kelantan. Memupuk minda muda melalui kecemerlangan pendidikan, pembinaan karakter, dan warisan budaya.",
   keywords: [
     "SJKC Pei Hwa",
+    "SJKC Pei Hwa Machang",
+    "Pei Hwa Machang",
     "培华小学",
     "SJK(C) Pei Hwa",
     "SJK Pei Hwa Machang",
@@ -26,8 +28,8 @@ export const metadata = {
     "Chinese Primary School Kelantan",
     "Sekolah Cina Kelantan",
     "Machang Kelantan",
-    "Education Malaysia",
     "华文小学马来西亚",
+    "吉兰丹马章培华小学",
     "吉兰丹华小",
     "马章华小",
   ],
@@ -94,7 +96,7 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#4F46E5", // Matching the primary color
+  themeColor: "#4F46E5",
   width: "device-width",
   initialScale: 1,
 };

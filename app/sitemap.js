@@ -1,9 +1,7 @@
 import historyData from "@/src/data/history.json";
 
-export const revalidate = 3600; // Revalidate sitemap hourly
-
 export default async function sitemap() {
-  const baseUrl = "https://sjkcpeihwa.edu.my";
+  const baseUrl = "https://sjkcpeihwa.vercel.app";
 
   // Static routes with appropriate priorities
   const staticRoutes = [
