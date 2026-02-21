@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import AnnouncementDetailClient from "./AnnouncementDetailClient";
 
 // ISR: Revalidate every 7 days
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 /**
  * Announcement Detail Page with ISR

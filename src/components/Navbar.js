@@ -103,6 +103,7 @@ export default function Navbar({
         },
       ],
     },
+    { href: "/penghargaan", label: t("nav.penghargaan", "Penghargaan") },
     {
       label: t("nav.organization.title", "Organization"),
       children: [
@@ -124,7 +125,6 @@ export default function Navbar({
         },
       ],
     },
-    { href: "/penghargaan", label: t("nav.penghargaan", "Penghargaan") },
     { href: "/#contact", label: t("nav.contact", "Contact") },
   ];
 

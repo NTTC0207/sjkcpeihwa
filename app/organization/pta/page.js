@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import GeneralOrgClient from "@components/organization/GeneralOrgClient";
 
 // ISR: Revalidate every 7 days (60*60*24*7)
-export const revalidate = lps;
+export const revalidate = false;
 
 export const metadata = {
   title: "Persatuan Ibu Bapa & Guru (PTA / PIBG)",
