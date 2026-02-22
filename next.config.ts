@@ -13,12 +13,21 @@ const nextConfig: NextConfig = {
   
   // Image optimization
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      }
+    ],
   },
   
-  experimental: {
-    // @ts-ignore - To silence Turbopack error when using webpack plugins
-    turbopack: {},
+  // @ts-ignore - To silence Turbopack error when using webpack plugins
+  turbopack: {
+    root: '.',
   },
 };
 
