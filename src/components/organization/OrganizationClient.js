@@ -139,7 +139,7 @@ export default function OrganizationClient({ initialStaffData }) {
 
   return (
     <div className="min-h-screen bg-neutral-bg flex flex-col">
-      <main className="flex-grow pt-28 pb-16">
+      <main className="flex-grow pt-28 pb-10">
         <div
           className={
             view === "chart"

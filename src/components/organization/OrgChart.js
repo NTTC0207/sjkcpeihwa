@@ -11,18 +11,25 @@ export default function OrgChart({ staffTree, getRole }) {
   const chartRef = useRef(null);
   const controls = useAnimation();
 
+  const [containerHeight, setContainerHeight] = useState(700);
+
   const fitToScreen = useCallback(() => {
     if (constraintsRef.current && chartRef.current) {
-      const containerWidth = constraintsRef.current.offsetWidth - 80;
-      const containerHeight = constraintsRef.current.offsetHeight - 80;
       const chartWidth = chartRef.current.scrollWidth;
       const chartHeight = chartRef.current.scrollHeight;
 
+      // Adapt container height to chart height (with min/max bounds)
+      const adaptedHeight = Math.min(Math.max(chartHeight + 60, 400), 800);
+      setContainerHeight(adaptedHeight);
+
+      const containerWidth = constraintsRef.current.offsetWidth - 40;
+      const containerHeightEffective = adaptedHeight - 40;
+
       if (chartWidth > 0 && chartHeight > 0) {
         const scaleX = containerWidth / chartWidth;
-        const scaleY = containerHeight / chartHeight;
+        const scaleY = containerHeightEffective / chartHeight;
         const newScale = Math.min(scaleX, scaleY, 1);
-        setScale(newScale * 0.9);
+        setScale(newScale * 0.98);
       }
     }
   }, []);
@@ -51,7 +58,10 @@ export default function OrgChart({ staffTree, getRole }) {
   };
 
   return (
-    <div className="relative w-full h-[700px] bg-white rounded-3xl border border-gray-100 shadow-inner overflow-hidden cursor-grab active:cursor-grabbing">
+    <div
+      style={{ height: `${containerHeight}px` }}
+      className="relative w-full bg-white rounded-3xl border border-gray-100 shadow-inner overflow-hidden cursor-grab active:cursor-grabbing"
+    >
       {/* Zoom Controls */}
       <div className="absolute bottom-8 right-8 flex flex-col gap-3 z-30">
         <button
@@ -102,7 +112,7 @@ export default function OrgChart({ staffTree, getRole }) {
 
       <div
         ref={constraintsRef}
-        className="w-full h-full flex items-center justify-center overflow-auto p-10 no-scrollbar"
+        className="w-full h-full flex items-center justify-center overflow-hidden p-4 no-scrollbar"
       >
         <motion.div
           drag
@@ -111,7 +121,7 @@ export default function OrgChart({ staffTree, getRole }) {
           animate={controls}
           initial={{ scale: 1, x: 0, y: 0 }}
           transition={{ type: "spring", damping: 30, stiffness: 200 }}
-          className="p-10"
+          className="p-4"
           style={{ transformOrigin: "center center" }}
         >
           <motion.div ref={chartRef} className="inline-flex justify-center">
@@ -272,10 +282,14 @@ function NodeCard({
           boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
         }}
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex flex-col items-center p-5 bg-white rounded-3xl shadow-xl border border-slate-100 w-64 z-10 cursor-pointer relative"
+        className="group flex flex-col items-center p-5 bg-white rounded-3xl shadow-xl border border-slate-100 w-64 z-10 cursor-pointer relative"
       >
-        <div className="relative mb-4">
-          <div className="w-24 h-24 rounded-full bg-slate-50 overflow-hidden ring-4 ring-white shadow-inner">
+        <p className="text-primary font-bold text-[10px] uppercase tracking-wider px-3 py-1 bg-white/80 backdrop-blur-sm rounded-full border border-primary/10 shadow-sm transition-transform group-hover:scale-105 mb-4">
+          {getRole(node)}
+        </p>
+
+        <div className="relative mb-5">
+          <div className="w-24 h-24 rounded-full bg-slate-50 overflow-hidden ring-4 ring-white shadow-xl">
             {node.image ? (
               <img
                 src={node.image}
@@ -290,7 +304,7 @@ function NodeCard({
           </div>
         </div>
 
-        <div className="text-center mb-1">
+        <div className="text-center mb-2">
           {node.name_zh && (
             <h3 className="font-display font-bold text-slate-800 text-lg leading-tight">
               {node.name_zh}
@@ -302,9 +316,6 @@ function NodeCard({
             {node.name}
           </h4>
         </div>
-        <p className="text-primary font-bold text-xs uppercase tracking-wider text-center px-3 py-1 bg-primary/5 rounded-full mb-2">
-          {getRole(node)}
-        </p>
 
         {/* Toggle Button */}
         {hasLocalChildren && (
