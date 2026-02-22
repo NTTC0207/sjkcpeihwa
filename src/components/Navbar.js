@@ -87,6 +87,11 @@ export default function Navbar({
       label: t("nav.announcements", "Announcements"),
       children: [
         {
+          href: "/announcements",
+          label: t("announcements.title"),
+          category: "academic",
+        },
+        {
           href: "/announcements?category=academic",
           label: t("nav.manage.academic"),
           category: "academic",

@@ -100,10 +100,12 @@ export default function AnnouncementDetailClient({ announcement }) {
               transition={{ delay: 0.1 }}
               className="bg-white rounded-b-[3rem] p-8 pt-0 md:px-12 shadow-xl border-x border-b border-gray-100 mb-12"
             >
-              <div
-                className="prose prose-lg max-w-none text-gray-700 pt-8"
-                dangerouslySetInnerHTML={{ __html: announcement.content }}
-              />
+              <div className="overflow-x-auto pt-8">
+                <div
+                  className="prose prose-lg max-w-none text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: announcement.content }}
+                />
+              </div>
 
               {/* Attachments */}
               {announcement.attachments?.length > 0 && (

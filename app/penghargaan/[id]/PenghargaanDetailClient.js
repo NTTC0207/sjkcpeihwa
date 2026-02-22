@@ -186,10 +186,12 @@ export default function PenghargaanDetailClient({ award }) {
                 )}
 
                 {/* Content Description */}
-                <div
-                  className="prose prose-lg max-w-none text-gray-700"
-                  dangerouslySetInnerHTML={{ __html: award.description }}
-                />
+                <div className="overflow-x-auto">
+                  <div
+                    className="prose prose-lg max-w-none text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: award.description }}
+                  />
+                </div>
 
                 {!award.description && (
                   <p className="text-gray-400 italic py-8">
