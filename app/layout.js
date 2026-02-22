@@ -12,6 +12,7 @@ export const metadata = {
     default: "SJK(C) Pei Hwa | 培华国民型华文小学",
     template: "%s | SJK(C) Pei Hwa",
   },
+  siteName: "SJK(C) Pei Hwa",
   description:
     "Laman web rasmi SJK(C) Pei Hwa (培华国民型华文小学), Machang, Kelantan. Memupuk minda muda melalui kecemerlangan pendidikan, pembinaan karakter, dan warisan budaya.",
   applicationName: "SJK(C) Pei Hwa",
