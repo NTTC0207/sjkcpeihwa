@@ -112,7 +112,19 @@
     "followUs": "关注我们",
     "hours": "学校开放时间",
     "days": "周日至周四: 7:30 AM - 4:30 PM",
-    "copyright": "© {{year}} 马樟培华国民型华文小学。版权所有。"
+    "copyright": "© {{year}} 马樟培华国民型华文小学。版权所有。",
+    "pwa": {
+      "title": "手机应用",
+      "install": "安装应用",
+      "installing": "安装中...",
+      "installed": "已安装 ✓",
+      "notSupported": "不支持",
+      "notifications": "接收通知",
+      "notificationsEnabled": "通知已开启 ✓",
+      "notificationsDenied": "通知已被屏蔽",
+      "notificationsUnsupported": "不支持",
+      "description": "安装应用以快速访问，并接收学校最新通知。"
+    }
   },
   "organization": {
     "title": "教师及行政人员",

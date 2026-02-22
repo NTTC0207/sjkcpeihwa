@@ -112,7 +112,19 @@
     "followUs": "Ikuti Kami",
     "hours": "Waktu Persekolahan",
     "days": "Ahad - Khamis: 7:30 AM - 4:30 PM",
-    "copyright": "© {{year}} SJK(C) Pei Hwa Machang. Hak cipta terpelihara."
+    "copyright": "© {{year}} SJK(C) Pei Hwa Machang. Hak cipta terpelihara.",
+    "pwa": {
+      "title": "Aplikasi Mudah Alih",
+      "install": "Pasang Aplikasi",
+      "installing": "Memasang...",
+      "installed": "Aplikasi Dipasang ✓",
+      "notSupported": "Tidak Disokong",
+      "notifications": "Terima Pemberitahuan",
+      "notificationsEnabled": "Pemberitahuan Aktif ✓",
+      "notificationsDenied": "Pemberitahuan Disekat",
+      "notificationsUnsupported": "Tidak Disokong",
+      "description": "Pasang aplikasi untuk akses pantas dan terima pemberitahuan terkini daripada sekolah."
+    }
   },
   "organization": {
     "title": "Guru dan Staff",
