@@ -527,7 +527,7 @@ const AwardCard = ({ award, locale, translations, t }) => {
         className="flex flex-col md:flex-row gap-0"
       >
         {/* Thumbnail Area */}
-        <div className="w-full md:w-56 h-48 md:h-auto shrink-0 overflow-hidden bg-neutral-bg relative">
+        <div className="w-full md:w-56 h-[200px] md:h-[285px] shrink-0 overflow-hidden bg-neutral-bg relative">
           {award.image ? (
             <>
               <img
