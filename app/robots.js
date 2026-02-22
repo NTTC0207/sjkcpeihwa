@@ -8,7 +8,7 @@ export default function robots() {
       },
       {
         // Block common AI scrapers from heavy crawling
-        userAgent: ["GPTBot", "Claude-Web", "CCBot"],
+        userAgent: ["CCBot"],
         disallow: "/",
       },
     ],
