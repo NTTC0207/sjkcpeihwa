@@ -91,6 +91,24 @@ export const galleryData = [
         src: "/gallery/stage-inside-library.avif",
         alt: "stage-inside-library",
       },
+        {
+        src: "/gallery/library1.avif",
+        alt: "library1",
+      },
+        {
+        src: "/gallery/library2.avif",
+        alt: "library2",
+      }, {
+        src: "/gallery/library3.avif",
+        alt: "library3",
+      }, {
+        src: "/gallery/library4.avif",
+        alt: "library4",
+      }, {
+        src: "/gallery/library6.avif",
+        alt: "library6",
+      },
+        
     ],
   },
   {
