@@ -1,6 +1,7 @@
 import "./globals.css";
 import ClientLayout from "@components/ClientLayout";
 import Script from "next/script";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 /**
  * Root Layout
@@ -191,6 +192,7 @@ export default function RootLayout({ children }) {
           `}
         </Script>
         <ClientLayout>{children}</ClientLayout>
+        <SpeedInsights />
       </body>
     </html>
   );
