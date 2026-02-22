@@ -28,41 +28,41 @@ import { db } from "@lib/firebase";
 
 // Category metadata for display
 const CATEGORY_META = {
-  Akademik: {
-    key: "Akademik",
-    labelKey: "penghargaan.categories.Akademik",
-    fallback: "Akademik",
+  "Ko-akademik": {
+    key: "Ko-akademik",
+    labelKey: "penghargaan.categories.Ko-akademik",
+    fallback: "Ko-akademik",
     color: "bg-blue-500",
     lightColor: "bg-blue-50",
     textColor: "text-blue-600",
     icon: <HiAcademicCap className="w-6 h-6" />,
   },
-  Sukan: {
-    key: "Sukan",
-    labelKey: "penghargaan.categories.Sukan",
-    fallback: "Sukan",
-    color: "bg-orange-500",
-    lightColor: "bg-orange-50",
-    textColor: "text-orange-600",
-    icon: <HiTrophy className="w-6 h-6" />,
-  },
-  "Ko-Kurikulum": {
-    key: "Ko-Kurikulum",
-    labelKey: "penghargaan.categories.Ko-Kurikulum",
-    fallback: "Ko-Kurikulum",
+  "Badan Beruniform": {
+    key: "Badan Beruniform",
+    labelKey: "penghargaan.categories.Badan Beruniform",
+    fallback: "Badan Beruniform",
     color: "bg-emerald-500",
     lightColor: "bg-emerald-50",
     textColor: "text-emerald-600",
     icon: <HiUserGroup className="w-6 h-6" />,
   },
-  "Seni & Kebudayaan": {
-    key: "Seni & Kebudayaan",
-    labelKey: "penghargaan.categories.Seni & Kebudayaan",
-    fallback: "Seni & Kebudayaan",
+  "Kelab & Persatuan": {
+    key: "Kelab & Persatuan",
+    labelKey: "penghargaan.categories.Kelab & Persatuan",
+    fallback: "Kelab & Persatuan",
     color: "bg-purple-500",
     lightColor: "bg-purple-50",
     textColor: "text-purple-600",
     icon: <HiStar className="w-6 h-6" />,
+  },
+  "Sukan & Permainan": {
+    key: "Sukan & Permainan",
+    labelKey: "penghargaan.categories.Sukan & Permainan",
+    fallback: "Sukan & Permainan",
+    color: "bg-orange-500",
+    lightColor: "bg-orange-50",
+    textColor: "text-orange-600",
+    icon: <HiTrophy className="w-6 h-6" />,
   },
   "Lain-lain": {
     key: "Lain-lain",

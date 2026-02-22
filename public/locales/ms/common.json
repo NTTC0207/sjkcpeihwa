@@ -185,10 +185,10 @@
     "tryAgain": "Sila cuba tapis mengikut tahun atau kategori lain.",
     "categories": {
       "all": "Semua",
-      "Akademik": "Akademik",
-      "Sukan": "Sukan",
-      "Ko-Kurikulum": "Ko-Kurikulum",
-      "Seni & Kebudayaan": "Seni & Kebudayaan",
+      "Ko-akademik": "Ko-akademik",
+      "Badan Beruniform": "Badan Beruniform",
+      "Kelab & Persatuan": "Kelab & Persatuan",
+      "Sukan & Permainan": "Sukan & Permainan",
       "Lain-lain": "Lain-lain"
     },
     "backToList": "Kembali ke Senarai",

@@ -15,25 +15,25 @@ import {
 } from "react-icons/hi2";
 
 const CATEGORY_META = {
-  Akademik: {
+  "Ko-akademik": {
     color: "bg-blue-500",
     textColor: "text-blue-600",
     icon: <HiAcademicCap className="w-5 h-5" />,
   },
-  Sukan: {
-    color: "bg-orange-500",
-    textColor: "text-orange-600",
-    icon: <HiTrophy className="w-5 h-5" />,
-  },
-  "Ko-Kurikulum": {
+  "Badan Beruniform": {
     color: "bg-emerald-500",
     textColor: "text-emerald-600",
     icon: <HiUserGroup className="w-5 h-5" />,
   },
-  "Seni & Kebudayaan": {
+  "Kelab & Persatuan": {
     color: "bg-purple-500",
     textColor: "text-purple-600",
     icon: <HiStar className="w-5 h-5" />,
+  },
+  "Sukan & Permainan": {
+    color: "bg-orange-500",
+    textColor: "text-orange-600",
+    icon: <HiTrophy className="w-5 h-5" />,
   },
   "Lain-lain": {
     color: "bg-slate-500",

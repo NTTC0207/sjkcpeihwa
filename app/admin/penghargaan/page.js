@@ -50,33 +50,33 @@ const RichTextEditor = dynamic(
 import RevalidateButton from "@components/admin/RevalidateButton";
 
 const CATEGORY_META = {
-  Akademik: {
-    label: "Akademik",
+  "Ko-akademik": {
+    label: "Ko-akademik",
     color: "bg-blue-500",
     lightColor: "bg-blue-50",
     textColor: "text-blue-600",
     icon: <HiAcademicCap className="w-5 h-5" />,
   },
-  Sukan: {
-    label: "Sukan",
-    color: "bg-orange-500",
-    lightColor: "bg-orange-50",
-    textColor: "text-orange-600",
-    icon: <HiTrophy className="w-5 h-5" />,
-  },
-  "Ko-Kurikulum": {
-    label: "Ko-Kurikulum",
+  "Badan Beruniform": {
+    label: "Badan Beruniform",
     color: "bg-emerald-500",
     lightColor: "bg-emerald-50",
     textColor: "text-emerald-600",
     icon: <HiUserGroup className="w-5 h-5" />,
   },
-  "Seni & Kebudayaan": {
-    label: "Seni & Kebudayaan",
+  "Kelab & Persatuan": {
+    label: "Kelab & Persatuan",
     color: "bg-purple-500",
     lightColor: "bg-purple-50",
     textColor: "text-purple-600",
     icon: <HiStar className="w-5 h-5" />,
+  },
+  "Sukan & Permainan": {
+    label: "Sukan & Permainan",
+    color: "bg-orange-500",
+    lightColor: "bg-orange-50",
+    textColor: "text-orange-600",
+    icon: <HiTrophy className="w-5 h-5" />,
   },
   "Lain-lain": {
     label: "Lain-lain",
@@ -106,7 +106,7 @@ const MONTH_OPTIONS = [
 const EMPTY_FORM = {
   title: "",
   date: new Date().toISOString().split("T")[0],
-  category: "Akademik",
+  category: "Ko-akademik",
   summary: "",
   description: "",
   image: "",
@@ -348,7 +348,7 @@ export default function PenghargaanAdminPage() {
     setFormData({
       title: award.title || "",
       date: award.date || new Date().toISOString().split("T")[0],
-      category: award.category || "Akademik",
+      category: award.category || "Ko-akademik",
       summary: award.summary || "",
       description: award.description || "",
       image: award.image || "",

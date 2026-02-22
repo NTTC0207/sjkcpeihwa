@@ -185,10 +185,10 @@
     "tryAgain": "请尝试筛选其他年份或类别。",
     "categories": {
       "all": "全部",
-      "Akademik": "学术",
-      "Sukan": "体育",
-      "Ko-Kurikulum": "课外活动",
-      "Seni & Kebudayaan": "艺术与文化",
+      "Ko-akademik": "学术性课外活动",
+      "Badan Beruniform": "制服团体",
+      "Kelab & Persatuan": "社团与学会",
+      "Sukan & Permainan": "体育与游戏",
       "Lain-lain": "其他"
     },
     "backToList": "返回列表",
