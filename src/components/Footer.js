@@ -15,6 +15,10 @@ import {
 } from "react-icons/md";
 import { HiArrowRight, HiMail } from "react-icons/hi";
 import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  requestNotificationPermission,
+  saveFCMToken,
+} from "@/src/lib/firebase";
 
 /* ─────────────────────────────────────────
    Helper: detect iOS (no beforeinstallprompt)
@@ -177,18 +181,24 @@ export default function Footer({ translations }) {
       }, 3000);
     }
 
-    // Notification permission
-    if (!("Notification" in window)) {
-      // iOS browser without PWA install  OR very old browser
-      setNotifState(onIOS && !inStandalone ? "pwa-required" : "unsupported");
+    // ── Notification / Push state detection ──────────────────────
+    // iOS in browser (not installed): Notification API may exist on iOS 16.4+
+    // but PushManager is only available in standalone (installed) mode.
+    const hasPushManager = "PushManager" in window;
+    const hasNotification = "Notification" in window;
+
+    if (onIOS && !inStandalone) {
+      // iOS browser — must install first before push works
+      setNotifState("pwa-required");
+    } else if (!hasNotification || !hasPushManager) {
+      // Very old browser or unsupported environment
+      setNotifState("unsupported");
     } else if (Notification.permission === "granted") {
       setNotifState("enabled");
     } else if (Notification.permission === "denied") {
       setNotifState("denied");
-    } else {
-      // "default" — can ask. But on iOS browser (not standalone) don't allow yet
-      if (onIOS && !inStandalone) setNotifState("pwa-required");
     }
+    // else: "default" — leave as "idle" so user can tap to enable
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handler);
@@ -224,20 +234,38 @@ export default function Footer({ translations }) {
     setInstallPrompt(null);
   }, [ios, installPrompt]);
 
-  /* ── Notification handler ── */
+  /* ── Notification handler (FCM — works on Android + iOS 16.4+ PWA) ── */
   const handleNotifications = useCallback(async () => {
-    if (!("Notification" in window)) return;
+    setNotifState("loading");
     try {
-      const permission = await Notification.requestPermission();
-      if (permission === "granted") {
+      const token = await requestNotificationPermission();
+      if (token) {
+        // Persist the token so the server can send real push notifications
+        await saveFCMToken(token);
         setNotifState("enabled");
-        new Notification(t?.nav?.name || "SJKC Pei Hwa", {
-          body:
-            t?.footer?.pwa?.notificationsEnabled || "Notifications enabled ✓",
-          icon: "/icon-192x192.png",
-        });
-      } else if (permission === "denied") {
+        // Show a local confirmation toast only on platforms that support it
+        // (not bare iOS Safari — PushManager handles the delivery there)
+        if ("Notification" in window && Notification.permission === "granted") {
+          try {
+            new Notification(t?.nav?.name || "SJKC Pei Hwa", {
+              body:
+                t?.footer?.pwa?.notificationsEnabled ||
+                "Notifications enabled ✓",
+              icon: "/icon-192x192.png",
+            });
+          } catch {
+            // Some browsers (e.g., iOS) may block new Notification() even after
+            // granting push permission — that's fine, push still works via FCM.
+          }
+        }
+      } else if (
+        "Notification" in window &&
+        Notification.permission === "denied"
+      ) {
         setNotifState("denied");
+      } else {
+        // Permission dismissed or FCM unsupported
+        setNotifState("idle");
       }
     } catch {
       setNotifState("unsupported");
@@ -339,6 +367,16 @@ export default function Footer({ translations }) {
           disabled: true,
           className:
             "bg-white/5 border border-white/10 text-gray-500 cursor-not-allowed opacity-50",
+        };
+      case "loading":
+        return {
+          label: "Enabling Notifications...",
+          icon: (
+            <MdNotifications className="text-lg flex-shrink-0 animate-pulse" />
+          ),
+          disabled: true,
+          className:
+            "bg-white/5 border border-white/15 text-gray-400 cursor-wait opacity-70",
         };
       default: // idle
         return {
