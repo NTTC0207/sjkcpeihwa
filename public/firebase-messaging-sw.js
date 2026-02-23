@@ -9,20 +9,20 @@ importScripts(
   "https://www.gstatic.com/firebasejs/11.0.0/firebase-messaging-compat.js",
 );
 
+console.log('test')
 // ── Firebase config ──────────────────────────────────────────────
 // These values are SAFE to expose in a service worker (they are already
 // public-facing in your Next.js NEXT_PUBLIC_ env vars).
 const firebaseConfig = {
-  apiKey: self.FIREBASE_API_KEY || "REPLACE_WITH_YOUR_API_KEY",
-  authDomain: self.FIREBASE_AUTH_DOMAIN || "REPLACE_WITH_YOUR_AUTH_DOMAIN",
-  projectId: self.FIREBASE_PROJECT_ID || "REPLACE_WITH_YOUR_PROJECT_ID",
-  storageBucket:
-    self.FIREBASE_STORAGE_BUCKET || "REPLACE_WITH_YOUR_STORAGE_BUCKET",
-  messagingSenderId:
-    self.FIREBASE_MESSAGING_SENDER_ID ||
-    "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
-  appId: self.FIREBASE_APP_ID || "REPLACE_WITH_YOUR_APP_ID",
+  apiKey: "[GCP_API_KEY]",
+  authDomain: "peihwa-3ca3b.firebaseapp.com",
+  projectId: "peihwa-3ca3b",
+  storageBucket: "peihwa-3ca3b.firebasestorage.app",
+  messagingSenderId: "690162935351",
+  appId: "1:690162935351:web:35320c599d1a524014c1b2",
 };
+
+console.log("Firebase config:", firebaseConfig);
 
 firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();

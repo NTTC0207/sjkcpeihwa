@@ -236,38 +236,54 @@ export default function Footer({ translations }) {
 
   /* ── Notification handler (FCM — works on Android + iOS 16.4+ PWA) ── */
   const handleNotifications = useCallback(async () => {
+    console.log("Starting notification registration...");
     setNotifState("loading");
+
     try {
       const token = await requestNotificationPermission();
+
       if (token) {
+        console.log("FCM Token acquired:", token);
         // Persist the token so the server can send real push notifications
         await saveFCMToken(token);
         setNotifState("enabled");
-        // Show a local confirmation toast only on platforms that support it
-        // (not bare iOS Safari — PushManager handles the delivery there)
-        if ("Notification" in window && Notification.permission === "granted") {
-          try {
-            new Notification(t?.nav?.name || "SJKC Pei Hwa", {
+
+        // Show a local confirmation toast via Service Worker
+        // (Necessary for mobile where new Notification() is often blocked)
+        if ("serviceWorker" in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          if (registration && "showNotification" in registration) {
+            registration.showNotification(t?.nav?.name || "SJKC Pei Hwa", {
               body:
                 t?.footer?.pwa?.notificationsEnabled ||
                 "Notifications enabled ✓",
               icon: "/icon-192x192.png",
+              badge: "/icon-192x192.png",
             });
-          } catch {
-            // Some browsers (e.g., iOS) may block new Notification() even after
-            // granting push permission — that's fine, push still works via FCM.
           }
         }
-      } else if (
-        "Notification" in window &&
-        Notification.permission === "denied"
-      ) {
-        setNotifState("denied");
       } else {
-        // Permission dismissed or FCM unsupported
-        setNotifState("idle");
+        // If token is null, it could be because permission was denied OR missing VAPID key
+        const permission = Notification.permission;
+        console.log("Notification permission state:", permission);
+
+        if (permission === "denied") {
+          setNotifState("denied");
+        } else {
+          // Could be "default" (dismissed) or internal error (like missing VAPID)
+          setNotifState("idle");
+
+          // On iOS, if nothing happens, it's often confusing.
+          // If we are here and permission is STILL default, it means the dialog didn't show or was dismissed.
+          if (permission === "default") {
+            console.warn(
+              "Notification permission dialog was dismissed or not shown.",
+            );
+          }
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error("Error in handleNotifications:", error);
       setNotifState("unsupported");
     }
   }, [t]);

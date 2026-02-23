@@ -52,26 +52,42 @@ export async function getMessagingInstance() {
  * @returns {Promise<string|null>} FCM token or null if unavailable/denied.
  */
 export async function requestNotificationPermission() {
-  const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
-  if (!vapidKey) {
-    console.warn("NEXT_PUBLIC_FIREBASE_VAPID_KEY is not set.");
+  // 1. Check if the Notification API is available
+  if (typeof window === "undefined" || !("Notification" in window)) {
+    console.warn("Notifications are not supported in this browser.");
     return null;
   }
 
-  // 1. Check if the Notification API is available
-  if (!("Notification" in window)) return null;
-
-  // 2. Request permission (browser will show native dialog if not yet decided)
+  // 2. Request permission (MUST be called directly from user gesture for iOS)
   let permission = Notification.permission;
   if (permission === "default") {
-    permission = await Notification.requestPermission();
+    try {
+      permission = await Notification.requestPermission();
+    } catch (err) {
+      console.error("Error requesting notification permission:", err);
+      return null;
+    }
   }
-  if (permission !== "granted") return null;
 
-  // 3. Register / verify the FCM service worker
+  if (permission !== "granted") {
+    console.log("Notification permission was not granted:", permission);
+    return null;
+  }
+
+  // 3. Now that we have permission, we can proceed with FCM-specific setup
+  const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+  if (!vapidKey) {
+    console.warn(
+      "NEXT_PUBLIC_FIREBASE_VAPID_KEY is not set. Cannot get FCM token.",
+    );
+    // We still have permission, but we can't get a token to send push notifications.
+    return null;
+  }
+
+  // 4. Register / verify the FCM service worker
   let swReg;
   try {
-    // Use the dedicated FCM sw. 'updateViaCache: none' ensures it stays fresh.
+    // Wait for SW to be ready
     swReg = await navigator.serviceWorker.register(
       "/firebase-messaging-sw.js",
       {
@@ -79,21 +95,28 @@ export async function requestNotificationPermission() {
         updateViaCache: "none",
       },
     );
+
+    // On some browsers, we might need to wait for the registration to be fully active
+    await navigator.serviceWorker.ready;
   } catch (err) {
     console.error("FCM service worker registration failed:", err);
     return null;
   }
 
-  // 4. Get the FCM push token
+  // 5. Get the FCM push token
   try {
     const { getToken } = await import("firebase/messaging");
     const messaging = await getMessagingInstance();
-    if (!messaging) return null;
+    if (!messaging) {
+      console.warn("Messaging instance could not be initialized.");
+      return null;
+    }
 
     const token = await getToken(messaging, {
       vapidKey,
       serviceWorkerRegistration: swReg,
     });
+
     return token || null;
   } catch (err) {
     console.error("Failed to get FCM token:", err);
