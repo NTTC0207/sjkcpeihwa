@@ -140,7 +140,6 @@ export default function Footer({ translations }) {
 
   // Notifications
   const [notifState, setNotifState] = useState("idle"); // "idle"|"enabled"|"denied"|"unsupported"|"pwa-required"
-  const hasAutoRun = useRef(false);
 
   useEffect(() => {
     const onIOS = isIOS();
@@ -189,16 +188,6 @@ export default function Footer({ translations }) {
     const hasNotification = "Notification" in window;
     const isSecure = window.isSecureContext;
 
-    console.log("FCM Debug Check:", {
-      hasNotification,
-      hasPushManager,
-      isSecure,
-      userAgent: navigator.userAgent,
-      standalone: inStandalone,
-      permission:
-        typeof Notification !== "undefined" ? Notification.permission : "N/A",
-    });
-
     if (!isSecure) {
       console.warn(
         "FCM Warning: This is NOT a secure context. Notifications/ServiceWorkers will only work on localhost or HTTPS.",
@@ -233,6 +222,36 @@ export default function Footer({ translations }) {
     }
   }, [standalone, notifState]);
 
+  // AUTO-TRIGGER: If permission is already granted, try to get the token immediately
+  // so the user doesn't have to click a disabled button.
+  // useEffect(() => {
+  //   if (notifState === "enabled") {
+  //     console.log("FCM: Permission already granted. Refreshing token...");
+  //     handleNotifications();
+  //   }
+  // }, [notifState, handleNotifications]);
+
+  /* ── Install handler ── */
+  const handleInstall = useCallback(async () => {
+    if (ios) {
+      setShowIOSModal(true);
+      return;
+    }
+    if (!installPrompt) return;
+    setInstallState("installing");
+    try {
+      const result = await installPrompt.prompt();
+      if (result?.outcome === "accepted") {
+        setInstallState("installed");
+      } else {
+        setInstallState("idle");
+      }
+    } catch {
+      setInstallState("idle");
+    }
+    setInstallPrompt(null);
+  }, [ios, installPrompt]);
+
   /* ── Notification handler (FCM — works on Android + iOS 16.4+ PWA) ── */
   const handleNotifications = useCallback(async () => {
     console.log("Starting notification registration...");
@@ -244,7 +263,7 @@ export default function Footer({ translations }) {
       if (token) {
         console.log("FCM Token acquired:", token);
         // Persist the token so the server can send real push notifications
-        // await saveFCMToken(token);
+        await saveFCMToken(token);
         setNotifState("enabled");
 
         // Show a local confirmation toast via Service Worker
@@ -286,37 +305,6 @@ export default function Footer({ translations }) {
       setNotifState("unsupported");
     }
   }, [t]);
-
-  // AUTO-TRIGGER: If permission is already granted, try to get the token immediately
-  // so the user doesn't have to click a disabled button.
-  useEffect(() => {
-    if (notifState === "enabled" && !hasAutoRun.current) {
-      hasAutoRun.current = true;
-      console.log("FCM: Permission already granted. Refreshing token...");
-      handleNotifications();
-    }
-  }, [notifState, handleNotifications]);
-
-  /* ── Install handler ── */
-  const handleInstall = useCallback(async () => {
-    if (ios) {
-      setShowIOSModal(true);
-      return;
-    }
-    if (!installPrompt) return;
-    setInstallState("installing");
-    try {
-      const result = await installPrompt.prompt();
-      if (result?.outcome === "accepted") {
-        setInstallState("installed");
-      } else {
-        setInstallState("idle");
-      }
-    } catch {
-      setInstallState("idle");
-    }
-    setInstallPrompt(null);
-  }, [ios, installPrompt]);
 
   /* ── Install button config ── */
   const installBtn = (() => {
