@@ -77,16 +77,16 @@ export async function requestNotificationPermission() {
   // 3. Now that we have permission, we can proceed with FCM-specific setup
   const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
   if (!vapidKey) {
-    console.warn(
-      "NEXT_PUBLIC_FIREBASE_VAPID_KEY is not set. Cannot get FCM token.",
+    console.error(
+      "❌ FCM ERROR: NEXT_PUBLIC_FIREBASE_VAPID_KEY is missing from your environment variables (.env.local).",
     );
-    // We still have permission, but we can't get a token to send push notifications.
     return null;
   }
 
   // 4. Register / verify the FCM service worker
   let swReg;
   try {
+    console.log("FCM: Registering service worker...");
     // Wait for SW to be ready
     swReg = await navigator.serviceWorker.register(
       "/firebase-messaging-sw.js",
@@ -96,8 +96,10 @@ export async function requestNotificationPermission() {
       },
     );
 
+    console.log("FCM: Service worker registered. Waiting for activation...");
     // On some browsers, we might need to wait for the registration to be fully active
     await navigator.serviceWorker.ready;
+    console.log("FCM: Service worker ready.");
   } catch (err) {
     console.error("FCM service worker registration failed:", err);
     return null;
@@ -112,10 +114,17 @@ export async function requestNotificationPermission() {
       return null;
     }
 
+    console.log("FCM: Requesting token with VAPID key...");
     const token = await getToken(messaging, {
       vapidKey,
       serviceWorkerRegistration: swReg,
     });
+
+    if (token) {
+      console.log("FCM: Token generated successfully.");
+    } else {
+      console.warn("FCM: No token returned from getToken().");
+    }
 
     return token || null;
   } catch (err) {

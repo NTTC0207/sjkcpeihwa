@@ -20,7 +20,7 @@ export function LanguageProvider({ children }) {
       try {
         const response = await fetch(`/locales/${locale}/common.json`);
         if (!response.ok) {
-          throw new Error(`Failed to load translations for ${locale}`);
+          // throw new Error(`Failed to load translations for ${locale}`);
         }
         const data = await response.json();
         setTranslations(data);
