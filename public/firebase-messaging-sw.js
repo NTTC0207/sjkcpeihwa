@@ -9,12 +9,11 @@ importScripts(
   "https://www.gstatic.com/firebasejs/11.0.0/firebase-messaging-compat.js",
 );
 
-console.log('test')
 // ── Firebase config ──────────────────────────────────────────────
 // These values are SAFE to expose in a service worker (they are already
 // public-facing in your Next.js NEXT_PUBLIC_ env vars).
 const firebaseConfig = {
-  apiKey: "[GCP_API_KEY]",
+  apiKey: "AIzaSyCxYQfFgCghAl2FubDTKUEpMZosBc4gPZs",
   authDomain: "peihwa-3ca3b.firebaseapp.com",
   projectId: "peihwa-3ca3b",
   storageBucket: "peihwa-3ca3b.firebasestorage.app",
