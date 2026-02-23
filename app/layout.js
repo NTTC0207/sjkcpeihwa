@@ -10,16 +10,16 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata = {
   metadataBase: new URL("https://sjkcpeihwa.vercel.app"),
   title: {
-    default: "SJK(C) Pei Hwa | 培华国民型华文小学",
-    template: "%s | SJK(C) Pei Hwa",
+    default: "SJKC Pei Hwa | 培华国民型华文小学",
+    template: "%s | SJKC Pei Hwa",
   },
-  siteName: "SJK(C) Pei Hwa",
+  siteName: "SJKC Pei Hwa",
   description:
-    "Laman web rasmi SJK(C) Pei Hwa (培华国民型华文小学), Machang, Kelantan. Memupuk minda muda melalui kecemerlangan pendidikan, pembinaan karakter, dan warisan budaya.",
-  applicationName: "SJK(C) Pei Hwa",
+    "Laman web rasmi SJKC Pei Hwa (培华国民型华文小学), Machang, Kelantan. Memupuk minda muda melalui kecemerlangan pendidikan, pembinaan karakter, dan warisan budaya.",
+  applicationName: "SJKC Pei Hwa",
   appleWebApp: {
     capable: true,
-    title: "SJK(C) Pei Hwa",
+    title: "SJKC Pei Hwa",
     statusBarStyle: "default",
   },
   keywords: [
@@ -28,7 +28,7 @@ export const metadata = {
     "Pei Hwa Machang",
     "培华小学",
     "培华华小",
-    "SJK(C) Pei Hwa",
+    "SJKC Pei Hwa",
     "SJK Pei Hwa Machang",
     "培华国民型华文小学",
     "Sekolah Rendah Machang",
@@ -41,9 +41,9 @@ export const metadata = {
     "马樟培华华小",
     "马樟培华小学",
   ],
-  authors: [{ name: "SJK(C) Pei Hwa" }],
-  creator: "SJK(C) Pei Hwa",
-  publisher: "SJK(C) Pei Hwa",
+  authors: [{ name: "SJKC Pei Hwa" }],
+  creator: "SJKC Pei Hwa",
+  publisher: "SJKC Pei Hwa",
   alternates: {
     canonical: "https://sjkcpeihwa.vercel.app",
     languages: {
@@ -57,17 +57,17 @@ export const metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "SJK(C) Pei Hwa | 培华国民型华文小学",
+    title: "SJKC Pei Hwa | 培华国民型华文小学",
     description:
-      "Laman web rasmi SJK(C) Pei Hwa - Memupuk Minda Muda, Membina Masa Depan Cerah. 培育英才，共创辉煌。",
+      "Laman web rasmi SJKC Pei Hwa - Memupuk Minda Muda, Membina Masa Depan Cerah. 培育英才，共创辉煌。",
     url: "https://sjkcpeihwa.vercel.app",
-    siteName: "SJK(C) Pei Hwa",
+    siteName: "SJKC Pei Hwa",
     images: [
       {
         url: "/gallery/landing-hero.avif",
         width: 1200,
         height: 630,
-        alt: "SJK(C) Pei Hwa School Building - 培华国民型华文小学",
+        alt: "SJKC Pei Hwa School Building - 培华国民型华文小学",
       },
     ],
     locale: "zh_CN",
@@ -76,9 +76,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "SJK(C) Pei Hwa | 培华国民型华文小学",
+    title: "SJKC Pei Hwa | 培华国民型华文小学",
     description:
-      "Laman web rasmi SJK(C) Pei Hwa - Memupuk Minda Muda, Membina Masa Depan Cerah.",
+      "Laman web rasmi SJKC Pei Hwa - Memupuk Minda Muda, Membina Masa Depan Cerah.",
     images: ["/gallery/landing-hero.avif"],
   },
   robots: {
@@ -113,11 +113,11 @@ export default function RootLayout({ children }) {
   const schoolJsonLd = {
     "@context": "https://schema.org",
     "@type": "ElementarySchool",
-    name: "SJK(C) Pei Hwa",
+    name: "SJKC Pei Hwa",
     alternateName: [
       "培华国民型华文小学",
       "SJKC Pei Hwa Machang",
-      "SJK(C) Pei Hwa Machang",
+      "SJKC Pei Hwa Machang",
     ],
     url: "https://sjkcpeihwa.vercel.app",
     logo: {
@@ -128,7 +128,7 @@ export default function RootLayout({ children }) {
     },
     image: "https://sjkcpeihwa.vercel.app/gallery/landing-hero.avif",
     description:
-      "Laman web rasmi SJK(C) Pei Hwa (培华国民型华文小学), Machang, Kelantan. Sekolah rendah jenis kebangsaan Cina yang menawarkan pendidikan berkualiti tinggi.",
+      "Laman web rasmi SJKC Pei Hwa (培华国民型华文小学), Machang, Kelantan. Sekolah rendah jenis kebangsaan Cina yang menawarkan pendidikan berkualiti tinggi.",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Machang",
@@ -160,7 +160,7 @@ export default function RootLayout({ children }) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": "https://sjkcpeihwa.vercel.app/#website",
-    name: "SJK(C) Pei Hwa",
+    name: "SJKC Pei Hwa",
     alternateName: ["培华国民型华文小学", "SJKC Pei Hwa"],
     url: "https://sjkcpeihwa.vercel.app",
   };

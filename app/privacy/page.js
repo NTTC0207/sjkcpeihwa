@@ -3,12 +3,12 @@ import Link from "next/link";
 export const metadata = {
   title: "Dasar Privasi | Privacy Policy | 隐私政策",
   description:
-    "Dasar Privasi SJK(C) Pei Hwa Machang – maklumat tentang penggunaan kuki dan Google Analytics.",
+    "Dasar Privasi SJKC Pei Hwa Machang – maklumat tentang penggunaan kuki dan Google Analytics.",
   openGraph: {
-    title: "Dasar Privasi | SJK(C) Pei Hwa",
-    description: "Dasar Privasi rasmi SJK(C) Pei Hwa Machang.",
+    title: "Dasar Privasi | SJKC Pei Hwa",
+    description: "Dasar Privasi rasmi SJKC Pei Hwa Machang.",
     url: "https://sjkcpeihwa.vercel.app/privacy",
-    siteName: "SJK(C) Pei Hwa",
+    siteName: "SJKC Pei Hwa",
     type: "website",
   },
 };
@@ -22,7 +22,7 @@ const sections = [
     items: [
       {
         heading: "1. Gambaran Keseluruhan",
-        body: "SJK(C) Pei Hwa Machang ('kami') menghormati privasi semua pengunjung laman web ini. Dasar Privasi ini menerangkan bagaimana maklumat dikumpul dan digunakan apabila anda melawat laman web rasmi kami di sjkcpeihwa",
+        body: "SJKC Pei Hwa Machang ('kami') menghormati privasi semua pengunjung laman web ini. Dasar Privasi ini menerangkan bagaimana maklumat dikumpul dan digunakan apabila anda melawat laman web rasmi kami di sjkcpeihwa",
       },
       {
         heading: "2. Maklumat yang Dikumpul",
@@ -94,7 +94,7 @@ const sections = [
     items: [
       {
         heading: "1. Overview",
-        body: "SJK(C) Pei Hwa Machang ('we') respects the privacy of all visitors to this website. This Privacy Policy explains how information is collected and used when you visit our official website at sjkcpeihwa",
+        body: "SJKC Pei Hwa Machang ('we') respects the privacy of all visitors to this website. This Privacy Policy explains how information is collected and used when you visit our official website at sjkcpeihwa",
       },
       {
         heading: "2. Information Collected",
@@ -198,7 +198,7 @@ export default function PrivacyPage() {
             Dasar Privasi · 隐私政策 · Privacy Policy
           </h1>
           <p style={{ color: "#94a3b8", fontSize: "14px", margin: 0 }}>
-            SJK(C) Pei Hwa Machang
+            SJKC Pei Hwa Machang
           </p>
         </div>
       </div>

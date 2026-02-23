@@ -18,10 +18,10 @@ export async function generateMetadata({ params }) {
       canonical: `https://sjkcpeihwa.vercel.app/profile/history/${id}`,
     },
     openGraph: {
-      title: `${item.title} | SJK(C) Pei Hwa`,
+      title: `${item.title} | SJKC Pei Hwa`,
       description: item.description,
       url: `https://sjkcpeihwa.vercel.app/profile/history/${id}`,
-      siteName: "SJK(C) Pei Hwa",
+      siteName: "SJKC Pei Hwa",
       type: "article",
     },
   };

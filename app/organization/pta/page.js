@@ -9,15 +9,15 @@ export const revalidate = false;
 export const metadata = {
   title: "Persatuan Ibu Bapa & Guru (PTA / PIBG)",
   description:
-    "Ahli Persatuan Ibu Bapa dan Guru (PIBG) SJK(C) Pei Hwa Machang, Kelantan. Kerjasama antara ibu bapa dan guru demi kecemerlangan pelajar.",
+    "Ahli Persatuan Ibu Bapa dan Guru (PIBG) SJKC Pei Hwa Machang, Kelantan. Kerjasama antara ibu bapa dan guru demi kecemerlangan pelajar.",
   alternates: {
     canonical: "https://sjkcpeihwa.vercel.app/organization/pta",
   },
   openGraph: {
-    title: "PIBG / PTA | SJK(C) Pei Hwa",
-    description: "Persatuan Ibu Bapa dan Guru SJK(C) Pei Hwa Machang.",
+    title: "PIBG / PTA | SJKC Pei Hwa",
+    description: "Persatuan Ibu Bapa dan Guru SJKC Pei Hwa Machang.",
     url: "https://sjkcpeihwa.vercel.app/organization/pta",
-    siteName: "SJK(C) Pei Hwa",
+    siteName: "SJKC Pei Hwa",
     type: "website",
   },
 };

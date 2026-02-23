@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "SJK(C) Pei Hwa | 培华国民型华文小学",
-    short_name: "SJK(C) Pei Hwa",
-    description: "Laman web rasmi SJK(C) Pei Hwa (培华国民型华文小学), Machang, Kelantan. Memupuk minda muda melalui kecemerlangan pendidikan.",
+    name: "SJKC Pei Hwa | 培华国民型华文小学",
+    short_name: "SJKC Pei Hwa",
+    description: "Laman web rasmi SJKC Pei Hwa (培华国民型华文小学), Machang, Kelantan. Memupuk minda muda melalui kecemerlangan pendidikan.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

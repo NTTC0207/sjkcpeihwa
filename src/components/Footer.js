@@ -74,7 +74,7 @@ function IOSInstallModal({ onClose, translations: t }) {
             />
           </div>
           <div>
-            <p className="font-bold text-white text-sm">SJK(C) Pei Hwa</p>
+            <p className="font-bold text-white text-sm">SJKC Pei Hwa</p>
             <p className="text-xs text-gray-400">Install the App on iOS</p>
           </div>
         </div>
@@ -231,7 +231,7 @@ export default function Footer({ translations }) {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         setNotifState("enabled");
-        new Notification(t?.nav?.name || "SJK(C) Pei Hwa", {
+        new Notification(t?.nav?.name || "SJKC Pei Hwa", {
           body:
             t?.footer?.pwa?.notificationsEnabled || "Notifications enabled ✓",
           icon: "/icon-192x192.png",
@@ -410,7 +410,7 @@ export default function Footer({ translations }) {
                 </div>
                 <div>
                   <h3 className="text-xl font-display font-bold">
-                    SJK(C) Pei Hwa
+                    SJKC Pei Hwa
                   </h3>
                   <p className="text-sm text-gray-300">Machang</p>
                 </div>
@@ -430,7 +430,7 @@ export default function Footer({ translations }) {
                 <li className="flex items-start">
                   <MdLocationOn className="mr-2 mt-1 text-accent-yellow text-lg" />
                   <a
-                    href="https://www.google.com/maps/place/SJK(C)+Pei+Hwa/@5.7651017,102.2206205,17z/data=!3m1!4b1!4m6!3m5!1s0x31b685332f7428b9:0x9723d38c28a38913!8m2!3d5.7650964!4d102.2231954!16s%2Fg%2F122np819?entry=ttu&g_ep=EgoyMDI2MDIxMS4wIKXMDSoASAFQAw%3D%3D"
+                    href="https://www.google.com/maps/place/SJKC+Pei+Hwa/@5.7651017,102.2206205,17z/data=!3m1!4b1!4m6!3m5!1s0x31b685332f7428b9:0x9723d38c28a38913!8m2!3d5.7650964!4d102.2231954!16s%2Fg%2F122np819?entry=ttu&g_ep=EgoyMDI2MDIxMS4wIKXMDSoASAFQAw%3D%3D"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-accent-yellow transition-colors duration-300"
@@ -545,7 +545,7 @@ export default function Footer({ translations }) {
                     "{{year}}",
                     new Date().getFullYear(),
                   )
-                : `© ${new Date().getFullYear()} SJK(C) Pei Hwa Machang. All rights reserved.`}
+                : `© ${new Date().getFullYear()} SJKC Pei Hwa Machang. All rights reserved.`}
             </p>
             <Link
               href="/privacy"

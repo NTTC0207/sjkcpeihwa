@@ -131,7 +131,7 @@ export default function LandscapePage() {
   const tTitle = translations?.nav?.profile?.landscape || "Campus Landscape";
   const tDescription =
     translations?.landscape?.tagline ||
-    "Discover the serene environment and modern facilities of SJK(C) Pei Hwa.";
+    "Discover the serene environment and modern facilities of SJKC Pei Hwa.";
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pt-32 pb-24">

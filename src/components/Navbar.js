@@ -178,7 +178,7 @@ export default function Navbar({
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl font-display font-bold text-primary">
-                {t("nav.name", "SJK(C) Pei Hwa")}
+                {t("nav.name", "SJKC Pei Hwa")}
               </h1>
               <p className="text-xs text-gray-600 font-medium">
                 {t("nav.place", "Machang")}

@@ -139,9 +139,7 @@ export default function AdminPage() {
                   <h1 className="text-xl font-display font-bold">
                     Papan Pemuka Pentadbir
                   </h1>
-                  <p className="text-xs text-gray-300">
-                    SJK(C) Pei Hwa Machang
-                  </p>
+                  <p className="text-xs text-gray-300">SJKC Pei Hwa Machang</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
@@ -161,7 +159,6 @@ export default function AdminPage() {
             </div>
           </div>
         </nav>
-
 
         {/* Dashboard Content */}
         <div className="container-custom py-8">
@@ -299,7 +296,7 @@ export default function AdminPage() {
           <h1 className="text-3xl font-display font-bold text-white mb-2">
             Log Masuk Pentadbir
           </h1>
-          <p className="text-primary-foreground/70">SJK(C) Pei Hwa Machang</p>
+          <p className="text-primary-foreground/70">SJKC Pei Hwa Machang</p>
         </div>
 
         {/* Login Card */}

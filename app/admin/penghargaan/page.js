@@ -534,7 +534,7 @@ export default function PenghargaanAdminPage() {
               <h1 className="text-xl font-display font-bold">
                 Pengurusan Penghargaan
               </h1>
-              <p className="text-xs text-gray-300">SJK(C) Pei Hwa Machang</p>
+              <p className="text-xs text-gray-300">SJKC Pei Hwa Machang</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -948,7 +948,7 @@ export default function PenghargaanAdminPage() {
 
       <footer className="container-custom py-12 border-t border-gray-100 mt-12 bg-white/50">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-gray-400 text-xs font-bold uppercase tracking-widest">
-          <p>© 2026 Portal Admin SJK(C) Pei Hwa</p>
+          <p>© 2026 Portal Admin SJKC Pei Hwa</p>
           <div className="flex items-center gap-6">
             <a href="#" className="hover:text-primary transition-colors">
               Bantuan

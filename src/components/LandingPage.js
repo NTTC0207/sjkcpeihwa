@@ -152,7 +152,7 @@ export default function LandingPage() {
                 >
                   <img
                     src="/gallery/landing-hero.avif"
-                    alt="SJK(C) Pei Hwa Hero"
+                    alt="SJKC Pei Hwa Hero"
                     className="w-full h-[350px] md:h-[450px] lg:h-[500px] object-cover transform group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent opacity-60"></div>
@@ -425,7 +425,7 @@ export default function LandingPage() {
                     {translations?.contact?.visit || "Visit Us"}
                   </h3>
                   <a
-                    href="https://www.google.com/maps/place/SJK(C)+Pei+Hwa/@5.7651017,102.2206205,17z/data=!3m1!4b1!4m6!3m5!1s0x31b685332f7428b9:0x9723d38c28a38913!8m2!3d5.7650964!4d102.2231954!16s%2Fg%2F122np819?entry=ttu&g_ep=EgoyMDI2MDIxMS4wIKXMDSoASAFQAw%3D%3D"
+                    href="https://www.google.com/maps/place/SJKC+Pei+Hwa/@5.7651017,102.2206205,17z/data=!3m1!4b1!4m6!3m5!1s0x31b685332f7428b9:0x9723d38c28a38913!8m2!3d5.7650964!4d102.2231954!16s%2Fg%2F122np819?entry=ttu&g_ep=EgoyMDI2MDIxMS4wIKXMDSoASAFQAw%3D%3D"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-600 leading-relaxed font-medium hover:text-primary transition-colors duration-300"
@@ -477,7 +477,7 @@ export default function LandingPage() {
               className="relative rounded-3xl overflow-hidden shadow-2xl border-8 border-white min-h-[400px] lg:min-h-full group"
             >
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3969.638125010755!2d102.22062047495648!3d5.765101731511689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31b685332f7428b9%3A0x9723d38c28a38913!2sSJK(C)%20Pei%20Hwa!5e0!3m2!1sen!2smy!4v1771335891513!5m2!1sen!2smy"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3969.638125010755!2d102.22062047495648!3d5.765101731511689!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31b685332f7428b9%3A0x9723d38c28a38913!2sSJKC%20Pei%20Hwa!5e0!3m2!1sen!2smy!4v1771335891513!5m2!1sen!2smy"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -485,7 +485,7 @@ export default function LandingPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="absolute inset-0 grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
-                title="SJK(C) Pei Hwa Location"
+                title="SJKC Pei Hwa Location"
               ></iframe>
             </motion.div>
           </div>

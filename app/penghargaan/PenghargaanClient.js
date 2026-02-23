@@ -358,7 +358,7 @@ export default function PenghargaanClient({ initialAwards }) {
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
               {t(
                 "penghargaan.subtitle",
-                "Meraikan kecemerlangan dan kejayaan murid-murid SJK(C) Pei Hwa dalam pelbagai bidang.",
+                "Meraikan kecemerlangan dan kejayaan murid-murid SJKC Pei Hwa dalam pelbagai bidang.",
               )}
             </p>
 

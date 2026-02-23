@@ -9,15 +9,15 @@ export const revalidate = false;
 export const metadata = {
   title: "Lembaga Pengurusan Sekolah (LPS)",
   description:
-    "Ahli Lembaga Pengurusan Sekolah (LPS) SJK(C) Pei Hwa Machang, Kelantan. Badan pengurusan yang memastikan kecemerlangan pentadbiran dan pembangunan sekolah.",
+    "Ahli Lembaga Pengurusan Sekolah (LPS) SJKC Pei Hwa Machang, Kelantan. Badan pengurusan yang memastikan kecemerlangan pentadbiran dan pembangunan sekolah.",
   alternates: {
     canonical: "https://sjkcpeihwa.vercel.app/organization/lps",
   },
   openGraph: {
-    title: "Lembaga Pengurusan Sekolah (LPS) | SJK(C) Pei Hwa",
-    description: "Ahli Lembaga Pengurusan Sekolah SJK(C) Pei Hwa Machang.",
+    title: "Lembaga Pengurusan Sekolah (LPS) | SJKC Pei Hwa",
+    description: "Ahli Lembaga Pengurusan Sekolah SJKC Pei Hwa Machang.",
     url: "https://sjkcpeihwa.vercel.app/organization/lps",
-    siteName: "SJK(C) Pei Hwa",
+    siteName: "SJKC Pei Hwa",
     type: "website",
   },
 };

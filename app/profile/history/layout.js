@@ -1,7 +1,7 @@
 export const metadata = {
   title: "校史 | School History",
   description:
-    "Perjalanan sejarah SJK(C) Pei Hwa dari 1939 hingga kini. Jejaki perkembangan sekolah melalui detik-detik bersejarah yang membentuk institusi pendidikan unggul di Machang, Kelantan.",
+    "Perjalanan sejarah SJKC Pei Hwa dari 1939 hingga kini. Jejaki perkembangan sekolah melalui detik-detik bersejarah yang membentuk institusi pendidikan unggul di Machang, Kelantan.",
   keywords: [
     "SJK Pei Hwa history",
     "培华小学校史",
@@ -13,11 +13,11 @@ export const metadata = {
     canonical: "https://sjkcpeihwa.vercel.app/profile/history",
   },
   openGraph: {
-    title: "校史 | SJK(C) Pei Hwa",
+    title: "校史 | SJKC Pei Hwa",
     description:
-      "Perjalanan sejarah SJK(C) Pei Hwa dari 1939 hingga kini di Machang, Kelantan.",
+      "Perjalanan sejarah SJKC Pei Hwa dari 1939 hingga kini di Machang, Kelantan.",
     url: "https://sjkcpeihwa.vercel.app/profile/history",
-    siteName: "SJK(C) Pei Hwa",
+    siteName: "SJKC Pei Hwa",
     type: "website",
   },
 };

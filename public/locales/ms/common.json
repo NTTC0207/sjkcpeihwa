@@ -1,6 +1,6 @@
 {
   "nav": {
-    "name": "SJK(C) Pei Hwa",
+    "name": "SJKC Pei Hwa",
     "place": "Machang",
     "home": "Laman Utama",
     "about": "Tentang Kami",
@@ -32,10 +32,10 @@
     }
   },
   "history": {
-    "subtitle": "Menelusuri legasi SJK(C) Pei Hwa, daripada permulaannya yang sederhana hingga mencapai kecemerlangan moden"
+    "subtitle": "Menelusuri legasi SJKC Pei Hwa, daripada permulaannya yang sederhana hingga mencapai kecemerlangan moden"
   },
   "hero": {
-    "welcome": "Selamat Datang ke SJK(C) Pei Hwa Machang",
+    "welcome": "Selamat Datang ke SJKC Pei Hwa Machang",
     "motto": "Memupuk Minda Muda, Membina Masa Depan Cerah",
     "cta": "Ketahui Lebih Lanjut"
   },
@@ -112,7 +112,7 @@
     "followUs": "Ikuti Kami",
     "hours": "Waktu Persekolahan",
     "days": "Ahad - Khamis: 7:30 AM - 4:30 PM",
-    "copyright": "© {{year}} SJK(C) Pei Hwa Machang. Hak cipta terpelihara.",
+    "copyright": "© {{year}} SJKC Pei Hwa Machang. Hak cipta terpelihara.",
     "pwa": {
       "title": "Aplikasi Mudah Alih",
       "install": "Pasang Aplikasi",
@@ -143,7 +143,7 @@
   },
   "landscape": {
     "title": "Landskap Sekolah",
-    "tagline": "Terokai persekitaran yang tenang dan kemudahan moden di SJK(C) Pei Hwa Machang."
+    "tagline": "Terokai persekitaran yang tenang dan kemudahan moden di SJKC Pei Hwa Machang."
   },
   "pta": {
     "title": "PIBG",
@@ -185,7 +185,7 @@
   },
   "penghargaan": {
     "title": "Penghargaan",
-    "subtitle": "Meraikan kecemerlangan dan kejayaan murid-murid SJK(C) Pei Hwa dalam pelbagai bidang.",
+    "subtitle": "Meraikan kecemerlangan dan kejayaan murid-murid SJKC Pei Hwa dalam pelbagai bidang.",
     "categoryLabel": "Kategori",
     "yearLabel": "Tahun",
     "all": "Semua",

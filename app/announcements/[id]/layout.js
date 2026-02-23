@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
       const title = data.title || "Pengumuman";
       const description =
         data.summary ||
-        `Pengumuman daripada SJK(C) Pei Hwa Machang, Kelantan bertarikh ${data.date || ""}.`;
+        `Pengumuman daripada SJKC Pei Hwa Machang, Kelantan bertarikh ${data.date || ""}.`;
 
       return {
         title,
@@ -22,10 +22,10 @@ export async function generateMetadata({ params }) {
           canonical: `https://sjkcpeihwa.vercel.app/announcements/${id}`,
         },
         openGraph: {
-          title: `${title} | SJK(C) Pei Hwa`,
+          title: `${title} | SJKC Pei Hwa`,
           description,
           url: `https://sjkcpeihwa.vercel.app/announcements/${id}`,
-          siteName: "SJK(C) Pei Hwa",
+          siteName: "SJKC Pei Hwa",
           type: "article",
           publishedTime: data.date,
           images: data.image
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }) {
                   url: "/gallery/landing-hero.avif",
                   width: 1200,
                   height: 630,
-                  alt: "SJK(C) Pei Hwa",
+                  alt: "SJKC Pei Hwa",
                 },
               ],
         },
@@ -46,8 +46,8 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: "Pengumuman | SJK(C) Pei Hwa",
-    description: "Pengumuman daripada SJK(C) Pei Hwa Machang, Kelantan.",
+    title: "Pengumuman | SJKC Pei Hwa",
+    description: "Pengumuman daripada SJKC Pei Hwa Machang, Kelantan.",
   };
 }
 

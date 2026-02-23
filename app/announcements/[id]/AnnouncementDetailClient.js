@@ -75,7 +75,7 @@ export default function AnnouncementDetailClient({ announcement }) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-primary">
-                      SJK(C) Pei Hwa
+                      SJKC Pei Hwa
                     </p>
                     <p className="text-xs text-gray-500">
                       Official Announcement

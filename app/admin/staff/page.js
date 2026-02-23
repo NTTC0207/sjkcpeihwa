@@ -72,7 +72,7 @@ export default function AdminStaffPage() {
                 <h1 className="text-xl font-display font-bold">
                   Pengurusan Kakitangan
                 </h1>
-                <p className="text-xs text-gray-300">SJK(C) Pei Hwa Machang</p>
+                <p className="text-xs text-gray-300">SJKC Pei Hwa Machang</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -118,7 +118,7 @@ export default function AdminStaffPage() {
       {/* Footer Meta */}
       <footer className="container-custom py-12 border-t border-gray-200 mt-12">
         <div className="text-center text-gray-400 text-sm">
-          <p>© 2026 SJK(C) Pei Hwa Machang Admin Portal</p>
+          <p>© 2026 SJKC Pei Hwa Machang Admin Portal</p>
         </div>
       </footer>
     </div>

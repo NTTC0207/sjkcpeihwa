@@ -6,7 +6,7 @@ export const announcements = [
     badge: "重要",
     badgeColor: "bg-accent-red",
     department: "academic",
-    summary: "关于 2026 学年国民型华文小学（SJK(C) Pei Hwa）复课的相关信息。",
+    summary: "关于 2026 学年国民型华文小学（SJKC Pei Hwa）复课的相关信息。",
     content: `
 # 2026 学校复课
 
@@ -40,7 +40,7 @@ export const announcements = [
     content: `
 # 2026 年度运动会
 
-加入我们一年中最精彩的活动！国民型华文小学（SJK(C) Pei Hwa）年度运动会将于今年三月举行。
+加入我们一年中最精彩的活动！国民型华文小学（SJKC Pei Hwa）年度运动会将于今年三月举行。
 
 ## 活动详情
 - **日期：** 2026年3月15日

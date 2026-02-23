@@ -120,7 +120,7 @@ export default function PenghargaanDetailClient({ award }) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-primary">
-                      {t("nav.name", "SJK(C) Pei Hwa")}
+                      {t("nav.name", "SJKC Pei Hwa")}
                     </p>
                     <p className="text-xs text-gray-500">
                       Official Penghargaan

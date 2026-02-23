@@ -1,22 +1,22 @@
 export const metadata = {
   title: "Landskap Sekolah | Campus Gallery",
   description:
-    "Galeri gambar kampus SJK(C) Pei Hwa Machang, Kelantan. Terokai kemudahan moden dan persekitaran pembelajaran yang kondusif di sekolah kami.",
+    "Galeri gambar kampus SJKC Pei Hwa Machang, Kelantan. Terokai kemudahan moden dan persekitaran pembelajaran yang kondusif di sekolah kami.",
   alternates: {
     canonical: "https://sjkcpeihwa.vercel.app/profile/landscape",
   },
   openGraph: {
-    title: "Landskap Kampus | SJK(C) Pei Hwa",
+    title: "Landskap Kampus | SJKC Pei Hwa",
     description:
-      "Galeri gambar kampus SJK(C) Pei Hwa Machang — kemudahan moden, perpustakaan, dan persekitaran sekolah.",
+      "Galeri gambar kampus SJKC Pei Hwa Machang — kemudahan moden, perpustakaan, dan persekitaran sekolah.",
     url: "https://sjkcpeihwa.vercel.app/profile/landscape",
-    siteName: "SJK(C) Pei Hwa",
+    siteName: "SJKC Pei Hwa",
     images: [
       {
         url: "/gallery/frontview.avif",
         width: 1200,
         height: 800,
-        alt: "SJK(C) Pei Hwa Campus Front View",
+        alt: "SJKC Pei Hwa Campus Front View",
       },
     ],
     type: "website",
