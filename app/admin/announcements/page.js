@@ -162,8 +162,6 @@ const EMPTY_FORM = {
   image: "",
   attachments: [],
   pushNotification: true,
-  pushTime: "",
-  pushNow: true,
 };
 
 // Toast notification component
@@ -565,20 +563,6 @@ export default function AnnouncementsAdminPage() {
   };
 
   const handleEdit = (ann) => {
-    // Convert ISO string back to datetime-local format if needed
-    const formatForInput = (isoString) => {
-      if (!isoString) return "";
-      try {
-        const date = new Date(isoString);
-        if (isNaN(date.getTime())) return isoString; // Fallback if already in input format
-        const offset = date.getTimezoneOffset() * 60000;
-        const local = new Date(date.getTime() - offset);
-        return local.toISOString().slice(0, 16);
-      } catch (e) {
-        return isoString;
-      }
-    };
-
     setEditingId(ann.id);
     setFormData({
       title: ann.title || "",
@@ -592,8 +576,6 @@ export default function AnnouncementsAdminPage() {
       image: ann.image || "",
       attachments: ann.attachments || [],
       pushNotification: ann.pushNotification || false,
-      pushNow: ann.pushNow !== undefined ? ann.pushNow : true,
-      pushTime: formatForInput(ann.pushTime),
     });
     setView("edit");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -604,22 +586,6 @@ export default function AnnouncementsAdminPage() {
       return;
     try {
       await deleteDoc(doc(db, "announcement", id));
-
-      // Also delete any pending notifications for this announcement
-      try {
-        const q = query(
-          collection(db, "scheduled_notifications"),
-          where("announcementId", "==", id),
-          where("status", "==", "pending"),
-        );
-        const snap = await getDocs(q);
-        snap.forEach(async (d) => {
-          await deleteDoc(doc(db, "scheduled_notifications", d.id));
-        });
-      } catch (e) {
-        console.warn("Failed to cleanup scheduled notifications:", e);
-      }
-
       setAnnouncements((prev) => prev.filter((a) => a.id !== id));
       showToast("Pengumuman berjaya dipadam.");
     } catch (err) {
@@ -779,12 +745,8 @@ export default function AnnouncementsAdminPage() {
         image: formData.image.trim(),
         attachments: formData.attachments || [],
         updatedAt: new Date().toISOString(),
-        // Save notification settings in firestore
+        // Save notification setting in firestore
         pushNotification: formData.pushNotification,
-        pushNow: formData.pushNow,
-        pushTime: formData.pushTime
-          ? new Date(formData.pushTime).toISOString()
-          : "",
       };
 
       let currentDocId = editingId;
@@ -798,7 +760,7 @@ export default function AnnouncementsAdminPage() {
         showToast("Pengumuman berjaya diterbitkan!");
       }
 
-      // Push notification logic (Unified for Add/Edit)
+      // Push notification logic (Immediate only)
       if (formData.pushNotification) {
         const notificationData = {
           title: payload.title,
@@ -807,55 +769,15 @@ export default function AnnouncementsAdminPage() {
           topic: "announcements",
         };
 
-        if (formData.pushNow) {
-          // Send Immediately
-          try {
-            await fetch("/api/notifications/send", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(notificationData),
-            });
-          } catch (notificationErr) {
-            console.error("Failed to push notification:", notificationErr);
-          }
-        } else if (formData.pushTime) {
-          // Schedule for later
-          try {
-            const scheduledDate = new Date(formData.pushTime).toISOString();
-
-            // Check for existing pending notification for this announcement
-            const q = query(
-              collection(db, "scheduled_notifications"),
-              where("announcementId", "==", currentDocId),
-              where("status", "==", "pending"),
-            );
-            const snap = await getDocs(q);
-
-            if (!snap.empty) {
-              // Update existing pending notification
-              await updateDoc(
-                doc(db, "scheduled_notifications", snap.docs[0].id),
-                {
-                  ...notificationData,
-                  scheduledFor: scheduledDate,
-                  updatedAt: new Date().toISOString(),
-                },
-              );
-              showToast("Jadual notifikasi dikemas kini.");
-            } else {
-              // Create new scheduled notification
-              await addDoc(collection(db, "scheduled_notifications"), {
-                ...notificationData,
-                scheduledFor: scheduledDate,
-                status: "pending",
-                createdAt: new Date().toISOString(),
-                announcementId: currentDocId,
-              });
-              showToast("Notifikasi telah dijadualkan.");
-            }
-          } catch (scheduleErr) {
-            console.error("Failed to schedule notification:", scheduleErr);
-          }
+        // Send Immediately
+        try {
+          await fetch("/api/notifications/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(notificationData),
+          });
+        } catch (notificationErr) {
+          console.error("Failed to push notification:", notificationErr);
         }
       }
 
@@ -1532,56 +1454,6 @@ export default function AnnouncementsAdminPage() {
 
                         {formData.pushNotification && (
                           <div className="mt-4 pl-8 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                            <div className="flex items-center gap-4">
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="radio"
-                                  checked={formData.pushNow}
-                                  onChange={() =>
-                                    setFormData({ ...formData, pushNow: true })
-                                  }
-                                  className="w-4 h-4 text-primary focus:ring-primary/20"
-                                />
-                                <span className="text-xs font-medium text-gray-600">
-                                  Hantar Sekarang
-                                </span>
-                              </label>
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input
-                                  type="radio"
-                                  checked={!formData.pushNow}
-                                  onChange={() =>
-                                    setFormData({ ...formData, pushNow: false })
-                                  }
-                                  className="w-4 h-4 text-primary focus:ring-primary/20"
-                                />
-                                <span className="text-xs font-medium text-gray-600">
-                                  Jadualkan
-                                </span>
-                              </label>
-                            </div>
-
-                            {!formData.pushNow && (
-                              <div>
-                                <input
-                                  type="datetime-local"
-                                  value={formData.pushTime}
-                                  onChange={(e) =>
-                                    setFormData({
-                                      ...formData,
-                                      pushTime: e.target.value,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent transition-all"
-                                  required={!formData.pushNow}
-                                />
-                                <p className="text-[10px] text-indigo-500 mt-1 font-medium italic">
-                                  Nota: Notifikasi akan dihantar secara
-                                  automatik pada masa ini.
-                                </p>
-                              </div>
-                            )}
-
                             <div className="p-3 bg-indigo-50/50 border border-indigo-100/50 rounded-xl space-y-2">
                               <p className="text-[10px] uppercase tracking-wider font-bold text-indigo-400">
                                 Pratonton Kandungan Push
