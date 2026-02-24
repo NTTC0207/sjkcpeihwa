@@ -565,6 +565,20 @@ export default function AnnouncementsAdminPage() {
   };
 
   const handleEdit = (ann) => {
+    // Convert ISO string back to datetime-local format if needed
+    const formatForInput = (isoString) => {
+      if (!isoString) return "";
+      try {
+        const date = new Date(isoString);
+        if (isNaN(date.getTime())) return isoString; // Fallback if already in input format
+        const offset = date.getTimezoneOffset() * 60000;
+        const local = new Date(date.getTime() - offset);
+        return local.toISOString().slice(0, 16);
+      } catch (e) {
+        return isoString;
+      }
+    };
+
     setEditingId(ann.id);
     setFormData({
       title: ann.title || "",
@@ -577,7 +591,9 @@ export default function AnnouncementsAdminPage() {
       content: ann.content || "",
       image: ann.image || "",
       attachments: ann.attachments || [],
-      pushNotification: false, // Default to false when editing existing
+      pushNotification: ann.pushNotification || false,
+      pushNow: ann.pushNow !== undefined ? ann.pushNow : true,
+      pushTime: formatForInput(ann.pushTime),
     });
     setView("edit");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -588,6 +604,22 @@ export default function AnnouncementsAdminPage() {
       return;
     try {
       await deleteDoc(doc(db, "announcement", id));
+
+      // Also delete any pending notifications for this announcement
+      try {
+        const q = query(
+          collection(db, "scheduled_notifications"),
+          where("announcementId", "==", id),
+          where("status", "==", "pending"),
+        );
+        const snap = await getDocs(q);
+        snap.forEach(async (d) => {
+          await deleteDoc(doc(db, "scheduled_notifications", d.id));
+        });
+      } catch (e) {
+        console.warn("Failed to cleanup scheduled notifications:", e);
+      }
+
       setAnnouncements((prev) => prev.filter((a) => a.id !== id));
       showToast("Pengumuman berjaya dipadam.");
     } catch (err) {
@@ -747,51 +779,82 @@ export default function AnnouncementsAdminPage() {
         image: formData.image.trim(),
         attachments: formData.attachments || [],
         updatedAt: new Date().toISOString(),
+        // Save notification settings in firestore
+        pushNotification: formData.pushNotification,
+        pushNow: formData.pushNow,
+        pushTime: formData.pushTime
+          ? new Date(formData.pushTime).toISOString()
+          : "",
       };
 
+      let currentDocId = editingId;
       if (view === "edit" && editingId) {
         await updateDoc(doc(db, "announcement", editingId), payload);
         showToast("Pengumuman berjaya dikemas kini!");
       } else {
         payload.createdAt = new Date().toISOString();
         const docRef = await addDoc(collection(db, "announcement"), payload);
+        currentDocId = docRef.id;
         showToast("Pengumuman berjaya diterbitkan!");
+      }
 
-        // Push notification logic
-        if (formData.pushNotification) {
-          if (formData.pushNow) {
-            // Send Immediately
-            try {
-              await fetch("/api/notifications/send", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  title: payload.title,
-                  body: payload.summary || "Ada pengumuman baru untuk anda!",
-                  url: `/announcements/${docRef.id}`,
-                  topic: "announcements",
-                }),
-              });
-            } catch (notificationErr) {
-              console.error("Failed to push notification:", notificationErr);
-            }
-          } else if (formData.pushTime) {
-            // Schedule for later
-            try {
+      // Push notification logic (Unified for Add/Edit)
+      if (formData.pushNotification) {
+        const notificationData = {
+          title: payload.title,
+          body: payload.summary || "Ada pengumuman baru untuk anda!",
+          url: `/announcements/${currentDocId}`,
+          topic: "announcements",
+        };
+
+        if (formData.pushNow) {
+          // Send Immediately
+          try {
+            await fetch("/api/notifications/send", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(notificationData),
+            });
+          } catch (notificationErr) {
+            console.error("Failed to push notification:", notificationErr);
+          }
+        } else if (formData.pushTime) {
+          // Schedule for later
+          try {
+            const scheduledDate = new Date(formData.pushTime).toISOString();
+
+            // Check for existing pending notification for this announcement
+            const q = query(
+              collection(db, "scheduled_notifications"),
+              where("announcementId", "==", currentDocId),
+              where("status", "==", "pending"),
+            );
+            const snap = await getDocs(q);
+
+            if (!snap.empty) {
+              // Update existing pending notification
+              await updateDoc(
+                doc(db, "scheduled_notifications", snap.docs[0].id),
+                {
+                  ...notificationData,
+                  scheduledFor: scheduledDate,
+                  updatedAt: new Date().toISOString(),
+                },
+              );
+              showToast("Jadual notifikasi dikemas kini.");
+            } else {
+              // Create new scheduled notification
               await addDoc(collection(db, "scheduled_notifications"), {
-                title: payload.title,
-                body: payload.summary || "Ada pengumuman baru untuk anda!",
-                url: `/announcements/${docRef.id}`,
-                topic: "announcements",
-                scheduledFor: formData.pushTime,
+                ...notificationData,
+                scheduledFor: scheduledDate,
                 status: "pending",
                 createdAt: new Date().toISOString(),
-                announcementId: docRef.id,
+                announcementId: currentDocId,
               });
               showToast("Notifikasi telah dijadualkan.");
-            } catch (scheduleErr) {
-              console.error("Failed to schedule notification:", scheduleErr);
             }
+          } catch (scheduleErr) {
+            console.error("Failed to schedule notification:", scheduleErr);
           }
         }
       }
