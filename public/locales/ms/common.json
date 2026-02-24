@@ -101,7 +101,13 @@
     "latestToOldest": "Terbaharu",
     "oldestToLatest": "Terlama",
     "filterMonth": "Tapis mengikut Bulan",
-    "allMonths": "Semua Bulan"
+    "allMonths": "Semua Bulan",
+    "subscribeAction": "Terima Notifikasi Pengumuman",
+    "subscribing": "Melanggan...",
+    "subscribed": "Sudah Melanggan",
+    "subscribeSuccess": "Anda telah berjaya melanggan pengumuman!",
+    "subscribeDenied": "Kebenaran notifikasi ditolak atau tidak disokong.",
+    "subscribeStatus": "Anda sedang melanggan notifikasi. Klik butang di bawah jika anda ingin mengemas kini langganan."
   },
   "footer": {
     "contact": "Hubungi Kami",

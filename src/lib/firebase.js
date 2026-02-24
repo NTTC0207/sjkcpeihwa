@@ -87,7 +87,17 @@ export async function requestNotificationPermission() {
   let swReg;
   try {
     console.log("FCM: Registering service worker...");
-    // Wait for SW to be ready
+
+    // Cleanup any existing sw.js (from next-pwa) that might conflict in dev
+    const regs = await navigator.serviceWorker.getRegistrations();
+    for (const reg of regs) {
+      if (reg.active && reg.active.scriptURL.endsWith("/sw.js")) {
+        console.log("FCM: Unregistering conflicting sw.js...");
+        await reg.unregister();
+      }
+    }
+
+    // Register our specific FCM worker
     swReg = await navigator.serviceWorker.register(
       "/firebase-messaging-sw.js",
       {
@@ -97,7 +107,6 @@ export async function requestNotificationPermission() {
     );
 
     console.log("FCM: Service worker registered. Waiting for activation...");
-    // On some browsers, we might need to wait for the registration to be fully active
     await navigator.serviceWorker.ready;
     console.log("FCM: Service worker ready.");
   } catch (err) {
@@ -156,11 +165,26 @@ export async function saveFCMToken(token) {
 }
 
 function detectPlatform() {
-  if (typeof navigator === "undefined") return "unknown";
-  const ua = navigator.userAgent;
-  if (/iphone|ipad|ipod/i.test(ua)) return "ios";
-  if (/android/i.test(ua)) return "android";
   return "desktop";
+}
+
+/**
+ * Handle foreground messages.
+ * @param {Function} callback - Function called when a message is received.
+ */
+export async function onForegroundMessage(callback) {
+  if (typeof window === "undefined") return;
+  const messaging = await getMessagingInstance();
+  if (!messaging) return;
+  try {
+    const { onMessage } = await import("firebase/messaging");
+    return onMessage(messaging, (payload) => {
+      console.log("Foreground message received:", payload);
+      callback(payload);
+    });
+  } catch (err) {
+    console.error("Error setting up foreground message listener:", err);
+  }
 }
 
 export default app;

@@ -1,4 +1,10 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { HiUser, HiPlus, HiMinus, HiArrowPath } from "react-icons/hi2";
 
@@ -36,11 +42,20 @@ export default function OrgChart({ staffTree, getRole }) {
 
   useEffect(() => {
     const timer = setTimeout(fitToScreen, 100);
-    const observer = new ResizeObserver(() => fitToScreen());
+
+    // Use a debounced internal function for the observer
+    let timeoutId;
+    const debouncedFit = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(fitToScreen, 150);
+    };
+
+    const observer = new ResizeObserver(debouncedFit);
     if (chartRef.current) observer.observe(chartRef.current);
     window.addEventListener("resize", fitToScreen);
     return () => {
       clearTimeout(timer);
+      clearTimeout(timeoutId);
       observer.disconnect();
       window.removeEventListener("resize", fitToScreen);
     };
@@ -117,12 +132,22 @@ export default function OrgChart({ staffTree, getRole }) {
         <motion.div
           drag
           dragConstraints={constraintsRef}
+          dragElastic={0.05} // Tighter drag feel
+          dragMomentum={false} // Reduces calculation overhead during momentum
           onDragStart={() => setShowInstructions(false)}
           animate={controls}
           initial={{ scale: 1, x: 0, y: 0 }}
-          transition={{ type: "spring", damping: 30, stiffness: 200 }}
+          transition={{
+            type: "spring",
+            damping: 30,
+            stiffness: 200,
+            mass: 0.8,
+          }}
           className="p-4"
-          style={{ transformOrigin: "center center" }}
+          style={{
+            transformOrigin: "center center",
+            willChange: "transform", // Hardware acceleration hint
+          }}
         >
           <motion.div ref={chartRef} className="inline-flex justify-center">
             <TreeLevel nodes={staffTree} getRole={getRole} />
@@ -145,7 +170,7 @@ export default function OrgChart({ staffTree, getRole }) {
   );
 }
 
-function TreeLevel({ nodes, getRole }) {
+const TreeLevel = React.memo(function TreeLevel({ nodes, getRole }) {
   const [showChildren, setShowChildren] = useState(true);
 
   // Split nodes into those to display now (min level) and those for later
@@ -213,13 +238,13 @@ function TreeLevel({ nodes, getRole }) {
       </div>
 
       {/* Next Level Nodes (Remaining + Children) */}
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {hasChildren && showChildren && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={springConfig}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ type: "tween", duration: 0.3 }}
             className="w-full flex flex-col items-center"
           >
             <div className="org-tree-node-connector-down" />
@@ -231,9 +256,9 @@ function TreeLevel({ nodes, getRole }) {
       </AnimatePresence>
     </div>
   );
-}
+});
 
-function NodeCard({
+const NodeCard = React.memo(function NodeCard({
   node,
   getRole,
   index,
@@ -274,13 +299,14 @@ function NodeCard({
 
       {/* The Card */}
       <motion.div
-        layout
-        transition={springConfig}
+        // Optimized: Only use layout when absolutely necessary, or remove if too heavy
+        // Replaced layout with a simpler whileHover
         whileHover={{
-          y: -8,
-          scale: 1.02,
-          boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+          y: -4,
+          scale: 1.01,
+          boxShadow: "0 15px 30px -10px rgba(0, 0, 0, 0.12)",
         }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
         onClick={() => setIsExpanded(!isExpanded)}
         className="group flex flex-col items-center p-5 bg-white rounded-3xl shadow-xl border border-slate-100 w-64 z-10 cursor-pointer relative"
       >
@@ -336,4 +362,4 @@ function NodeCard({
       </motion.div>
     </div>
   );
-}
+});

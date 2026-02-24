@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { useLanguage } from "@lib/LanguageContext";
@@ -57,11 +57,14 @@ export default function OrganizationClient({ initialStaffData }) {
     );
   }, [searchTerm, selectedSubject, selectedCategory]);
 
-  const getLocalizedRole = (staff) => {
-    if (locale === "zh") return staff.role_zh;
-    if (locale === "ms") return staff.role_ms;
-    return staff.role_en || staff.role;
-  };
+  const getLocalizedRole = useCallback(
+    (staff) => {
+      if (locale === "zh") return staff.role_zh;
+      if (locale === "ms") return staff.role_ms;
+      return staff.role_en || staff.role;
+    },
+    [locale],
+  );
 
   // Dynamically extract categories from data
   const uniqueCategories = useMemo(() => {

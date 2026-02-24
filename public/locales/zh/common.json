@@ -101,7 +101,13 @@
     "latestToOldest": "最新发布",
     "oldestToLatest": "最早发布",
     "filterMonth": "按月份筛选",
-    "allMonths": "所有月份"
+    "allMonths": "所有月份",
+    "subscribeAction": "接收公告通知",
+    "subscribing": "订阅中...",
+    "subscribed": "已订阅",
+    "subscribeSuccess": "您已成功订阅公告通知！",
+    "subscribeDenied": "通知权限被拒绝或浏览器不支持。",
+    "subscribeStatus": "您已开启通知。如需更新，请点击下方按钮。"
   },
   "footer": {
     "contact": "联系我们",

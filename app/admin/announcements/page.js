@@ -161,6 +161,9 @@ const EMPTY_FORM = {
   content: "",
   image: "",
   attachments: [],
+  pushNotification: true,
+  pushTime: "",
+  pushNow: true,
 };
 
 // Toast notification component
@@ -428,6 +431,30 @@ export default function AnnouncementsAdminPage() {
     setToast({ message, type });
   };
 
+  const handlePushTest = async () => {
+    if (!confirm("Hantar notifikasi ujian ke semua pelanggan?")) return;
+    try {
+      const response = await fetch("/api/notifications/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Ujian Notifikasi 🔔",
+          body: "Ini adalah notifikasi ujian daripada sistem pentadbir.",
+          url: "/announcements",
+          topic: "announcements",
+        }),
+      });
+      if (response.ok) {
+        showToast("Notifikasi ujian berjaya dihantar!");
+      } else {
+        throw new Error("Gagal menghantar notifikasi ujian");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Gagal menghantar notifikasi ujian.", "error");
+    }
+  };
+
   const fetchAnnouncements = async (isLoadMore = false) => {
     if (!user) return;
     setLoading(true);
@@ -550,6 +577,7 @@ export default function AnnouncementsAdminPage() {
       content: ann.content || "",
       image: ann.image || "",
       attachments: ann.attachments || [],
+      pushNotification: false, // Default to false when editing existing
     });
     setView("edit");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -726,8 +754,46 @@ export default function AnnouncementsAdminPage() {
         showToast("Pengumuman berjaya dikemas kini!");
       } else {
         payload.createdAt = new Date().toISOString();
-        await addDoc(collection(db, "announcement"), payload);
+        const docRef = await addDoc(collection(db, "announcement"), payload);
         showToast("Pengumuman berjaya diterbitkan!");
+
+        // Push notification logic
+        if (formData.pushNotification) {
+          if (formData.pushNow) {
+            // Send Immediately
+            try {
+              await fetch("/api/notifications/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  title: payload.title,
+                  body: payload.summary || "Ada pengumuman baru untuk anda!",
+                  url: `/announcements/${docRef.id}`,
+                  topic: "announcements",
+                }),
+              });
+            } catch (notificationErr) {
+              console.error("Failed to push notification:", notificationErr);
+            }
+          } else if (formData.pushTime) {
+            // Schedule for later
+            try {
+              await addDoc(collection(db, "scheduled_notifications"), {
+                title: payload.title,
+                body: payload.summary || "Ada pengumuman baru untuk anda!",
+                url: `/announcements/${docRef.id}`,
+                topic: "announcements",
+                scheduledFor: formData.pushTime,
+                status: "pending",
+                createdAt: new Date().toISOString(),
+                announcementId: docRef.id,
+              });
+              showToast("Notifikasi telah dijadualkan.");
+            } catch (scheduleErr) {
+              console.error("Failed to schedule notification:", scheduleErr);
+            }
+          }
+        }
       }
 
       setView("list");
@@ -857,10 +923,6 @@ export default function AnnouncementsAdminPage() {
           </div>
         </div>
       </nav>
-
-      <div className="container-custom mt-6">
-        <RevalidateButton path="/announcements" label="Pengumuman" />
-      </div>
 
       <div className="container-custom py-8">
         {/* ─── LIST VIEW ─── */}
@@ -1361,6 +1423,103 @@ export default function AnnouncementsAdminPage() {
                             </button>
                           ))}
                         </div>
+                      </div>
+
+                      {/* Push Notification Toggle */}
+                      <div className="pt-4 border-t border-gray-100">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              checked={formData.pushNotification}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  pushNotification: e.target.checked,
+                                })
+                              }
+                              className="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary/20 transition-all bg-gray-50"
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-gray-700 group-hover:text-primary transition-colors">
+                              Hantar Notifikasi Push
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-normal">
+                              Beritahu semua pelanggan melalui aplikasi PWA
+                              mereka
+                            </span>
+                          </div>
+                        </label>
+
+                        {formData.pushNotification && (
+                          <div className="mt-4 pl-8 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="flex items-center gap-4">
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  checked={formData.pushNow}
+                                  onChange={() =>
+                                    setFormData({ ...formData, pushNow: true })
+                                  }
+                                  className="w-4 h-4 text-primary focus:ring-primary/20"
+                                />
+                                <span className="text-xs font-medium text-gray-600">
+                                  Hantar Sekarang
+                                </span>
+                              </label>
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="radio"
+                                  checked={!formData.pushNow}
+                                  onChange={() =>
+                                    setFormData({ ...formData, pushNow: false })
+                                  }
+                                  className="w-4 h-4 text-primary focus:ring-primary/20"
+                                />
+                                <span className="text-xs font-medium text-gray-600">
+                                  Jadualkan
+                                </span>
+                              </label>
+                            </div>
+
+                            {!formData.pushNow && (
+                              <div>
+                                <input
+                                  type="datetime-local"
+                                  value={formData.pushTime}
+                                  onChange={(e) =>
+                                    setFormData({
+                                      ...formData,
+                                      pushTime: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent transition-all"
+                                  required={!formData.pushNow}
+                                />
+                                <p className="text-[10px] text-indigo-500 mt-1 font-medium italic">
+                                  Nota: Notifikasi akan dihantar secara
+                                  automatik pada masa ini.
+                                </p>
+                              </div>
+                            )}
+
+                            <div className="p-3 bg-indigo-50/50 border border-indigo-100/50 rounded-xl space-y-2">
+                              <p className="text-[10px] uppercase tracking-wider font-bold text-indigo-400">
+                                Pratonton Kandungan Push
+                              </p>
+                              <div className="space-y-1">
+                                <p className="text-[11px] font-bold text-gray-700 truncate">
+                                  {formData.title || "Tajuk Notifikasi"}
+                                </p>
+                                <p className="text-[10px] text-gray-500 line-clamp-2 leading-relaxed">
+                                  {formData.summary ||
+                                    "Isi ringkasan pengumuman akan muncul di sini sebagai badan notifikasi."}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -27,24 +27,26 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 // Handle background messages (when the app is not in the foreground)
+// 1. Listen for background messages
 messaging.onBackgroundMessage((payload) => {
   console.log(
     "[firebase-messaging-sw.js] Background message received:",
     payload,
   );
 
-  const notificationTitle =
-    payload.notification?.title || payload.data?.title || "SJKC Pei Hwa";
+  const notification = payload.notification || {};
+  const data = payload.data || {};
+
+  const notificationTitle = notification.title || data.title || "SJKC Pei Hwa";
   const notificationOptions = {
-    body:
-      payload.notification?.body ||
-      payload.data?.body ||
-      "New notification from SJKC Pei Hwa",
+    body: notification.body || data.body || "Ada pengumuman baru untuk anda!",
     icon: "/icon-192x192.png",
     badge: "/icon-192x192.png",
-    data: payload.data || {},
-    // Show the notification even if a client is focused (good for iOS)
-    requireInteraction: false,
+    tag: "announcement-notification",
+    renotify: true,
+    data: {
+      url: data.url || "/announcements",
+    },
   };
 
   return self.registration.showNotification(
@@ -53,23 +55,37 @@ messaging.onBackgroundMessage((payload) => {
   );
 });
 
-// Handle notification click — open/focus the app
+// 2. Handle notification clicks
 self.addEventListener("notificationclick", (event) => {
+  console.log("[firebase-messaging-sw.js] Notification clicked:", event);
   event.notification.close();
-  const url = event.notification.data?.url || "/";
+
+  const urlToOpen = event.notification.data?.url || "/";
+
   event.waitUntil(
     clients
       .matchAll({ type: "window", includeUncontrolled: true })
-      .then((clientList) => {
-        // If a window is already open, focus it
-        for (const client of clientList) {
-          if (client.url.includes(self.location.origin) && "focus" in client) {
-            client.navigate(url);
+      .then((windowClients) => {
+        // If a tab is already open, focus it and navigate
+        for (let i = 0; i < windowClients.length; i++) {
+          const client = windowClients[i];
+          if (client.url === urlToOpen && "focus" in client) {
             return client.focus();
           }
         }
-        // Otherwise open a new window
-        if (clients.openWindow) return clients.openWindow(url);
+        // Otherwise open a new tab
+        if (clients.openWindow) {
+          return clients.openWindow(urlToOpen);
+        }
       }),
   );
+});
+
+// 3. Force service worker to take control immediately
+self.addEventListener("install", () => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(clients.claim());
 });

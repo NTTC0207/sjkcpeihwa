@@ -9,6 +9,8 @@ import {
   HiArrowRight,
   HiCalendar,
   HiChevronDown,
+  HiCheckCircle,
+  HiXMark,
 } from "react-icons/hi2";
 import {
   collection,
@@ -21,7 +23,12 @@ import {
   limit,
   startAfter,
 } from "firebase/firestore";
-import { db } from "@lib/firebase";
+import {
+  db,
+  requestNotificationPermission,
+  saveFCMToken,
+  onForegroundMessage,
+} from "@lib/firebase";
 
 // Category metadata for display
 const CATEGORY_META = {
@@ -66,6 +73,35 @@ function buildYearList(data) {
   return years.sort((a, b) => b - a);
 }
 
+// Toast notification component for client side
+function ClientToast({ message, type, onClose }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 5000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+
+  return (
+    <div
+      className={`fixed top-24 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-white text-sm font-bold animate-in fade-in slide-in-from-top-4 duration-300 ${
+        type === "success" ? "bg-primary" : "bg-red-600"
+      }`}
+    >
+      <HiMegaphone className="w-5 h-5 shrink-0" />
+      <div className="flex flex-col">
+        <span className="leading-tight">{message.title}</span>
+        {message.body && (
+          <span className="text-[10px] opacity-80 font-normal mt-0.5">
+            {message.body}
+          </span>
+        )}
+      </div>
+      <button onClick={onClose} className="ml-2 opacity-70 hover:opacity-100">
+        <HiXMark className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
 export default function AnnouncementsClient({
   initialAnnouncements,
   initialCategory,
@@ -87,6 +123,86 @@ export default function AnnouncementsClient({
   );
   const [selectedYear, setSelectedYear] = useState("all");
   const [selectedMonth, setSelectedMonth] = useState("all");
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscribing, setSubscribing] = useState(false);
+  const [showSubTooltip, setShowSubTooltip] = useState(false);
+
+  useEffect(() => {
+    // Check if user has already granted permission and we have a token
+    if (typeof window !== "undefined") {
+      const subStatus = localStorage.getItem("fcm_subscribed");
+      if (subStatus === "true" && Notification.permission === "granted") {
+        setIsSubscribed(true);
+      }
+    }
+
+    // Set up foreground message listener
+    const unsubPromise = onForegroundMessage((payload) => {
+      console.log("Foreground message received in Client:", payload);
+
+      // Trigger a NATIVE system notification in foreground
+      if (payload.notification && Notification.permission === "granted") {
+        const { title, body } = payload.notification;
+        const notification = new Notification(title, {
+          body: body,
+          icon: "/icon-192x192.png",
+          badge: "/icon-192x192.png",
+          tag: "announcement-notification",
+        });
+
+        notification.onclick = (e) => {
+          e.preventDefault();
+          const targetUrl = payload.data?.url || "/announcements";
+          window.location.href = targetUrl;
+          window.focus();
+        };
+      }
+    });
+
+    return () => {
+      unsubPromise.then((unsub) => unsub?.());
+    };
+  }, []);
+
+  const handleSubscribe = async () => {
+    setSubscribing(true);
+    try {
+      const token = await requestNotificationPermission();
+      if (token) {
+        // 1. Save token to Firestore (for direct pushes if needed)
+        await saveFCMToken(token);
+
+        // 2. Subscribe to topic via API
+        const response = await fetch("/api/notifications/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, topic: "announcements" }),
+        });
+
+        if (response.ok) {
+          setIsSubscribed(true);
+          localStorage.setItem("fcm_subscribed", "true");
+          localStorage.setItem("fcm_token", token);
+          alert(
+            translations.announcements.subscribeSuccess ||
+              "Anda telah berjaya melanggan pengumuman!",
+          );
+        } else {
+          throw new Error("Failed to subscribe to topic");
+        }
+      } else {
+        alert(
+          translations.announcements.subscribeDenied ||
+            "Kebenaran notifikasi ditolak atau tidak disokong.",
+        );
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      alert("Gagal melanggan. Sila cuba lagi kemudian.");
+    } finally {
+      setSubscribing(false);
+    }
+  };
 
   const months = useMemo(
     () => [
@@ -366,6 +482,8 @@ export default function AnnouncementsClient({
               {translations.announcements.subtitle}
             </p>
 
+            {/* Removed the large subscription section from here */}
+
             {/* Category filter tabs */}
             <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
               <button
@@ -506,6 +624,83 @@ export default function AnnouncementsClient({
           </div>
         </div>
       </main>
+
+      {/* Floating Subscription Button */}
+      <div className="fixed bottom-8 right-8 z-[90]">
+        <div className="relative">
+          {/* Tooltip-like status message */}
+          <div
+            className={`absolute bottom-full right-0 mb-4 w-64 p-4 bg-white rounded-2xl shadow-2xl border border-gray-100 transition-all duration-300 transform ${
+              showSubTooltip
+                ? "opacity-100 visible translate-y-0"
+                : "opacity-0 invisible translate-y-2"
+            }`}
+          >
+            <div className="flex justify-between items-start mb-2">
+              <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400">
+                Notifikasi
+              </p>
+              <button
+                onClick={() => setShowSubTooltip(false)}
+                className="text-gray-300 hover:text-gray-500 transition-colors"
+              >
+                <HiXMark className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed mb-3">
+              {isSubscribed
+                ? translations.announcements.subscribeStatus
+                : translations.announcements.subtitle}
+            </p>
+            <button
+              onClick={async () => {
+                await handleSubscribe();
+                setShowSubTooltip(false);
+              }}
+              disabled={subscribing}
+              className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                isSubscribed
+                  ? "bg-green-50 text-green-600 hover:bg-green-100"
+                  : "bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/20"
+              }`}
+            >
+              {subscribing ? (
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+              ) : isSubscribed ? (
+                <>
+                  <HiCheckCircle className="w-4 h-4" />
+                  {translations.announcements.subscribed}
+                </>
+              ) : (
+                <>
+                  <HiMegaphone className="w-4 h-4" />
+                  {translations.announcements.subscribeAction}
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* The actual floating button */}
+          <button
+            onClick={() => setShowSubTooltip(!showSubTooltip)}
+            className={`w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 active:scale-95 ${
+              isSubscribed
+                ? "bg-white text-green-500 border-2 border-green-500/20"
+                : "bg-primary text-white"
+            }`}
+          >
+            {isSubscribed ? (
+              <HiCheckCircle className="w-7 h-7" />
+            ) : (
+              <HiMegaphone className="w-7 h-7" />
+            )}
+            {/* Red dot if not subscribed */}
+            {!isSubscribed && (
+              <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 border-2 border-white rounded-full"></span>
+            )}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
