@@ -10,7 +10,11 @@ export function LanguageProvider({ children }) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const savedLocale = localStorage.getItem("preferredLocale") || "en";
+    let savedLocale = localStorage.getItem("preferredLocale") || "ms";
+    if (savedLocale === "en") {
+      savedLocale = "ms";
+      localStorage.setItem("preferredLocale", "ms");
+    }
     setLocale(savedLocale);
     setIsMounted(true);
   }, []);
@@ -20,15 +24,15 @@ export function LanguageProvider({ children }) {
       try {
         const response = await fetch(`/locales/${locale}/common.json`);
         if (!response.ok) {
-          // throw new Error(`Failed to load translations for ${locale}`);
+          throw new Error(`Failed to load translations for ${locale}`);
         }
         const data = await response.json();
         setTranslations(data);
       } catch (error) {
         console.error("Error loading translations:", error);
-        // Fallback to 'zh' if 'en' or other locale fails
-        if (locale !== "zh") {
-          console.log("Falling back to 'zh' translations");
+        // Fallback to 'ms' if other locale fails
+        if (locale !== "ms") {
+          console.log("Falling back to 'ms' translations");
           try {
             const fallbackResponse = await fetch("/locales/ms/common.json");
             if (fallbackResponse.ok) {
