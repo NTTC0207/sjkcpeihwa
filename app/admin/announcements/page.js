@@ -796,6 +796,17 @@ export default function AnnouncementsAdminPage() {
         }
       }
 
+      // Trigger ISR revalidation
+      try {
+        await fetch("/api/revalidate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ path: "/announcements" }),
+        });
+      } catch (err) {
+        console.warn("Revalidation failed:", err);
+      }
+
       setView("list");
       setEditingId(null);
       setFormData(EMPTY_FORM);
@@ -923,6 +934,10 @@ export default function AnnouncementsAdminPage() {
           </div>
         </div>
       </nav>
+
+      <div className="container-custom mt-6">
+        <RevalidateButton path="/announcements" label="Pengumuman" />
+      </div>
 
       <div className="container-custom py-8">
         {/* ─── LIST VIEW ─── */}
