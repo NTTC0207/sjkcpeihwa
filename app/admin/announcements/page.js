@@ -161,7 +161,7 @@ const EMPTY_FORM = {
   content: "",
   image: "",
   attachments: [],
-  pushNotification: true,
+  pushNotification: false,
   pushTime: "",
   pushNow: true,
 };
