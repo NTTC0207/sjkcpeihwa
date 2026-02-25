@@ -249,7 +249,7 @@ export default function AdminPage() {
                 </p>
               </Link>
 
-              <Link
+              {/* <Link
                 href="/admin/management"
                 className="card group hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-left block"
               >
@@ -262,7 +262,7 @@ export default function AdminPage() {
                 <p className="text-sm text-gray-600">
                   Urus persaraan, pertukaran, dan pembangunan sekolah.
                 </p>
-              </Link>
+              </Link> */}
               <Link
                 href="/admin/management/retirement"
                 className="card group border-2 border-yellow-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-left block bg-gradient-to-br from-white to-yellow-50/30"
