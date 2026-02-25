@@ -11,7 +11,7 @@ import { db } from "@lib/firebase";
 import AnnouncementsClient from "./AnnouncementsClient";
 
 // ISR: Revalidate every 7 days (in seconds)
-export const revalidate = false;
+export const revalidate = 604800;
 
 /**
  * Announcements Page with ISR (Incremental Static Regeneration)

@@ -15,14 +15,20 @@ export async function POST(request) {
     // Trigger revalidation for the specified path
     revalidatePath(path);
 
-    // Also revalidate sub-paths if needed
+    // Also revalidate sub-paths and home if needed
     if (path === "/announcements") {
+      revalidatePath("/", "layout"); // Revalidate home and everything under it if needed
+      revalidatePath("/announcements");
       revalidatePath("/announcements/[id]", "page");
-      revalidatePath("/management/khidmat_bantu", "page");
+      revalidatePath("/management/khidmat_bantu");
+    } else if (path === "/management/khidmat_bantu") {
+      revalidatePath("/management/khidmat_bantu");
+      revalidatePath("/announcements"); // They share data
     } else if (path === "/organization") {
-      revalidatePath("/organization/lps", "page");
-      revalidatePath("/organization/pta", "page");
+      revalidatePath("/organization/lps");
+      revalidatePath("/organization/pta");
     } else if (path === "/penghargaan") {
+      revalidatePath("/penghargaan");
       revalidatePath("/penghargaan/[id]", "page");
     }
 

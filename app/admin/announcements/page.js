@@ -920,8 +920,16 @@ export default function AnnouncementsAdminPage() {
         </div>
       </nav>
 
-      <div className="container-custom mt-6">
-        <RevalidateButton path="/announcements" label="Pengumuman" />
+      <div className="container-custom mt-6 flex flex-col md:flex-row gap-4">
+        <div className="flex-1">
+          <RevalidateButton path="/announcements" label="Pengumuman" />
+        </div>
+        <div className="flex-1">
+          <RevalidateButton
+            path="/management/khidmat_bantu"
+            label="Khidmat Bantu"
+          />
+        </div>
       </div>
 
       <div className="container-custom py-8">
