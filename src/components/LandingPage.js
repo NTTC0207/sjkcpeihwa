@@ -119,10 +119,10 @@ export default function LandingPage() {
               className="flex-1 text-center lg:text-left"
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-primary mb-4 leading-tight">
-                {translations.hero.welcome}
+                {translations?.hero.welcome}
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 mb-8 font-medium">
-                {translations.hero.motto}
+                {translations?.hero.motto}
               </p>
               <Link href="/profile/history">
                 <motion.button
@@ -130,7 +130,7 @@ export default function LandingPage() {
                   whileTap={{ scale: 0.95 }}
                   className="btn-primary-accent text-lg"
                 >
-                  {translations.hero.cta}
+                  {translations?.hero.cta}
                 </motion.button>
               </Link>
             </motion.div>
@@ -206,10 +206,10 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="section-title mb-4">{translations.about.title}</h2>
+            <h2 className="section-title mb-4">{translations?.about.title}</h2>
             <div className="w-20 h-1.5 bg-accent-yellow mx-auto rounded-full mb-6"></div>
             <p className="section-subtitle max-w-2xl">
-              {translations.about.subtitle}
+              {translations?.about.subtitle}
             </p>
           </motion.div>
 
@@ -233,14 +233,14 @@ export default function LandingPage() {
                     <HiStar className="w-9 h-9 text-accent-yellow" />
                   </div>
                   <h3 className="text-3xl font-display font-bold text-primary">
-                    {translations.about.vision}
+                    {translations?.about.vision}
                   </h3>
                 </div>
 
                 <div className="relative flex-grow">
                   <div className="absolute top-0 left-0 w-1 h-full bg-accent-yellow/30 rounded-full"></div>
                   <p className="pl-8 text-2xl md:text-3xl font-display font-medium leading-relaxed italic text-gray-700">
-                    "{translations.about.visionText}"
+                    "{translations?.about.visionText}"
                   </p>
                 </div>
               </div>
@@ -265,14 +265,14 @@ export default function LandingPage() {
                     <HiCheckBadge className="w-9 h-9 text-primary" />
                   </div>
                   <h3 className="text-3xl font-display font-bold text-primary">
-                    {translations.about.mission}
+                    {translations?.about.mission}
                   </h3>
                 </div>
 
                 <div className="relative flex-grow">
                   <div className="absolute top-0 left-0 w-1 h-full bg-primary/30 rounded-full"></div>
                   <p className="pl-8 text-lg md:text-xl font-bold leading-relaxed text-gray-600 uppercase tracking-wide">
-                    {translations.about.missionText}
+                    {translations?.about.missionText}
                   </p>
                 </div>
               </div>
@@ -340,7 +340,7 @@ export default function LandingPage() {
       </section>
 
       {/* Charter Section */}
-      {translations.charter && (
+      {translations?.charter && (
         <section
           id="charter"
           className="section bg-white border-t border-gray-100"
@@ -352,7 +352,7 @@ export default function LandingPage() {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <h2 className="section-title">{translations.charter.title}</h2>
+              <h2 className="section-title">{translations?.charter.title}</h2>
               <div className="w-24 h-1.5 bg-accent-yellow mx-auto mt-4 rounded-full"></div>
             </motion.div>
 
@@ -363,7 +363,7 @@ export default function LandingPage() {
               viewport={{ once: true }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
             >
-              {translations.charter.items.map((item, index) => (
+              {translations?.charter.items.map((item, index) => (
                 <motion.div
                   key={index}
                   variants={itemFadeIn}
@@ -400,7 +400,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="text-center mb-12"
           >
-            <h2 className="section-title">{translations.footer.contact}</h2>
+            <h2 className="section-title">{translations?.footer.contact}</h2>
             <div className="w-20 h-1.5 bg-accent-yellow mx-auto rounded-full mb-6"></div>
           </motion.div>
 
@@ -430,7 +430,7 @@ export default function LandingPage() {
                     rel="noopener noreferrer"
                     className="text-gray-600 leading-relaxed font-medium hover:text-primary transition-colors duration-300"
                   >
-                    {translations.footer.address}
+                    {translations?.footer.address}
                   </a>
                 </div>
               </motion.div>

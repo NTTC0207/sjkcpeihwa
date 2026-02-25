@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useLanguage } from "@lib/LanguageContext";
+import Image from "next/image";
 import {
   HiArrowLeft,
   HiCalendar,
@@ -28,8 +29,8 @@ export default function AnnouncementDetailClient({ announcement }) {
         <div className="container-custom">
           {/* Back Button */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="mb-8"
           >
             <Link
@@ -37,14 +38,14 @@ export default function AnnouncementDetailClient({ announcement }) {
               className="inline-flex items-center text-primary font-bold hover:text-primary-dark transition-colors"
             >
               <HiArrowLeft className="mr-2" />
-              {translations.penghargaan.backToList}
+              {translations?.penghargaan?.backToList || "Back to List"}
             </Link>
           </motion.div>
 
           <div className="max-w-4xl mx-auto">
             {/* Header Card */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-t-[3rem] p-8 pb-0 md shadow-sm border-x border-t border-gray-100"
             >
@@ -66,11 +67,13 @@ export default function AnnouncementDetailClient({ announcement }) {
 
               <div className="flex items-center justify-between py-6 border-t border-gray-100">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                    <img
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center relative overflow-hidden">
+                    <Image
                       src="/logo.png"
                       alt="Logo"
-                      className="w-6 h-6 object-contain"
+                      width={24}
+                      height={24}
+                      className="object-contain"
                     />
                   </div>
                   <div>
@@ -95,9 +98,8 @@ export default function AnnouncementDetailClient({ announcement }) {
 
             {/* Content Card */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               className="bg-white rounded-b-[3rem] p-8 pt-0 md:px-12 shadow-xl border-x border-b border-gray-100 mb-12"
             >
               <div className="overflow-x-auto pt-8">
@@ -143,7 +145,7 @@ export default function AnnouncementDetailClient({ announcement }) {
               className="flex justify-center"
             >
               <Link href="/announcements" className="btn-primary-accent">
-                {translations.penghargaan.viewMore}
+                {translations?.penghargaan?.viewMore || "View More"}
               </Link>
             </motion.div>
           </div>

@@ -14,6 +14,7 @@ import {
   MdIosShare,
 } from "react-icons/md";
 import { HiArrowRight, HiMail } from "react-icons/hi";
+import Image from "next/image";
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   requestNotificationPermission,
@@ -70,11 +71,13 @@ function IOSInstallModal({ onClose, translations: t }) {
         </button>
 
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl overflow-hidden bg-white flex items-center justify-center flex-shrink-0">
-            <img
+          <div className="w-10 h-10 rounded-xl overflow-hidden bg-white flex items-center justify-center flex-shrink-0 relative">
+            <Image
               src="/logo.png"
               alt="Logo"
-              className="w-full h-full object-contain p-1"
+              width={40}
+              height={40}
+              className="object-contain p-1"
             />
           </div>
           <div>
@@ -473,11 +476,13 @@ export default function Footer({ translations }) {
             {/* School Info */}
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-white rounded-full overflow-hidden flex items-center justify-center border border-gray-100 shadow-sm">
-                  <img
+                <div className="w-12 h-12 bg-white rounded-full overflow-hidden flex items-center justify-center border border-gray-100 shadow-sm relative">
+                  <Image
                     src="/logo.png"
                     alt="Peihwa Logo"
-                    className="w-full h-full object-contain p-1"
+                    width={48}
+                    height={48}
+                    className="object-contain p-1"
                   />
                 </div>
                 <div>

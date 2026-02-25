@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
+import Image from "next/image";
 
 /**
  * Navbar Component
@@ -195,11 +196,14 @@ export default function Navbar({
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 bg-white rounded-full overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm border border-gray-100">
-              <img
+            <div className="w-12 h-12 bg-white rounded-full overflow-hidden flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-sm border border-gray-100 relative">
+              <Image
                 src="/logo.png"
                 alt="Peihwa Logo"
-                className="w-full h-full object-contain"
+                width={48}
+                height={48}
+                className="object-contain"
+                priority
               />
             </div>
             <div className="hidden sm:block">
@@ -331,10 +335,10 @@ export default function Navbar({
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300"
             aria-label="Toggle menu"
           >
-            <div className="w-6 h-5 flex flex-col justify-between">
+            <div className="w-6 h-4 flex flex-col justify-between">
               <span
                 className={`w-full h-0.5 bg-primary transition-all duration-300 ${
-                  isOpen ? "rotate-45 translate-y-2" : ""
+                  isOpen ? "rotate-45 translate-y-[7px]" : ""
                 }`}
               ></span>
               <span
@@ -344,7 +348,7 @@ export default function Navbar({
               ></span>
               <span
                 className={`w-full h-0.5 bg-primary transition-all duration-300 ${
-                  isOpen ? "-rotate-45 -translate-y-2" : ""
+                  isOpen ? "-rotate-45 -translate-y-[7px]" : ""
                 }`}
               ></span>
             </div>

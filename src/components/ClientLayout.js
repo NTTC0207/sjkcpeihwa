@@ -12,18 +12,23 @@ function LayoutContent({ children }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
+  // No longer blocking the entire layout with a loading spinner.
+  // This improves LCP and initial paint by allowing the server-rendered HTML to show immediately.
   if (!isMounted || !translations) {
+    // We can still return a shell or just the children.
+    // Since Navbar and Footer have fallbacks, we can render them.
+    if (isAdmin) return <>{children}</>;
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-bg">
-        <div className="text-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-            className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"
-          ></motion.div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
+      <>
+        <Navbar
+          translations={translations}
+          currentLocale={locale}
+          onLocaleChange={changeLocale}
+        />
+        {children}
+        <Footer translations={translations} />
+        <CookieNotice />
+      </>
     );
   }
 
