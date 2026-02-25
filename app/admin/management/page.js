@@ -67,18 +67,18 @@ const MANAGEMENT_CATEGORIES = [
     color: "bg-yellow-500",
     textColor: "text-yellow-600",
   },
-  {
-    id: "penyelenggaraan",
-    label: "Kerja-kerja Baik Pulih",
-    color: "bg-yellow-500",
-    textColor: "text-yellow-600",
-  },
-  {
-    id: "khidmat_bantu",
-    label: "Kunjung Khidmat Bantu",
-    color: "bg-purple-500",
-    textColor: "text-purple-600",
-  },
+  // {
+  //   id: "penyelenggaraan",
+  //   label: "Kerja-kerja Baik Pulih",
+  //   color: "bg-yellow-500",
+  //   textColor: "text-yellow-600",
+  // },
+  // {
+  //   id: "khidmat_bantu",
+  //   label: "Kunjung Khidmat Bantu",
+  //   color: "bg-purple-500",
+  //   textColor: "text-purple-600",
+  // },
 ];
 
 const EMPTY_FORM = {

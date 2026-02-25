@@ -301,8 +301,6 @@ export default function AnnouncementsClient({
               "Berita",
               "Notis",
               "Pekeliling",
-              "Kerja-kerja Baik Pulih",
-              "Bangunan Baru",
             ]),
           );
         }
