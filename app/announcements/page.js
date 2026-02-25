@@ -1,4 +1,11 @@
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  where,
+} from "firebase/firestore";
 import { db } from "@lib/firebase";
 import AnnouncementsClient from "./AnnouncementsClient";
 
