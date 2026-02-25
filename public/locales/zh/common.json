@@ -20,6 +20,16 @@
       "hem":"学生事务",
       "curriculum":"课外活动"
     },
+    "management": {
+      "title": "校务事项",
+      "perkhidmatan": "人事事务",
+      "retirement": "教职员工荣休",
+      "transfer": "报到与转校",
+      "pembangunan": "校园建设",
+      "new_building": "新校舍",
+      "maintenance": "维修工程",
+      "visit": "探访协助"
+    },
     "profile": {
       "title": "学校概况",
       "anthem": "校歌",
@@ -215,5 +225,6 @@
     "summaryLabel": "摘要",
     "recipientLabel": "获奖者 / 涉及学生",
     "noDetails": "无更多详情。"
-  }
+  },
+  "coming_soon": "敬请期待"
 }

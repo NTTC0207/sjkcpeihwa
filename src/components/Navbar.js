@@ -81,6 +81,23 @@ export default function Navbar({
           href: "/profile/history",
           label: t("nav.profile.calendar"),
         },
+        { type: "divider" },
+        {
+          href: "/organization?view=chart",
+          label: t("nav.organization.chart", "Organization Chart"),
+        },
+        {
+          href: "/organization/pta",
+          label: t("nav.profile.pta", "PTA"),
+        },
+        {
+          href: "/organization/lps",
+          label: t("nav.profile.lps", "LPS"),
+        },
+        {
+          href: "/organization?view=grid",
+          label: t("nav.organization.staff", "Teachers & Staff"),
+        },
       ],
     },
     {
@@ -89,8 +106,9 @@ export default function Navbar({
         {
           href: "/announcements",
           label: t("announcements.title"),
-          category: "academic",
+          category: "all",
         },
+        { type: "divider" },
         {
           href: "/announcements?category=academic",
           label: t("nav.manage.academic"),
@@ -110,23 +128,31 @@ export default function Navbar({
     },
     { href: "/penghargaan", label: t("nav.penghargaan", "Penghargaan") },
     {
-      label: t("nav.organization.title", "Organization"),
+      label: t("nav.management.title", "School Affairs"),
       children: [
+        { type: "header", label: t("nav.management.perkhidmatan") },
         {
-          href: "/organization?view=chart",
-          label: t("nav.organization.chart", "Organization Chart"),
+          href: "/management/persaraan",
+          label: t("nav.management.retirement"),
+        },
+        // {
+        //   href: "/management/pertukaran",
+        //   label: t("nav.management.transfer"),
+        // },
+        { type: "divider" },
+        { type: "header", label: t("nav.management.pembangunan") },
+        {
+          href: "/management/bangunan",
+          label: t("nav.management.new_building"),
         },
         {
-          href: "/organization/pta",
-          label: t("nav.profile.pta", "PTA"),
+          href: "/management/penyelenggaraan",
+          label: t("nav.management.maintenance"),
         },
+        { type: "divider" },
         {
-          href: "/organization/lps",
-          label: t("nav.profile.lps", "LPS"),
-        },
-        {
-          href: "/organization?view=grid",
-          label: t("nav.organization.staff", "Teachers & Staff"),
+          href: "/management/khidmat_bantu",
+          label: t("nav.management.visit"),
         },
       ],
     },
@@ -226,25 +252,45 @@ export default function Navbar({
                     }`}
                   >
                     <div className="py-2">
-                      {link.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className={`block px-4 py-2 text-sm transition-colors duration-200 ${
-                            pathname === "/announcements" &&
-                            child.category &&
-                            typeof window !== "undefined" &&
-                            new URLSearchParams(window.location.search).get(
-                              "category",
-                            ) === child.category
-                              ? "bg-primary/10 text-primary font-semibold"
-                              : "text-gray-700 hover:bg-primary/5 hover:text-primary"
-                          }`}
-                          onClick={() => setActiveDropdown(null)}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                      {link.children.map((child, idx) => {
+                        if (child.type === "header") {
+                          return (
+                            <div
+                              key={idx}
+                              className="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50/50 mb-1"
+                            >
+                              {child.label}
+                            </div>
+                          );
+                        }
+                        if (child.type === "divider") {
+                          return (
+                            <div
+                              key={idx}
+                              className="my-1 border-t border-gray-100"
+                            ></div>
+                          );
+                        }
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className={`block px-4 py-2 text-sm transition-colors duration-200 ${
+                              pathname === "/announcements" &&
+                              child.category &&
+                              typeof window !== "undefined" &&
+                              new URLSearchParams(window.location.search).get(
+                                "category",
+                              ) === child.category
+                                ? "bg-primary/10 text-primary font-semibold"
+                                : "text-gray-700 hover:bg-primary/5 hover:text-primary"
+                            }`}
+                            onClick={() => setActiveDropdown(null)}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -329,22 +375,44 @@ export default function Navbar({
                     </button>
                     <div
                       className={`overflow-hidden transition-all duration-300 pl-4 space-y-1 ${
-                        mobileExpanded[link.label] ? "max-h-64 mt-1" : "max-h-0"
+                        mobileExpanded[link.label]
+                          ? "max-h-[500px] mt-1"
+                          : "max-h-0"
                       }`}
                     >
-                      {link.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="block px-4 py-2 text-sm text-gray-600 hover:text-primary rounded-lg transition-colors border-l-2 border-transparent hover:border-primary"
-                          onClick={() => {
-                            setIsOpen(false);
-                            setMobileExpanded({});
-                          }}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                      {link.children.map((child, idx) => {
+                        if (child.type === "header") {
+                          return (
+                            <div
+                              key={idx}
+                              className="px-4 py-1.5 mt-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+                            >
+                              {child.label}
+                            </div>
+                          );
+                        }
+                        if (child.type === "divider") {
+                          return (
+                            <div
+                              key={idx}
+                              className="mx-4 my-1 border-t border-gray-100"
+                            ></div>
+                          );
+                        }
+                        return (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className="block px-4 py-2 text-sm text-gray-600 hover:text-primary rounded-lg transition-colors border-l-2 border-transparent hover:border-primary"
+                            onClick={() => {
+                              setIsOpen(false);
+                              setMobileExpanded({});
+                            }}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </>
                 ) : (

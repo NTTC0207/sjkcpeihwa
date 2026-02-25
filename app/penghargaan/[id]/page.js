@@ -3,7 +3,7 @@ import { doc, getDoc } from "firebase/firestore";
 import PenghargaanDetailClient from "./PenghargaanDetailClient";
 import { notFound } from "next/navigation";
 
-export const revalidate = 604800; // 7 days
+export const revalidate = false; // 7 days
 
 async function getAward(id) {
   try {

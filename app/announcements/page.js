@@ -3,7 +3,7 @@ import { db } from "@lib/firebase";
 import AnnouncementsClient from "./AnnouncementsClient";
 
 // ISR: Revalidate every 7 days (in seconds)
-export const revalidate = 604800;
+export const revalidate = false;
 
 /**
  * Announcements Page with ISR (Incremental Static Regeneration)
@@ -23,6 +23,15 @@ export default async function AnnouncementsPage() {
   try {
     const q = query(
       collection(db, "announcement"),
+      where("badge", "in", [
+        "Penting",
+        "Acara",
+        "Mesyuarat",
+        "Cuti",
+        "Berita",
+        "Notis",
+        "Pekeliling",
+      ]),
       orderBy("date", "desc"),
       orderBy("__name__", "desc"),
       limit(20),

@@ -20,6 +20,16 @@
       "hem": "Hal Ehwal Murid",
       "curriculum": "Ko-Kurikulum"
     },
+    "management": {
+      "title": "Urusan Sekolah",
+      "perkhidmatan": "Urusan Perkhidmatan",
+      "retirement": "Persaraan Warga Sekolah",
+      "transfer": "Lapor Diri & Pertukaran",
+      "pembangunan": "Pembangunan Sekolah",
+      "new_building": "Bangunan Baharu",
+      "maintenance": "Kerja-kerja Baik Pulih",
+      "visit": "Kunjung Khidmat Bantu"
+    },
     "profile": {
       "title": "Profil Sekolah",
       "anthem": "Lagu Sekolah",
@@ -215,5 +225,6 @@
     "summaryLabel": "Ringkasan",
     "recipientLabel": "Penerima / Murid terlibat",
     "noDetails": "Tiada butiran tambahan."
-  }
+  },
+  "coming_soon": "Akan Datang"
 }

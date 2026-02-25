@@ -290,6 +290,21 @@ export default function AnnouncementsClient({
 
         if (targetCategory) {
           constraints.unshift(where("department", "==", targetCategory));
+        } else {
+          // Exclude Kunjung Khidmat Bantu using 'in' filter for the "All" view
+          constraints.unshift(
+            where("badge", "in", [
+              "Penting",
+              "Acara",
+              "Mesyuarat",
+              "Cuti",
+              "Berita",
+              "Notis",
+              "Pekeliling",
+              "Kerja-kerja Baik Pulih",
+              "Bangunan Baru",
+            ]),
+          );
         }
 
         if (isLoadMore) {
@@ -324,7 +339,7 @@ export default function AnnouncementsClient({
         const newItems = isLoadMore
           ? [...announcementsRef.current, ...data]
           : data;
-        const more = data.length === batchSize;
+        const more = querySnapshot.docs.length === batchSize;
 
         setAnnouncements(newItems);
         setLastDoc(lastVisible);

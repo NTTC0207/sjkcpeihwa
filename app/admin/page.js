@@ -249,6 +249,36 @@ export default function AdminPage() {
                 </p>
               </Link>
 
+              <Link
+                href="/admin/management"
+                className="card group hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-left block"
+              >
+                <div className="w-12 h-12 bg-accent-blue rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-900/10">
+                  <span className="text-2xl text-white">💼</span>
+                </div>
+                <h3 className="text-xl font-bold text-primary mb-2">
+                  Urusan Sekolah
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Urus persaraan, pertukaran, dan pembangunan sekolah.
+                </p>
+              </Link>
+              <Link
+                href="/admin/management/retirement"
+                className="card group border-2 border-yellow-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-left block bg-gradient-to-br from-white to-yellow-50/30"
+              >
+                <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-yellow-200/50">
+                  <span className="text-2xl text-white">⭐</span>
+                </div>
+                <h3 className="text-xl font-bold text-primary mb-2">
+                  Urus Persaraan
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Urus rekod persaraan warga sekolah dengan sistem paginasi
+                  baharu.
+                </p>
+              </Link>
+
               <div className="card opacity-60 grayscale cursor-not-allowed">
                 <div className="w-12 h-12 bg-accent-green rounded-xl flex items-center justify-center mb-4">
                   <span className="text-2xl">📅</span>

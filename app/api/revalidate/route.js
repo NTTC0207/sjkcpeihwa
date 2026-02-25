@@ -18,6 +18,7 @@ export async function POST(request) {
     // Also revalidate sub-paths if needed
     if (path === "/announcements") {
       revalidatePath("/announcements/[id]", "page");
+      revalidatePath("/management/khidmat_bantu", "page");
     } else if (path === "/organization") {
       revalidatePath("/organization/lps", "page");
       revalidatePath("/organization/pta", "page");
