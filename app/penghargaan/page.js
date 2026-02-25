@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@lib/firebase";
 import PenghargaanClient from "./PenghargaanClient";
@@ -24,5 +25,9 @@ export default async function PenghargaanPage() {
     initialAwards = [];
   }
 
-  return <PenghargaanClient initialAwards={initialAwards} />;
+  return (
+    <Suspense fallback={null}>
+      <PenghargaanClient initialAwards={initialAwards} />
+    </Suspense>
+  );
 }

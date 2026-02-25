@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import {
   collection,
   getDocs,
@@ -54,9 +55,11 @@ export default async function AnnouncementsPage() {
   }
 
   return (
-    <AnnouncementsClient
-      initialAnnouncements={initialAnnouncements}
-      initialCategory={null}
-    />
+    <Suspense fallback={null}>
+      <AnnouncementsClient
+        initialAnnouncements={initialAnnouncements}
+        initialCategory={null}
+      />
+    </Suspense>
   );
 }

@@ -104,9 +104,13 @@ export default function SchoolAnthemPage() {
                 <FaPlayCircle className="text-2xl text-accent-yellow" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-800 mb-1">{translations.anthem.playbackInstructions}</h3>
+                <h3 className="font-bold text-gray-800 mb-1">
+                  {translations?.anthem?.playbackInstructions ||
+                    "Arahan Main Balik"}
+                </h3>
                 <p className="text-sm text-gray-600">
-                 {translations.anthem.description}
+                  {translations?.anthem?.description ||
+                    "Klik pada baris lirik untuk terus ke bahagian tersebut dalam lagu."}
                 </p>
               </div>
             </div>

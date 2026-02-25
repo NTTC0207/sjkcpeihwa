@@ -28,7 +28,8 @@ export default function HistoryPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-6 text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed"
           >
-           {translations.history?.subtitle}
+            {translations?.history?.subtitle ||
+              "Sejarah sekolah kami yang kaya dengan tradisi dan kecemerlangan."}
           </motion.p>
         </header>
 

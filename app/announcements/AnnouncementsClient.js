@@ -472,7 +472,7 @@ export default function AnnouncementsClient({
                   onClick={() => handleCategoryChange(null)}
                   className="text-sm text-gray-400 hover:text-primary transition-colors"
                 >
-                  {translations.announcements.title}
+                  {translations?.announcements?.title || "Pengumuman"}
                 </button>
                 <span className="text-gray-300">/</span>
                 <span
@@ -486,7 +486,7 @@ export default function AnnouncementsClient({
             <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4">
               {categoryMeta
                 ? tNav(categoryMeta.labelKey, categoryMeta.fallback)
-                : translations.announcements.title}
+                : translations?.announcements?.title || "Pengumuman"}
             </h1>
             <div
               className={`w-20 h-1.5 mx-auto rounded-full mb-6 ${
@@ -494,7 +494,8 @@ export default function AnnouncementsClient({
               }`}
             />
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              {translations.announcements.subtitle}
+              {translations?.announcements?.subtitle ||
+                "Berita dan pengumuman terkini."}
             </p>
 
             {/* Removed the large subscription section from here */}
@@ -509,7 +510,7 @@ export default function AnnouncementsClient({
                     : "bg-white text-gray-500 border border-gray-200 hover:border-primary/40 hover:text-primary"
                 }`}
               >
-                {translations.announcements.allYears
+                {translations?.announcements?.allYears
                   ? tNav("announcements.title", "All")
                   : "All"}
               </button>

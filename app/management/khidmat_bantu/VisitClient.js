@@ -239,7 +239,8 @@ export default function VisitClient({ initialItems }) {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4">
-              {translations.nav.management.visit}
+              {translations?.nav?.management?.visit ||
+                "Lawatan & Khidmat Bantu"}
             </h1>
             <div className="w-20 h-1.5 mx-auto rounded-full mb-6 bg-yellow-500" />
 
@@ -255,7 +256,7 @@ export default function VisitClient({ initialItems }) {
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-3">
                 <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                  {translations.announcements.filterYear}
+                  {translations?.announcements?.filterYear || "Tahun"}
                 </span>
                 <div className="relative inline-block w-40">
                   <select
@@ -264,7 +265,7 @@ export default function VisitClient({ initialItems }) {
                     className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm"
                   >
                     <option value="all">
-                      {translations.announcements.allYears}
+                      {translations?.announcements?.allYears || "Semua Tahun"}
                     </option>
                     {availableYears.map((year) => (
                       <option key={year} value={year}>
@@ -280,7 +281,7 @@ export default function VisitClient({ initialItems }) {
 
               <div className="flex items-center gap-3">
                 <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                  {translations.announcements.filterMonth}
+                  {translations?.announcements?.filterMonth || "Bulan"}
                 </span>
                 <div className="relative inline-block w-40">
                   <select
@@ -289,7 +290,7 @@ export default function VisitClient({ initialItems }) {
                     className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm"
                   >
                     <option value="all">
-                      {translations.announcements.allMonths}
+                      {translations?.announcements?.allMonths || "Semua Bulan"}
                     </option>
                     {months.map((m) => (
                       <option key={m.value} value={m.value}>
@@ -305,7 +306,8 @@ export default function VisitClient({ initialItems }) {
             </div>
 
             <div className="text-sm text-gray-400 font-medium">
-              {filteredItems.length} {translations.nav.management.visit}
+              {filteredItems.length}{" "}
+              {translations?.nav?.management?.visit || "Lawatan"}
             </div>
           </div>
 
@@ -326,7 +328,7 @@ export default function VisitClient({ initialItems }) {
                   <HiCalendar className="w-8 h-8 text-gray-300" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-400">
-                  {translations.announcements.noAnnouncements ||
+                  {translations?.announcements?.noAnnouncements ||
                     "Tiada rekod ditemui."}
                 </h3>
               </div>
@@ -344,7 +346,7 @@ export default function VisitClient({ initialItems }) {
                   ) : (
                     <>
                       <span>
-                        {translations.announcements.loadMore || "Lihat Lagi"}
+                        {translations?.announcements?.loadMore || "Lihat Lagi"}
                       </span>
                       <HiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </>
