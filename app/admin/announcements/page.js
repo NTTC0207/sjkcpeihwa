@@ -102,18 +102,18 @@ const BADGE_OPTIONS = [
     textColor: "text-amber-600",
     bg: "bg-amber-50",
   },
-  {
-    label: "Kerja-kerja Baik Pulih",
-    color: "bg-orange-500",
-    textColor: "text-orange-600",
-    bg: "bg-orange-50",
-  },
-  {
-    label: "Bangunan Baru",
-    color: "bg-sky-500",
-    textColor: "text-sky-600",
-    bg: "bg-sky-50",
-  },
+  // {
+  //   label: "Kerja-kerja Baik Pulih",
+  //   color: "bg-orange-500",
+  //   textColor: "text-orange-600",
+  //   bg: "bg-orange-50",
+  // },
+  // {
+  //   label: "Bangunan Baru",
+  //   color: "bg-sky-500",
+  //   textColor: "text-sky-600",
+  //   bg: "bg-sky-50",
+  // },
 ];
 
 const DEPARTMENT_OPTIONS = [
