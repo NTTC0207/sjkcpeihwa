@@ -279,6 +279,22 @@ export default function AdminPage() {
                 </p>
               </Link>
 
+              <Link
+                href="/admin/management/pembangunan"
+                className="card group border-2 border-emerald-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-left block bg-gradient-to-br from-white to-emerald-50/30"
+              >
+                <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-emerald-200/50">
+                  <span className="text-2xl text-white">🏗️</span>
+                </div>
+                <h3 className="text-xl font-bold text-primary mb-2">
+                  Pembangunan & Penyelenggaraan
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Urus rekod pembinaan bangunan baru dan kerja-kerja baik pulih
+                  (Timeline).
+                </p>
+              </Link>
+
               <div className="card opacity-60 grayscale cursor-not-allowed">
                 <div className="w-12 h-12 bg-accent-green rounded-xl flex items-center justify-center mb-4">
                   <span className="text-2xl">📅</span>

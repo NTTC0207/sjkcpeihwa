@@ -14,7 +14,7 @@ import {
 } from "react-icons/hi2";
 
 export default function RetirementDetailClient({ item }) {
-  const { locale } = useLanguage();
+  const { locale, isMounted } = useLanguage();
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -22,6 +22,14 @@ export default function RetirementDetailClient({ item }) {
       alert("Link copied to clipboard!");
     }
   };
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-bg">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-neutral-bg">

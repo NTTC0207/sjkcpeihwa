@@ -9,8 +9,9 @@ import {
 import { db } from "@lib/firebase";
 import ManagementClient from "../ManagementClient";
 import RetirementClient from "../RetirementClient";
+import TimelineClient from "../TimelineClient";
 
-export const revalidate = false; // Disable ISR, always fetch fresh data
+export const revalidate = false; // Enable ISR, revalidate every hour
 
 export default async function ManagementPage({ params }) {
   const { category } = await params;
@@ -25,14 +26,14 @@ export default async function ManagementPage({ params }) {
       q = query(
         collection(db, collectionName),
         orderBy("date", "desc"),
-        limit(5),
+        limit(20), // Fetch more for timeline
       );
     } else {
       q = query(
         collection(db, "management"),
         where("category", "==", category),
         orderBy("date", "desc"),
-        limit(5),
+        limit(20), // Fetch more for timeline
       );
     }
     const querySnapshot = await getDocs(q);
@@ -46,6 +47,10 @@ export default async function ManagementPage({ params }) {
 
   if (category === "persaraan") {
     return <RetirementClient initialItems={initialItems} />;
+  }
+
+  if (["bangunan", "penyelenggaraan"].includes(category)) {
+    return <TimelineClient initialItems={initialItems} category={category} />;
   }
 
   return <ManagementClient initialItems={initialItems} category={category} />;

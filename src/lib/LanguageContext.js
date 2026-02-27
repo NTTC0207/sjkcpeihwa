@@ -44,6 +44,8 @@ export function LanguageProvider({ children }) {
               "Critical error: Could not load fallback translations",
               fallbackError,
             );
+            // Ensure we at least have an empty object to avoid infinite loading screens
+            setTranslations({});
           }
         }
       }

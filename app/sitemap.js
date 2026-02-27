@@ -15,6 +15,23 @@ export default async function sitemap() {
     { path: "/profile/anthem", priority: 0.6, changeFrequency: "yearly" },
     { path: "/profile/motto", priority: 0.6, changeFrequency: "yearly" },
     { path: "/profile/landscape", priority: 0.6, changeFrequency: "monthly" },
+    { path: "/management/persaraan", priority: 0.7, changeFrequency: "weekly" },
+    { path: "/management/bangunan", priority: 0.7, changeFrequency: "monthly" },
+    {
+      path: "/management/penyelenggaraan",
+      priority: 0.7,
+      changeFrequency: "monthly",
+    },
+    {
+      path: "/management/khidmat_bantu",
+      priority: 0.7,
+      changeFrequency: "weekly",
+    },
+    {
+      path: "/management/majlis_rasmi",
+      priority: 0.7,
+      changeFrequency: "weekly",
+    },
   ].map(({ path, priority, changeFrequency }) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),

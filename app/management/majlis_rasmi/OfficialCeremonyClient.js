@@ -44,7 +44,7 @@ function buildYearList(data) {
   return years.sort((a, b) => b - a);
 }
 
-export default function VisitClient({ initialItems }) {
+export default function OfficialCeremonyClient({ initialItems }) {
   const { translations, locale, isMounted } = useLanguage();
 
   const [items, setItems] = useState(initialItems || []);
@@ -168,7 +168,7 @@ export default function VisitClient({ initialItems }) {
     try {
       const batchSize = isLoadMore ? LOAD_MORE_LIMIT : INITIAL_LIMIT;
       const constraints = [
-        where("badge", "==", "Kunjung Khidmat Bantu"),
+        where("badge", "==", "Majlis Rasmi Sekolah"),
         orderBy("date", "desc"),
         orderBy("__name__", "desc"),
         limit(batchSize),
@@ -206,7 +206,7 @@ export default function VisitClient({ initialItems }) {
         setAvailableYears(buildYearList(newItems));
       }
     } catch (error) {
-      console.error("Error fetching visits:", error);
+      console.error("Error fetching ceremonies:", error);
     } finally {
       if (!isLoadMore) setLoading(false);
       setLoadingMore(false);
@@ -247,15 +247,15 @@ export default function VisitClient({ initialItems }) {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4">
-              {translations?.nav?.management?.visit ||
-                "Lawatan & Khidmat Bantu"}
+              {translations?.nav?.management?.official_ceremony ||
+                "Majlis Rasmi Sekolah"}
             </h1>
             <div className="w-20 h-1.5 mx-auto rounded-full mb-6 bg-yellow-500" />
 
             <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
               {locale === "zh"
-                ? "由各界人士和机构提供的探访与协助，旨在提升学生的福利和学校的设施。"
-                : "Aktiviti kunjung khidmat bantu daripada pelbagai pihak bagi menyokong kebajikan murid dan pembangunan sekolah."}
+                ? "学校举办的各项正式庆典与活动，见证校园的精彩瞬间与重要时刻。"
+                : "Pelbagai majlis dan acara rasmi yang dianjurkan oleh pihak sekolah bagi meraikan peristiwa penting dan hari-hari kebesaran."}
             </p>
           </div>
 
@@ -315,14 +315,15 @@ export default function VisitClient({ initialItems }) {
 
             <div className="text-sm text-gray-400 font-medium">
               {filteredItems.length}{" "}
-              {translations?.nav?.management?.visit || "Lawatan"}
+              {translations?.nav?.management?.official_ceremony ||
+                "Majlis Rasmi"}
             </div>
           </div>
 
           {/* Listing */}
           <div className="grid gap-6 max-w-4xl mx-auto">
             {filteredItems.map((item) => (
-              <VisitCard
+              <CeremonyCard
                 key={item.id}
                 item={item}
                 locale={locale}
@@ -369,7 +370,7 @@ export default function VisitClient({ initialItems }) {
   );
 }
 
-const VisitCard = ({ item, locale, translations }) => {
+const CeremonyCard = ({ item, locale, translations }) => {
   const monthLabel = useMemo(() => {
     if (!item.date) return "";
     const month = item.date.split("-")[1];
@@ -447,7 +448,7 @@ const VisitCard = ({ item, locale, translations }) => {
         <div className="flex-grow p-6 md:p-8 flex flex-col">
           <div className="flex flex-wrap items-center gap-3 mb-4">
             <span
-              className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg text-white ${item.badgeColor || "bg-primary"}`}
+              className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg text-white ${item.badgeColor || "bg-yellow-500"}`}
             >
               {item.badge}
             </span>

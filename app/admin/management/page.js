@@ -88,6 +88,7 @@ const EMPTY_FORM = {
   summary: "",
   content: "",
   image: "",
+  images: [],
 };
 
 function Toast({ message, type, onClose }) {
@@ -120,14 +121,16 @@ function ItemCard({ item, onEdit, onDelete }) {
     MANAGEMENT_CATEGORIES.find((c) => c.id === item.category) ||
     MANAGEMENT_CATEGORIES[0];
 
+  const displayImage = item.image || (item.images && item.images[0]);
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
       <div className="flex items-stretch">
         <div className={`w-1.5 shrink-0 ${cat.color}`} />
         <div className="w-20 h-20 shrink-0 bg-gray-50 flex items-center justify-center overflow-hidden m-3 rounded-xl">
-          {item.image ? (
+          {displayImage ? (
             <img
-              src={item.image}
+              src={displayImage}
               alt=""
               className="w-full h-full object-cover"
             />
@@ -146,6 +149,11 @@ function ItemCard({ item, onEdit, onDelete }) {
               <HiCalendar className="w-3 h-3" />
               {item.date}
             </span>
+            {item.images?.length > 1 && (
+              <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold">
+                {item.images.length} Imej
+              </span>
+            )}
           </div>
           <h3 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-1">
             {item.title}
@@ -214,7 +222,11 @@ export default function ManagementAdminPage() {
 
   const handleEdit = (item) => {
     setEditingId(item.id);
-    setFormData({ ...item });
+    setFormData({
+      ...EMPTY_FORM,
+      ...item,
+      images: item.images || (item.image ? [item.image] : []),
+    });
     setView("edit");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -231,27 +243,58 @@ export default function ManagementAdminPage() {
   };
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
     setUploadingImage(true);
     try {
-      const result = await uploadToCloudinary(file);
-      if (result?.url) {
-        setFormData((prev) => ({ ...prev, image: result.url }));
-        showToast("Imej berjaya dimuat naik.");
+      const uploadPromises = files.map((file) => uploadToCloudinary(file));
+      const results = await Promise.all(uploadPromises);
+
+      const newUrls = results.filter((r) => r?.url).map((r) => r.url);
+
+      if (newUrls.length > 0) {
+        setFormData((prev) => {
+          const updatedImages = [...(prev.images || []), ...newUrls];
+          return {
+            ...prev,
+            images: updatedImages,
+            image: updatedImages[0], // Set first image as primary
+          };
+        });
+        showToast(`${newUrls.length} imej berjaya dimuat naik.`);
       }
     } catch (err) {
       showToast("Gagal muat naik imej.", "error");
     } finally {
       setUploadingImage(false);
+      if (imageInputRef.current) imageInputRef.current.value = "";
     }
+  };
+
+  const removeImage = (index) => {
+    setFormData((prev) => {
+      const updatedImages = prev.images.filter((_, i) => i !== index);
+      return {
+        ...prev,
+        images: updatedImages,
+        image: updatedImages.length > 0 ? updatedImages[0] : "",
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
-      const payload = { ...formData, updatedAt: new Date().toISOString() };
+      const payload = {
+        ...formData,
+        updatedAt: new Date().toISOString(),
+        // Ensure image and images are synced
+        image: formData.images?.[0] || "",
+        images: formData.images || [],
+      };
+
       if (editingId) {
         await updateDoc(doc(db, "management", editingId), payload);
         showToast("Berjaya dikemas kini!");
@@ -326,7 +369,10 @@ export default function ManagementAdminPage() {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold">Senarai Urusan Sekolah</h2>
               <button
-                onClick={() => setView("add")}
+                onClick={() => {
+                  setFormData(EMPTY_FORM);
+                  setView("add");
+                }}
                 className="btn-primary flex items-center gap-2 px-6 py-3 rounded-xl shadow-lg"
               >
                 <HiPlus /> Tambah Baru
@@ -452,7 +498,7 @@ export default function ManagementAdminPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Imej
+                  Imej (Carousel)
                 </label>
                 <input
                   type="file"
@@ -460,25 +506,47 @@ export default function ManagementAdminPage() {
                   onChange={handleImageUpload}
                   className="hidden"
                   accept="image/*"
+                  multiple
                 />
-                <div
-                  onClick={() => imageInputRef.current?.click()}
-                  className="cursor-pointer bg-gray-50 border border-dashed rounded-xl p-6 text-center hover:bg-gray-100 transition-colors"
-                >
-                  {formData.image ? (
-                    <img
-                      src={formData.image}
-                      className="max-h-48 mx-auto rounded-lg mb-2"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center gap-2 text-gray-400">
-                      <HiPhoto className="w-10 h-10" />{" "}
-                      <span>Muat Naik Imej</span>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                  {formData.images?.map((img, idx) => (
+                    <div
+                      key={idx}
+                      className="relative aspect-square rounded-xl overflow-hidden group border bg-gray-50"
+                    >
+                      <img src={img} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(idx)}
+                        className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <HiXMark className="w-4 h-4" />
+                      </button>
+                      {idx === 0 && (
+                        <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-amber-500 text-white text-[10px] font-bold rounded-lg uppercase">
+                          Utama
+                        </span>
+                      )}
                     </div>
-                  )}
-                  {uploadingImage && (
-                    <p className="text-xs text-primary mt-2">Memuat naik...</p>
-                  )}
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => imageInputRef.current?.click()}
+                    className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl hover:bg-gray-50 transition-colors text-gray-400"
+                  >
+                    {uploadingImage ? (
+                      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <HiPlus className="w-6 h-6" />
+                        <span className="text-[10px] font-bold">
+                          Tambah Imej
+                        </span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import Image from "next/image";
 
@@ -20,13 +20,21 @@ export default function Navbar({
   translations,
   currentLocale,
   onLocaleChange,
+  isMounted,
 }) {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [mobileExpanded, setMobileExpanded] = useState({});
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const dropdownRef = useRef(null);
+
+  // Set local mounted state to true after first render
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Handle scroll effect for sticky navbar
   useEffect(() => {
@@ -52,6 +60,9 @@ export default function Navbar({
 
   // Read translations with safe fallbacks
   const t = (key, fallback) => {
+    // During hydration, always use fallbacks to avoid mismatches
+    if (!mounted || !isMounted) return fallback;
+
     // Handle nested keys like 'nav.profile.title'
     const keys = key.split(".");
     let value = translations;
@@ -153,7 +164,11 @@ export default function Navbar({
         { type: "divider" },
         {
           href: "/management/khidmat_bantu",
-          label: t("nav.management.visit"),
+          label: t("nav.management.visit", "Kunjung Khidmat Bantu"),
+        },
+        {
+          href: "/management/majlis_rasmi",
+          label: t("nav.management.official_ceremony", "Majlis Rasmi Sekolah"),
         },
       ],
     },
@@ -281,11 +296,7 @@ export default function Navbar({
                             href={child.href}
                             className={`block px-4 py-2 text-sm transition-colors duration-200 ${
                               pathname === "/announcements" &&
-                              child.category &&
-                              typeof window !== "undefined" &&
-                              new URLSearchParams(window.location.search).get(
-                                "category",
-                              ) === child.category
+                              child.category === searchParams.get("category")
                                 ? "bg-primary/10 text-primary font-semibold"
                                 : "text-gray-700 hover:bg-primary/5 hover:text-primary"
                             }`}

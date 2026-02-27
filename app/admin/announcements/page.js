@@ -102,6 +102,12 @@ const BADGE_OPTIONS = [
     textColor: "text-amber-600",
     bg: "bg-amber-50",
   },
+  {
+    label: "Majlis Rasmi Sekolah",
+    color: "bg-rose-500",
+    textColor: "text-rose-600",
+    bg: "bg-rose-50",
+  },
   // {
   //   label: "Kerja-kerja Baik Pulih",
   //   color: "bg-orange-500",
@@ -920,15 +926,38 @@ export default function AnnouncementsAdminPage() {
         </div>
       </nav>
 
-      <div className="container-custom mt-6 flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <RevalidateButton path="/announcements" label="Pengumuman" />
-        </div>
-        <div className="flex-1">
-          <RevalidateButton
-            path="/management/khidmat_bantu"
-            label="Khidmat Bantu"
-          />
+      <div className="container-custom mt-8">
+        <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-primary flex items-center gap-2">
+                <HiCloudArrowUp className="w-5 h-5" /> Kemas Kini Kandungan
+                Laman Web (ISR)
+              </h3>
+              <p className="text-sm text-gray-500">
+                Segarkan cache untuk memastikan pelawat melihat pengumuman
+                terbaru pada halaman tertentu.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <RevalidateButton
+              path="/announcements"
+              label="Pengumuman (Utama)"
+              minimal
+            />
+            <RevalidateButton
+              path="/management/khidmat_bantu"
+              label="Khidmat Bantu"
+              minimal
+            />
+            <RevalidateButton
+              path="/management/majlis_rasmi"
+              label="Majlis Rasmi Sekolah"
+              minimal
+            />
+          </div>
         </div>
       </div>
 

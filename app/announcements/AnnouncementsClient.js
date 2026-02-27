@@ -184,7 +184,7 @@ export default function AnnouncementsClient({
           localStorage.setItem("fcm_subscribed", "true");
           localStorage.setItem("fcm_token", token);
           alert(
-            translations.announcements.subscribeSuccess ||
+            translations?.announcements?.subscribeSuccess ||
               "Anda telah berjaya melanggan pengumuman!",
           );
         } else {
@@ -192,7 +192,7 @@ export default function AnnouncementsClient({
         }
       } else {
         alert(
-          translations.announcements.subscribeDenied ||
+          translations?.announcements?.subscribeDenied ||
             "Kebenaran notifikasi ditolak atau tidak disokong.",
         );
       }
@@ -288,21 +288,22 @@ export default function AnnouncementsClient({
           limit(batchSize),
         ];
 
+        // Always exclude Kunjung Khidmat Bantu from the general announcements views
+        // as it has its own dedicated page.
+        constraints.unshift(
+          where("badge", "in", [
+            "Penting",
+            "Acara",
+            "Mesyuarat",
+            "Cuti",
+            "Berita",
+            "Notis",
+            "Pekeliling",
+          ]),
+        );
+
         if (targetCategory) {
           constraints.unshift(where("department", "==", targetCategory));
-        } else {
-          // Exclude Kunjung Khidmat Bantu using 'in' filter for the "All" view
-          constraints.unshift(
-            where("badge", "in", [
-              "Penting",
-              "Acara",
-              "Mesyuarat",
-              "Cuti",
-              "Berita",
-              "Notis",
-              "Pekeliling",
-            ]),
-          );
         }
 
         if (isLoadMore) {
@@ -534,7 +535,7 @@ export default function AnnouncementsClient({
                 {/* Year Filter */}
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                    {translations.announcements.filterYear}
+                    {translations?.announcements?.filterYear || "Tahun"}
                   </span>
                   <div className="relative inline-block w-40">
                     <select
@@ -543,7 +544,7 @@ export default function AnnouncementsClient({
                       className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
                     >
                       <option value="all">
-                        {translations.announcements.allYears}
+                        {translations?.announcements?.allYears || "Semua Tahun"}
                       </option>
                       {availableYears.map((year) => (
                         <option key={year} value={year}>
@@ -560,7 +561,7 @@ export default function AnnouncementsClient({
                 {/* Month Filter */}
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                    {translations.announcements.filterMonth}
+                    {translations?.announcements?.filterMonth || "Bulan"}
                   </span>
                   <div className="relative inline-block w-40">
                     <select
@@ -569,7 +570,8 @@ export default function AnnouncementsClient({
                       className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
                     >
                       <option value="all">
-                        {translations.announcements.allMonths}
+                        {translations?.announcements?.allMonths ||
+                          "Semua Bulan"}
                       </option>
                       {months.map((m) => (
                         <option key={m.value} value={m.value}>
@@ -586,7 +588,8 @@ export default function AnnouncementsClient({
             </div>
 
             <div className="text-sm text-gray-400 font-medium">
-              {filteredAnnouncements.length} {translations.announcements.title}
+              {filteredAnnouncements.length}{" "}
+              {translations?.announcements?.title || "Pengumuman"}
             </div>
           </div>
 
@@ -607,7 +610,7 @@ export default function AnnouncementsClient({
                   <HiCalendar className="w-8 h-8 text-gray-300" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-400">
-                  {translations.announcements.noAnnouncements ||
+                  {translations?.announcements?.noAnnouncements ||
                     "No announcements found for this year"}
                 </h3>
               </div>
@@ -626,7 +629,7 @@ export default function AnnouncementsClient({
                   ) : (
                     <>
                       <span>
-                        {translations.announcements.loadMore ||
+                        {translations?.announcements?.loadMore ||
                           "Request More Announcements"}
                       </span>
                       <HiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

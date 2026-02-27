@@ -3,7 +3,11 @@
 import { useState, useEffect } from "react";
 import { HiArrowPath } from "react-icons/hi2";
 
-export default function RevalidateButton({ path, label = "Laman Utama" }) {
+export default function RevalidateButton({
+  path,
+  label = "Laman Utama",
+  minimal = false,
+}) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(null);
 
@@ -37,7 +41,7 @@ export default function RevalidateButton({ path, label = "Laman Utama" }) {
         });
         setLastRefreshed(timeString);
         localStorage.setItem(storageKey, timeString);
-        alert(`Laman ${label} telah dikemas kini untuk semua pelawat!`);
+        // alert(`Laman ${label} telah dikemas kini untuk semua pelawat!`);
       }
     } catch (error) {
       console.error("Revalidation error:", error);
@@ -46,6 +50,41 @@ export default function RevalidateButton({ path, label = "Laman Utama" }) {
       setIsRefreshing(false);
     }
   };
+
+  if (minimal) {
+    return (
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 transition-all duration-300 hover:shadow-md hover:border-primary/20 flex flex-col justify-between h-full gap-3">
+        <div>
+          <h4 className="text-sm font-bold text-gray-900 line-clamp-1">
+            {label}
+          </h4>
+          <p className="text-[10px] text-gray-400 mt-1">
+            {lastRefreshed ? (
+              <span>Dikemas kini: {lastRefreshed}</span>
+            ) : (
+              <span className="italic">Belum pernah disegarkan</span>
+            )}
+          </p>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={isRefreshing}
+          className={`w-full py-2 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+            isRefreshing
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-primary/5 text-primary hover:bg-primary hover:text-white active:scale-95"
+          }`}
+        >
+          {isRefreshing ? (
+            <div className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+          ) : (
+            <HiArrowPath className="w-3.5 h-3.5" />
+          )}
+          <span>{isRefreshing ? "Menyegarkan..." : "Segarkan"}</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-4 mb-6">

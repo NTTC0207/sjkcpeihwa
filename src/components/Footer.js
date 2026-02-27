@@ -129,8 +129,14 @@ function IOSInstallModal({ onClose, translations: t }) {
 /* ─────────────────────────────────────────
    Main Footer Component
 ───────────────────────────────────────── */
-export default function Footer({ translations }) {
-  const t = translations;
+export default function Footer({ translations, isMounted }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const t = mounted && isMounted ? translations : null;
 
   // PWA / platform state
   const [ios, setIos] = useState(false);
