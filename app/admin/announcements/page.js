@@ -40,7 +40,10 @@ import {
   HiExclamationTriangle,
   HiDocumentText,
   HiCloudArrowUp,
+  HiSparkles,
+  HiAdjustmentsHorizontal,
 } from "react-icons/hi2";
+import Script from "next/script";
 
 import RevalidateButton from "@components/admin/RevalidateButton";
 
@@ -141,6 +144,40 @@ const DEPARTMENT_OPTIONS = [
   },
 ];
 
+const DEFAULT_AI_PROMPT_ZH = `您是 SJKC Pei Hwa Machang 学校的行政人员。
+请将以下学校公告改写成一则 **适合发送给家长群的 WhatsApp 消息**，语气需 **亲切、专业、清晰**。
+
+请注意：
+
+* 使用合适的 emoji，让信息更吸引人，但仍保持专业形象。
+* 必须保留重要信息，例如 **标题和日期**。
+* 信息要 **简洁明了、重点清楚**。
+* 只需提供可直接发送的 WhatsApp 消息内容。
+
+---
+
+**标题:** {{title}}
+**日期:** {{date}}
+**摘要:** {{summary}}
+`;
+
+const DEFAULT_AI_PROMPT_MS = `Anda adalah seorang pentadbir sekolah SJKC Pei Hwa Machang.
+Sila ubah suai pengumuman sekolah berikut menjadi **mesej WhatsApp yang sesuai untuk dihantar kepada kumpulan ibu bapa**, dengan nada yang **mesra, profesional, dan jelas**.
+
+Sila ambil perhatian:
+
+* Gunakan emoji yang sesuai supaya mesej lebih menarik, tetapi mengekalkan imej profesional.
+* Maklumat penting seperti **Tajuk dan Tarikh** mesti dikekalkan.
+* Mesej haruslah **ringkas dan padat**.
+* Hanya berikan kandungan mesej WhatsApp yang sedia untuk dihantar.
+
+---
+
+**Tajuk:** {{title}}
+**Tarikh:** {{date}}
+**Ringkasan:** {{summary}}
+`;
+
 const MONTH_OPTIONS = [
   { id: "All", label: "Semua Bulan" },
   { id: "01", label: "Januari" },
@@ -168,6 +205,12 @@ const EMPTY_FORM = {
   image: "",
   attachments: [],
   pushNotification: true,
+  sendWhatsApp: false,
+  whatsappMessageZh: "",
+  whatsappMessageMs: "",
+  whatsappLanguage: "zh",
+  aiPromptZh: DEFAULT_AI_PROMPT_ZH,
+  aiPromptMs: DEFAULT_AI_PROMPT_MS,
 };
 
 // Toast notification component
@@ -404,6 +447,8 @@ export default function AnnouncementsAdminPage() {
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [polishing, setPolishing] = useState(false);
+  const [showPromptConfig, setShowPromptConfig] = useState(false);
 
   // Auth guard
   useEffect(() => {
@@ -582,6 +627,12 @@ export default function AnnouncementsAdminPage() {
       image: ann.image || "",
       attachments: ann.attachments || [],
       pushNotification: ann.pushNotification || false,
+      sendWhatsApp: false,
+      whatsappMessageZh: "",
+      whatsappMessageMs: "",
+      whatsappLanguage: "zh",
+      aiPromptZh: DEFAULT_AI_PROMPT_ZH,
+      aiPromptMs: DEFAULT_AI_PROMPT_MS,
     });
     setView("edit");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -727,6 +778,52 @@ export default function AnnouncementsAdminPage() {
     showToast("Pautan berjaya dilampirkan.");
   };
 
+  const handleAIPolish = async () => {
+    if (!window.puter) {
+      showToast("Sila tunggu sehingga Puter.js dimuatkan.", "error");
+      return;
+    }
+
+    if (!formData.title.trim()) {
+      showToast("Sila masukkan tajuk sebelum menggunakan AI.", "error");
+      return;
+    }
+
+    setPolishing(true);
+    try {
+      // Polish Chinese version
+      let promptZh = formData.aiPromptZh || DEFAULT_AI_PROMPT_ZH;
+      promptZh = promptZh
+        .replace("{{title}}", formData.title)
+        .replace("{{date}}", formData.date)
+        .replace("{{summary}}", formData.summary || "Tiada ringkasan");
+
+      // Polish Malay version
+      let promptMs = formData.aiPromptMs || DEFAULT_AI_PROMPT_MS;
+      promptMs = promptMs
+        .replace("{{title}}", formData.title)
+        .replace("{{date}}", formData.date)
+        .replace("{{summary}}", formData.summary || "Tiada ringkasan");
+
+      const [resZh, resMs] = await Promise.all([
+        window.puter.ai.chat(promptZh),
+        window.puter.ai.chat(promptMs),
+      ]);
+
+      setFormData((prev) => ({
+        ...prev,
+        whatsappMessageZh: resZh.message.content.trim(),
+        whatsappMessageMs: resMs.message.content.trim(),
+      }));
+      showToast("Mesej (Cina & Melayu) telah digilap dengan AI!");
+    } catch (err) {
+      console.error("AI Polish failed", err);
+      showToast("Gagal menggilap mesej dengan AI.", "error");
+    } finally {
+      setPolishing(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
@@ -796,6 +893,32 @@ export default function AnnouncementsAdminPage() {
         });
       } catch (err) {
         console.warn("Revalidation failed:", err);
+      }
+
+      // Trigger WhatsApp redirection if enabled
+      if (formData.sendWhatsApp) {
+        const baseUrl = window.location.origin;
+        let finalMsg =
+          formData.whatsappLanguage === "zh"
+            ? formData.whatsappMessageZh
+            : formData.whatsappMessageMs;
+
+        // If no polished message, build the default one
+        if (!finalMsg) {
+          finalMsg = `*${payload.title}*\n\n${
+            payload.summary || ""
+          }\n\nBaca butiran lanjut di sini:\n${baseUrl}/announcements/${currentDocId}`;
+        } else {
+          // If polished, ensure it still contains the link if not already there
+          if (!finalMsg.includes(currentDocId)) {
+            finalMsg += `\n\nBaca butiran lanjut di sini:\n${baseUrl}/announcements/${currentDocId}`;
+          }
+        }
+
+        window.open(
+          `https://web.whatsapp.com/send?text=${encodeURIComponent(finalMsg)}`,
+          "_blank",
+        );
       }
 
       setView("list");
@@ -1508,6 +1631,185 @@ export default function AnnouncementsAdminPage() {
                           </div>
                         )}
                       </div>
+
+                      {/* WhatsApp Share Toggle */}
+                      <div className="pt-4 border-t border-gray-100">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              checked={formData.sendWhatsApp}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  sendWhatsApp: e.target.checked,
+                                })
+                              }
+                              className="w-5 h-5 rounded border-gray-300 text-[#25D366] focus:ring-[#25D366]/20 transition-all bg-gray-50"
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-xs font-bold text-gray-700 group-hover:text-[#25D366] transition-colors">
+                              Hantar ke Kumpulan WhatsApp
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-normal">
+                              Buka WhatsApp Web untuk berkongsi pengumuman ini
+                            </span>
+                          </div>
+                        </label>
+
+                        {formData.sendWhatsApp && (
+                          <div className="mt-4 pl-8 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                            <div className="flex items-center justify-between">
+                              <div className="flex bg-gray-100 p-1 rounded-lg gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setFormData({
+                                      ...formData,
+                                      whatsappLanguage: "zh",
+                                    })
+                                  }
+                                  className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${
+                                    formData.whatsappLanguage === "zh"
+                                      ? "bg-white text-primary shadow-sm"
+                                      : "text-gray-400 hover:text-gray-600"
+                                  }`}
+                                >
+                                  Cina
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setFormData({
+                                      ...formData,
+                                      whatsappLanguage: "ms",
+                                    })
+                                  }
+                                  className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${
+                                    formData.whatsappLanguage === "ms"
+                                      ? "bg-white text-primary shadow-sm"
+                                      : "text-gray-400 hover:text-gray-600"
+                                  }`}
+                                >
+                                  Melayu
+                                </button>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={handleAIPolish}
+                                disabled={polishing}
+                                className="flex items-center gap-1.5 px-2 py-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-[10px] font-bold rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-all shadow-sm disabled:opacity-50"
+                              >
+                                {polishing ? (
+                                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <HiSparkles className="w-3 h-3" />
+                                )}
+                                {polishing ? "Menggilap..." : "Gilap dengan AI"}
+                              </button>
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="text-[10px] uppercase tracking-wider font-bold text-gray-400">
+                                Mesej WhatsApp (
+                                {formData.whatsappLanguage === "zh"
+                                  ? "Cina"
+                                  : "Melayu"}
+                                )
+                              </label>
+                              <textarea
+                                value={
+                                  formData.whatsappLanguage === "zh"
+                                    ? formData.whatsappMessageZh
+                                    : formData.whatsappMessageMs
+                                }
+                                onChange={(e) =>
+                                  setFormData({
+                                    ...formData,
+                                    [formData.whatsappLanguage === "zh"
+                                      ? "whatsappMessageZh"
+                                      : "whatsappMessageMs"]: e.target.value,
+                                  })
+                                }
+                                placeholder={`Mesej WhatsApp ${formData.whatsappLanguage === "zh" ? "Cina" : "Melayu"}...`}
+                                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-[11px] focus:outline-none focus:ring-2 focus:ring-[#25D366]/20 focus:border-[#25D366] transition-all resize-none min-h-[120px]"
+                              />
+                            </div>
+
+                            <p className="text-[9px] text-gray-400 italic">
+                              Hujung pautan pengumuman akan ditambah secara
+                              automatik jika tiada.
+                            </p>
+
+                            <div className="pt-2">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setShowPromptConfig(!showPromptConfig)
+                                }
+                                className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 hover:text-primary transition-colors"
+                              >
+                                <HiAdjustmentsHorizontal className="w-3 h-3" />
+                                {showPromptConfig
+                                  ? "Sembunyikan"
+                                  : "Selaraskan"}{" "}
+                                Arahan AI (Prompt)
+                              </button>
+
+                              {showPromptConfig && (
+                                <div className="mt-2 space-y-4 animate-in fade-in slide-in-from-top-1 duration-200">
+                                  <div className="space-y-1">
+                                    <label className="text-[9px] font-bold text-gray-500">
+                                      Prompt Cina
+                                    </label>
+                                    <textarea
+                                      value={formData.aiPromptZh}
+                                      onChange={(e) =>
+                                        setFormData({
+                                          ...formData,
+                                          aiPromptZh: e.target.value,
+                                        })
+                                      }
+                                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/20 focus:border-primary transition-all min-h-[100px]"
+                                    />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[9px] font-bold text-gray-500">
+                                      Prompt Melayu
+                                    </label>
+                                    <textarea
+                                      value={formData.aiPromptMs}
+                                      onChange={(e) =>
+                                        setFormData({
+                                          ...formData,
+                                          aiPromptMs: e.target.value,
+                                        })
+                                      }
+                                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-[10px] focus:outline-none focus:ring-1 focus:ring-primary/20 focus:border-primary transition-all min-h-[100px]"
+                                    />
+                                  </div>
+                                  <p className="text-[8px] text-gray-400">
+                                    Gunakan{" "}
+                                    <code className="bg-gray-100 px-1 rounded">
+                                      {"{{title}}"}
+                                    </code>
+                                    ,{" "}
+                                    <code className="bg-gray-100 px-1 rounded">
+                                      {"{{date}}"}
+                                    </code>
+                                    , dan{" "}
+                                    <code className="bg-gray-100 px-1 rounded">
+                                      {"{{summary}}"}
+                                    </code>{" "}
+                                    sebagai tempat letak maklumat.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -1617,6 +1919,7 @@ export default function AnnouncementsAdminPage() {
           <p>© 2026 SJKC Pei Hwa Machang Admin Portal</p>
         </div>
       </footer>
+      <Script src="https://js.puter.com/v2/" strategy="afterInteractive" />
     </div>
   );
 }
