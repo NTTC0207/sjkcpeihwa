@@ -148,14 +148,35 @@ export default function PenghargaanClient({ initialAwards }) {
     [locale],
   );
 
-  // Local cache — avoids redundant Firebase reads on category revisits
-  const dataCacheRef = useRef({
-    all: {
-      items: initialAwards || [],
-      lastDoc: null,
-      hasMore: (initialAwards || []).length === INITIAL_LIMIT,
-    },
-  });
+  // Local cache — avoids redundant Firebase reads on category revisits.
+  // Pre-seeded with server-provided awards to respect ISR (revalidate=false):
+  // we bucket each award by its category so that switching to a category tab
+  // that is already covered by the initial payload never fires a Firebase read.
+  const dataCacheRef = useRef(null);
+  if (!dataCacheRef.current) {
+    const initialItems = initialAwards || [];
+    dataCacheRef.current = {
+      all: {
+        items: initialItems,
+        lastDoc: null,
+        hasMore: initialItems.length === INITIAL_LIMIT,
+      },
+    };
+
+    // Pre-seed each category bucket from the initial payload
+    initialItems.forEach((award) => {
+      if (award.category) {
+        if (!dataCacheRef.current[award.category]) {
+          dataCacheRef.current[award.category] = {
+            items: [],
+            lastDoc: null,
+            hasMore: false, // Initial chunk doesn't guarantee full category list
+          };
+        }
+        dataCacheRef.current[award.category].items.push(award);
+      }
+    });
+  }
 
   const [availableYears, setAvailableYears] = useState(() =>
     buildYearList(initialAwards || []),
@@ -279,7 +300,7 @@ export default function PenghargaanClient({ initialAwards }) {
 
       const cacheKey = newCat || "all";
       const cached = dataCacheRef.current[cacheKey];
-      if (cached) {
+      if (cached && cached.items.length > 0) {
         setAwards(cached.items);
         setLastDoc(cached.lastDoc);
         setHasMore(cached.hasMore);

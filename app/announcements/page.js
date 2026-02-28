@@ -10,13 +10,21 @@ import {
 import { db } from "@lib/firebase";
 import AnnouncementsClient from "./AnnouncementsClient";
 
-import { unstable_cache } from "next/cache";
-
-// ISR: Cache forever (build-time only)
-export const revalidate = false;
+// ISR: Revalidate every 7 days (60 * 60 * 24 * 7)
+export const revalidate = 604800;
 
 /**
- * Announcements Page with Static Generation
+ * Announcements Page with ISR (Incremental Static Regeneration)
+ *
+ * IMPORTANT: We intentionally do NOT read `searchParams` here.
+ * Reading searchParams in a Next.js Server Component opts the page into
+ * dynamic (SSR) rendering, which disables ISR caching entirely.
+ *
+ * Strategy:
+ *  - Server fetches the latest 20 announcements (no category filter) and
+ *    caches them for 7 days via ISR.
+ *  - Category filtering and pagination are handled 100% on the client side,
+ *    using the cached data first, then fetching from Firebase only if required.
  */
 export default async function AnnouncementsPage() {
   let initialAnnouncements = [];
@@ -42,13 +50,16 @@ export default async function AnnouncementsPage() {
       ...doc.data(),
     }));
   } catch (error) {
-    console.error("Error fetching announcements for Static Generation:", error);
+    console.error("Error fetching initial announcements for ISR:", error);
     initialAnnouncements = [];
   }
 
   return (
     <Suspense fallback={null}>
-      <AnnouncementsClient initialAnnouncements={initialAnnouncements} />
+      <AnnouncementsClient
+        initialAnnouncements={initialAnnouncements}
+        initialCategory={null}
+      />
     </Suspense>
   );
 }
