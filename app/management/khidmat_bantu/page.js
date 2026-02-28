@@ -10,7 +10,7 @@ import { db } from "@lib/firebase";
 import VisitClient from "./VisitClient";
 
 // ISR: Revalidate every 7 days (in seconds)
-export const revalidate = 604800;
+export const revalidate = false;
 
 export default async function ServiceVisitPage() {
   let initialItems = [];

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLanguage } from "@lib/LanguageContext";
 import {
@@ -113,6 +114,7 @@ export default function AnnouncementsClient({
 }) {
   const { translations, locale, isMounted } = useLanguage();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -257,34 +259,45 @@ export default function AnnouncementsClient({
   );
 
   // Local cache — avoids redundant Firebase reads on category revisits
-  // Always seed under "all" because server always fetches without category filter (ISR)
-  const dataCacheRef = useRef({
-    all: {
-      items: initialAnnouncements || [],
-      lastDoc: null,
-      hasMore: (initialAnnouncements || []).length === INITIAL_LIMIT,
-    },
-  });
+  // Pre-seeded with server-provided announcements to respect ISR (revalidate=false)
+  const dataCacheRef = useRef(null);
+  if (!dataCacheRef.current) {
+    const initialItems = initialAnnouncements || [];
+    dataCacheRef.current = {
+      all: {
+        items: initialItems,
+        lastDoc: null,
+        hasMore: initialItems.length === INITIAL_LIMIT,
+      },
+    };
+
+    // Pre-seed categories from initial set to avoid immediate fetches
+    initialItems.forEach((ann) => {
+      if (ann.department) {
+        if (!dataCacheRef.current[ann.department]) {
+          dataCacheRef.current[ann.department] = {
+            items: [],
+            lastDoc: null,
+            hasMore: false, // Initial chunk doesn't guarantee full category list
+          };
+        }
+        dataCacheRef.current[ann.department].items.push(ann);
+      }
+    });
+  }
 
   const [availableYears, setAvailableYears] = useState(() =>
     buildYearList(initialAnnouncements || []),
   );
 
   const activeCategoryRef = useRef(activeCategory);
-  useEffect(() => {
-    activeCategoryRef.current = activeCategory;
-  }, [activeCategory]);
-
-  // Stable reference to announcements for the load-more cursor
   const announcementsRef = useRef(announcements);
-  useEffect(() => {
-    announcementsRef.current = announcements;
-  }, [announcements]);
-
   const lastDocRef = useRef(lastDoc);
-  useEffect(() => {
-    lastDocRef.current = lastDoc;
-  }, [lastDoc]);
+
+  // Sync refs immediately on render to avoid dependency-lag in callbacks
+  activeCategoryRef.current = activeCategory;
+  announcementsRef.current = announcements;
+  lastDocRef.current = lastDoc;
 
   // Helper to read nested translation keys — memoized so it's stable across renders
   const tNav = t;
@@ -400,14 +413,17 @@ export default function AnnouncementsClient({
       const url = newCat
         ? `/announcements?category=${newCat}`
         : "/announcements";
-      window.history.pushState({ category: newCat }, "", url);
+
+      // Use Next.js router for consistent state management
+      router.push(url, { scroll: false });
+
       setActiveCategory(newCat);
       setSelectedYear("all");
       activeCategoryRef.current = newCat;
 
       const cacheKey = newCat || "all";
       const cached = dataCacheRef.current[cacheKey];
-      if (cached) {
+      if (cached && cached.items.length > 0) {
         setAnnouncements(cached.items);
         setLastDoc(cached.lastDoc);
         setHasMore(cached.hasMore);
@@ -417,43 +433,23 @@ export default function AnnouncementsClient({
         fetchAnnouncements(false, newCat);
       }
     },
-    [fetchAnnouncements],
+    [fetchAnnouncements, router],
   );
 
   // ─── React to URL ?category= changes ─────────────────────────────────────
-  // This fires on:
-  //   (a) first mount — applies the category from the URL (e.g. navbar link)
-  //   (b) every Next.js navigation that changes searchParams (navbar, back/forward)
-  // Using searchParams (from useSearchParams) means we never rely on the
-  // always-null initialCategory prop the server passes for ISR.
   useEffect(() => {
     const urlCategory = searchParams.get("category") || null;
 
-    if (urlCategory === activeCategoryRef.current) {
-      // Same category — just make sure we have data displayed (first mount)
-      if (announcements.length === 0 && !loading) {
-        const cacheKey = urlCategory || "all";
-        const cached = dataCacheRef.current[cacheKey];
-        if (cached && cached.items.length > 0) {
-          setAnnouncements(cached.items);
-          setLastDoc(cached.lastDoc);
-          setHasMore(cached.hasMore);
-          setAvailableYears(buildYearList(cached.items));
-        } else {
-          fetchAnnouncements(false, urlCategory);
-        }
-      }
-      return;
+    // Only sync if there's a real mismatch between URL and state
+    if (urlCategory !== activeCategoryRef.current) {
+      handleCategoryChange(urlCategory);
     }
+  }, [searchParams, handleCategoryChange]);
 
-    // Category changed — apply it (handleCategoryChange reads cache or fetches)
-    handleCategoryChange(urlCategory);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-  // NOTE: intentionally omitting handleCategoryChange & fetchAnnouncements from
-  // deps — both are stable useCallback refs; adding them would cause double-fires.
+  // ─── Selection Logic (No-Flick History Management) ──────────────────────
+  // We use window.history directly for detail views to avoid Next.js route
+  // transition flickers, while maintaining shareable URLs and back-button.
 
-  // Open a detail view inline — pushes the detail URL so back button works
   const handleSelectAnnouncement = useCallback((announcement) => {
     setSelectedAnnouncement(announcement);
     window.history.pushState(
@@ -464,7 +460,6 @@ export default function AnnouncementsClient({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Return to list from inline detail view
   const handleBackToList = useCallback(() => {
     setSelectedAnnouncement(null);
     const cat = activeCategoryRef.current;
@@ -473,34 +468,45 @@ export default function AnnouncementsClient({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
-  // Handle browser back/forward — stable: no deps that change frequently
   useEffect(() => {
-    const handlePop = () => {
-      // If we navigated back from a detail URL to the list URL, clear selection
+    const handlePopState = () => {
       const path = window.location.pathname;
-      if (path === "/announcements") {
-        setSelectedAnnouncement(null);
-        const params = new URLSearchParams(window.location.search);
-        const cat = params.get("category");
-        handleCategoryChange(cat);
+      const idMatch = path.match(/^\/announcements\/(.+)$/);
+
+      if (idMatch) {
+        const id = idMatch[1];
+        // Check current list or cache for the item to show it instantly
+        let found = announcementsRef.current.find((a) => a.id === id);
+        if (!found && dataCacheRef.current) {
+          Object.values(dataCacheRef.current).some((cache) => {
+            found = cache.items.find((a) => a.id === id);
+            return !!found;
+          });
+        }
+
+        if (found) {
+          setSelectedAnnouncement(found);
+        } else {
+          // If not in cache, we let Next.js handle a fresh load
+          window.location.reload();
+        }
       } else {
-        // Navigated back/forward to a detail URL — check if we have it cached
-        const idMatch = path.match(/^\/announcements\/(.+)$/);
-        if (idMatch) {
-          const id = idMatch[1];
-          const found = announcementsRef.current.find((a) => a.id === id);
-          if (found) {
-            setSelectedAnnouncement(found);
-          } else {
-            // Not in cache — let Next.js hard navigate
-            window.location.href = path;
-          }
+        setSelectedAnnouncement(null);
+        // If we returned to the list, sync the category filter from URL if needed
+        const params = new URLSearchParams(window.location.search);
+        const cat = params.get("category") || null;
+        if (cat !== activeCategoryRef.current) {
+          setActiveCategory(cat);
+          activeCategoryRef.current = cat;
+          const cached = dataCacheRef.current?.[cat || "all"];
+          if (cached) setAnnouncements(cached.items);
         }
       }
     };
-    window.addEventListener("popstate", handlePop);
-    return () => window.removeEventListener("popstate", handlePop);
-  }, [handleCategoryChange]); // handleCategoryChange is stable (useCallback with empty deps chain)
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
 
   // Compute filtered list once — avoid triple inline filter in JSX
   const filteredAnnouncements = useMemo(() => {
@@ -537,7 +543,11 @@ export default function AnnouncementsClient({
         <main className="pt-32 pb-24">
           <div className="container-custom">
             {/* Back Button */}
-            <div className="mb-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mb-8"
+            >
               <button
                 onClick={handleBackToList}
                 className="inline-flex items-center text-primary font-bold hover:text-primary-dark transition-colors"
@@ -545,11 +555,15 @@ export default function AnnouncementsClient({
                 <HiArrowLeft className="mr-2" />
                 {t("penghargaan.backToList", "Back to List")}
               </button>
-            </div>
+            </motion.div>
 
             <div className="max-w-4xl mx-auto">
               {/* Header Card */}
-              <div className="bg-white rounded-t-[3rem] p-8 pb-0 shadow-sm border-x border-t border-gray-100">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-t-[3rem] p-8 pb-0 shadow-sm border-x border-t border-gray-100"
+              >
                 <div className="flex flex-wrap items-center gap-4 mb-6">
                   <span
                     className={`text-sm font-bold uppercase tracking-widest px-4 py-1.5 rounded-full text-white ${
@@ -597,10 +611,14 @@ export default function AnnouncementsClient({
                     <HiShare className="w-5 h-5 text-gray-600 group-hover:text-primary" />
                   </button>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Content Card */}
-              <div className="bg-white rounded-b-[3rem] p-8 pt-0 md:px-12 shadow-xl border-x border-b border-gray-100 mb-12">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-white rounded-b-[3rem] p-8 pt-0 md:px-12 shadow-xl border-x border-b border-gray-100 mb-12"
+              >
                 <div className="overflow-x-auto pt-8">
                   <div
                     className="prose prose-lg max-w-none text-gray-700"
@@ -634,17 +652,22 @@ export default function AnnouncementsClient({
                     </div>
                   </div>
                 )}
-              </div>
+              </motion.div>
 
               {/* Bottom Navigation */}
-              <div className="flex justify-center">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex justify-center"
+              >
                 <button
                   onClick={handleBackToList}
                   className="btn-primary-accent"
                 >
                   {t("penghargaan.viewMore", "View More")}
                 </button>
-              </div>
+              </motion.div>
             </div>
           </div>
         </main>
