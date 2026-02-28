@@ -26,6 +26,7 @@ export async function POST(request) {
       // Invalidate the data cache tag (unstable_cache)
       revalidateTag("announcements", "max");
       // Also revalidate path-based cache for [id] detail pages
+      revalidatePath("/", "page");
       revalidatePath("/announcements", "page");
       revalidatePath("/announcements/[id]", "page");
       revalidatePath("/management/khidmat_bantu", "page");

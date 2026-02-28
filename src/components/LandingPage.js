@@ -40,10 +40,12 @@ import {
  * - Multi-language support (i18n)
  * - Smooth animations
  */
-export default function LandingPage() {
-  const { translations, locale, changeLocale } = useLanguage();
-  const [announcements, setAnnouncements] = useState([]);
-  const [loadingAnnouncements, setLoadingAnnouncements] = useState(true);
+export default function LandingPage({ initialAnnouncements = [] }) {
+  const { translations } = useLanguage();
+  const [announcements, setAnnouncements] = useState(initialAnnouncements);
+  const [loadingAnnouncements, setLoadingAnnouncements] = useState(
+    initialAnnouncements.length === 0,
+  );
 
   useEffect(() => {
     const fetchLatestAnnouncements = async () => {
@@ -75,8 +77,10 @@ export default function LandingPage() {
       }
     };
 
-    fetchLatestAnnouncements();
-  }, []);
+    if (initialAnnouncements.length === 0) {
+      fetchLatestAnnouncements();
+    }
+  }, [initialAnnouncements]);
 
   const currentYear = new Date().getFullYear();
   const historyYears = currentYear - 1938;
