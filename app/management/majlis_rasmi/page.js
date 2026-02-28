@@ -1,29 +1,26 @@
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  where,
-  limit,
-} from "firebase/firestore";
-import { db } from "@lib/firebase";
+import { db } from "@lib/firebase-admin";
 import OfficialCeremonyClient from "./OfficialCeremonyClient";
 
-// ISR: Revalidate every 7 days (in seconds)
+// ISR: cache indefinitely until manually revalidated
 export const revalidate = false;
 
+/**
+ * NOTE: Uses firebase-admin (NOT the client SDK) so the Firestore fetch goes
+ * through Node's http stack that Next.js ISR can cache. The browser client SDK
+ * uses WebSocket/long-poll which bypasses Next.js's fetch cache entirely.
+ */
 export default async function OfficialCeremonyPage() {
   let initialItems = [];
   try {
-    const q = query(
-      collection(db, "announcement"),
-      where("badge", "==", "Majlis Rasmi Sekolah"),
-      orderBy("date", "desc"),
-      orderBy("__name__", "desc"),
-      limit(20),
-    );
-    const querySnapshot = await getDocs(q);
-    initialItems = querySnapshot.docs.map((doc) => ({
+    const snapshot = await db
+      .collection("announcement")
+      .where("badge", "==", "Majlis Rasmi Sekolah")
+      .orderBy("date", "desc")
+      .orderBy("__name__", "desc")
+      .limit(20)
+      .get();
+
+    initialItems = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));

@@ -1,9 +1,8 @@
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "@lib/firebase";
+import { db } from "@lib/firebase-admin";
 import { Suspense } from "react";
 import GeneralOrgClient from "@components/organization/GeneralOrgClient";
 
-// ISR: Revalidate every 7 days (60*60*24*7)
+// ISR: cache indefinitely until manually revalidated
 export const revalidate = false;
 
 export const metadata = {
@@ -22,13 +21,17 @@ export const metadata = {
   },
 };
 
+/**
+ * NOTE: Uses firebase-admin (NOT the client SDK) so the Firestore fetch goes
+ * through Node's http stack that Next.js ISR can cache. The browser client SDK
+ * uses WebSocket/long-poll which bypasses Next.js's fetch cache entirely.
+ */
 async function getLPSData() {
   try {
-    const q = query(collection(db, "LPS"), orderBy("level", "asc"));
-    const querySnapshot = await getDocs(q);
+    const snapshot = await db.collection("LPS").orderBy("level", "asc").get();
 
-    if (!querySnapshot.empty) {
-      const data = querySnapshot.docs.map((doc) => ({
+    if (!snapshot.empty) {
+      const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));

@@ -1,11 +1,13 @@
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@lib/firebase";
+import { db } from "@lib/firebase-admin";
 import { notFound } from "next/navigation";
 import ManagementDetailClient from "./ManagementDetailClient";
 import RetirementDetailClient from "../../RetirementDetailClient";
 
-export const revalidate = false; // Disable ISR
+export const revalidate = false;
 
+/**
+ * NOTE: Uses firebase-admin (NOT the client SDK) — see announcements/page.js for details.
+ */
 export default async function ManagementDetailPage({ params }) {
   const { category, id } = await params;
 
@@ -14,10 +16,8 @@ export default async function ManagementDetailPage({ params }) {
 
   let item = null;
   try {
-    const docRef = doc(db, collectionName, id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
+    const docSnap = await db.collection(collectionName).doc(id).get();
+    if (docSnap.exists) {
       item = { id: docSnap.id, ...docSnap.data() };
     }
   } catch (error) {

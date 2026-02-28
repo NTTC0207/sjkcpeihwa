@@ -1,23 +1,21 @@
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@lib/firebase";
+import { db } from "@lib/firebase-admin";
 import { notFound } from "next/navigation";
 import AnnouncementDetailClient from "./AnnouncementDetailClient";
 
-// ISR: Revalidate every 7 days
+// ISR: cache indefinitely until manually revalidated
 export const revalidate = false;
 
 /**
  * Announcement Detail Page with ISR
+ * NOTE: Uses firebase-admin (NOT the client SDK) — see announcements/page.js for details.
  */
 export default async function AnnouncementDetailPage({ params }) {
   const { id } = await params;
 
   let announcement = null;
   try {
-    const docRef = doc(db, "announcement", id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
+    const docSnap = await db.collection("announcement").doc(id).get();
+    if (docSnap.exists) {
       announcement = { id: docSnap.id, ...docSnap.data() };
     }
   } catch (error) {

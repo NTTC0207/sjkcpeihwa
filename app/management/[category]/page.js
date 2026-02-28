@@ -1,18 +1,15 @@
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  where,
-  limit,
-} from "firebase/firestore";
-import { db } from "@lib/firebase";
+import { db } from "@lib/firebase-admin";
 import ManagementClient from "../ManagementClient";
 import RetirementClient from "../RetirementClient";
 import TimelineClient from "../TimelineClient";
 
-export const revalidate = false; // Enable ISR, revalidate every hour
+export const revalidate = false; // cache indefinitely until manually revalidated
 
+/**
+ * NOTE: Uses firebase-admin (NOT the client SDK) so the Firestore fetch goes
+ * through Node's http stack that Next.js ISR can cache. The browser client SDK
+ * uses WebSocket/long-poll which bypasses Next.js's fetch cache entirely.
+ */
 export default async function ManagementPage({ params }) {
   const { category } = await params;
   let initialItems = [];
@@ -21,23 +18,18 @@ export default async function ManagementPage({ params }) {
   const collectionName = isDedicatedCollection ? category : "management";
 
   try {
-    let q;
+    let query;
     if (isDedicatedCollection) {
-      q = query(
-        collection(db, collectionName),
-        orderBy("date", "desc"),
-        limit(20), // Fetch more for timeline
-      );
+      query = db.collection(collectionName).orderBy("date", "desc").limit(20);
     } else {
-      q = query(
-        collection(db, "management"),
-        where("category", "==", category),
-        orderBy("date", "desc"),
-        limit(20), // Fetch more for timeline
-      );
+      query = db
+        .collection("management")
+        .where("category", "==", category)
+        .orderBy("date", "desc")
+        .limit(20);
     }
-    const querySnapshot = await getDocs(q);
-    initialItems = querySnapshot.docs.map((doc) => ({
+    const snapshot = await query.get();
+    initialItems = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
