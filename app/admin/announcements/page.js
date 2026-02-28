@@ -885,15 +885,15 @@ export default function AnnouncementsAdminPage() {
       }
 
       // Trigger ISR revalidation
-      try {
-        await fetch("/api/revalidate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ path: "/announcements" }),
-        });
-      } catch (err) {
-        console.warn("Revalidation failed:", err);
-      }
+      // try {
+      //   await fetch("/api/revalidate", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({ path: "/announcements" }),
+      //   });
+      // } catch (err) {
+      //   console.warn("Revalidation failed:", err);
+      // }
 
       // Trigger WhatsApp redirection if enabled
       if (formData.sendWhatsApp) {

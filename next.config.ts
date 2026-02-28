@@ -5,6 +5,15 @@ const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
   register: true,
+  workboxOptions: {
+    runtimeCaching: [
+      {
+        urlPattern: /.*/, // all HTML
+        handler: "NetworkFirst", // try network first, fallback to cache
+        options: { cacheName: "html-cache" },
+      },
+    ],
+  },
 });
 
 const nextConfig: NextConfig = {

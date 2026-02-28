@@ -24,33 +24,33 @@ export async function POST(request) {
 
     if (path === "/announcements") {
       // Invalidate the data cache tag (unstable_cache)
-      revalidateTag("announcements");
+      revalidateTag("announcements", "max");
       // Also revalidate path-based cache for [id] detail pages
       revalidatePath("/announcements", "page");
       revalidatePath("/announcements/[id]", "page");
       revalidatePath("/management/khidmat_bantu", "page");
       revalidatePath("/management/majlis_rasmi", "page");
     } else if (path === "/management/khidmat_bantu") {
-      revalidateTag("khidmat_bantu");
+      revalidateTag("khidmat_bantu", "max");
       revalidatePath("/management/khidmat_bantu", "page");
       // Khidmat Bantu shares the "announcement" collection
-      revalidateTag("announcements");
+      revalidateTag("announcements", "max");
       revalidatePath("/announcements", "page");
     } else if (path === "/management/majlis_rasmi") {
-      revalidateTag("majlis_rasmi");
+      revalidateTag("majlis_rasmi", "max");
       revalidatePath("/management/majlis_rasmi", "page");
-      revalidateTag("announcements");
+      revalidateTag("announcements", "max");
     } else if (path === "/organization") {
-      revalidateTag("organization");
+      revalidateTag("organization", "max");
       revalidatePath("/organization", "page");
       revalidatePath("/organization/lps", "page");
       revalidatePath("/organization/pta", "page");
     } else if (path === "/penghargaan") {
-      revalidateTag("penghargaan");
+      revalidateTag("penghargaan", "max");
       revalidatePath("/penghargaan", "page");
       revalidatePath("/penghargaan/[id]", "page");
     } else if (path === "/management") {
-      revalidateTag("management");
+      revalidateTag("management", "max");
       revalidatePath("/management/[category]", "page");
       revalidatePath("/management/[category]/[id]", "page");
     } else {
