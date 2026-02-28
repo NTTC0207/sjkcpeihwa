@@ -1,15 +1,21 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@lib/LanguageContext";
+import { motion } from "framer-motion";
 import {
   HiMegaphone,
   HiArrowRight,
+  HiArrowLeft,
   HiCalendar,
   HiChevronDown,
   HiCheckCircle,
   HiXMark,
+  HiShare,
+  HiPaperClip,
+  HiDocumentText,
+  HiArrowTopRightOnSquare,
 } from "react-icons/hi2";
 import {
   collection,
@@ -58,7 +64,9 @@ export default function VisitClient({ initialItems }) {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
-  const [showSubTooltip, setShowSubTooltip] = useState(false);
+
+  // --- Inline detail view ---
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -109,7 +117,7 @@ export default function VisitClient({ initialItems }) {
           localStorage.setItem("fcm_subscribed", "true");
           localStorage.setItem("fcm_token", token);
           alert(
-            translations.announcements.subscribeSuccess ||
+            translations.announcements?.subscribeSuccess ||
               "Anda telah berjaya melanggan pengumuman!",
           );
         } else {
@@ -213,6 +221,44 @@ export default function VisitClient({ initialItems }) {
     }
   }, []);
 
+  const handleSelectItem = useCallback((item) => {
+    setSelectedItem(item);
+    window.history.pushState(
+      { announcementId: item.id },
+      "",
+      `/announcements/${item.id}`,
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  const handleBackToList = useCallback(() => {
+    setSelectedItem(null);
+    window.history.pushState({}, "", "/management/khidmat_bantu");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    const handlePop = () => {
+      const path = window.location.pathname;
+      if (path === "/management/khidmat_bantu") {
+        setSelectedItem(null);
+      } else {
+        const idMatch = path.match(/^\/announcements\/(.+)$/);
+        if (idMatch) {
+          const id = idMatch[1];
+          const found = itemsRef.current.find((a) => a.id === id);
+          if (found) {
+            setSelectedItem(found);
+          } else {
+            window.location.href = path;
+          }
+        }
+      }
+    };
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, []);
+
   const filteredItems = useMemo(() => {
     let list = items;
     if (selectedYear !== "all") {
@@ -228,6 +274,152 @@ export default function VisitClient({ initialItems }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-bg">
         <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // --- Inline detail view ---
+  if (selectedItem) {
+    const ann = selectedItem;
+    const handleShare = () => {
+      if (typeof window !== "undefined") {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-neutral-bg">
+        <main className="pt-32 pb-24">
+          <div className="container-custom">
+            {/* Back Button */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="mb-8"
+            >
+              <button
+                onClick={handleBackToList}
+                className="inline-flex items-center text-primary font-bold hover:text-primary-dark transition-colors"
+              >
+                <HiArrowLeft className="mr-2" />
+                {translations?.penghargaan?.backToList || "Back to List"}
+              </button>
+            </motion.div>
+
+            <div className="max-w-4xl mx-auto">
+              {/* Header Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-t-[3rem] p-8 pb-0 shadow-sm border-x border-t border-gray-100"
+              >
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  <span
+                    className={`text-sm font-bold uppercase tracking-widest px-4 py-1.5 rounded-full text-white ${
+                      ann.badgeColor || "bg-primary"
+                    }`}
+                  >
+                    {ann.badge}
+                  </span>
+                  <span className="flex items-center text-gray-500 font-medium">
+                    <HiCalendar className="mr-2 w-5 h-5 text-primary/60" />
+                    {ann.date}
+                  </span>
+                </div>
+
+                <h1 className="text-3xl md:text-5xl font-display font-bold text-primary mb-6 leading-tight">
+                  {ann.title}
+                </h1>
+
+                <div className="flex items-center justify-between py-6 border-t border-gray-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center relative overflow-hidden">
+                      <img
+                        src="/logo.png"
+                        alt="Logo"
+                        className="w-6 h-6 object-contain"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-primary">
+                        SJKC Pei Hwa
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Official Announcement
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleShare}
+                    className="p-3 bg-neutral-bg hover:bg-gray-200 rounded-full transition-colors group"
+                    title="Share"
+                  >
+                    <HiShare className="w-5 h-5 text-gray-600 group-hover:text-primary" />
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Content Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-white rounded-b-[3rem] p-8 pt-0 md:px-12 shadow-xl border-x border-b border-gray-100 mb-12"
+              >
+                <div className="overflow-x-auto pt-8">
+                  <div
+                    className="prose prose-lg max-w-none text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: ann.content }}
+                  />
+                </div>
+
+                {/* Attachments */}
+                {ann.attachments?.length > 0 && (
+                  <div className="mt-8 pt-6 border-t border-gray-100">
+                    <h4 className="font-bold text-gray-700 mb-3 flex items-center gap-2">
+                      <HiPaperClip className="w-4 h-4" />
+                      Attachments ({ann.attachments.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {ann.attachments.map((att, i) => (
+                        <a
+                          key={i}
+                          href={att.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-indigo-50 transition-colors group"
+                        >
+                          <HiDocumentText className="w-5 h-5 text-gray-400 group-hover:text-indigo-500" />
+                          <span className="text-sm font-medium text-gray-700 flex-1 truncate">
+                            {att.name}
+                          </span>
+                          <HiArrowTopRightOnSquare className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+
+              {/* Bottom Navigation */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex justify-center"
+              >
+                <button
+                  onClick={handleBackToList}
+                  className="btn-primary-accent"
+                >
+                  {translations?.penghargaan?.viewMore || "View More"}
+                </button>
+              </motion.div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -319,6 +511,7 @@ export default function VisitClient({ initialItems }) {
                 item={item}
                 locale={locale}
                 translations={translations}
+                onSelect={handleSelectItem}
               />
             ))}
 
@@ -361,7 +554,7 @@ export default function VisitClient({ initialItems }) {
   );
 }
 
-const VisitCard = ({ item, locale, translations }) => {
+const VisitCard = ({ item, locale, translations, onSelect }) => {
   const monthLabel = useMemo(() => {
     if (!item.date) return "";
     const month = item.date.split("-")[1];
@@ -401,9 +594,9 @@ const VisitCard = ({ item, locale, translations }) => {
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-      <Link
-        href={`/announcements/${item.id}`}
-        className="flex flex-col md:flex-row gap-0"
+      <button
+        onClick={() => onSelect(item)}
+        className="w-full flex-col md:flex-row gap-0 flex text-left"
       >
         <div className="w-full md:w-56 h-[200px] md:h-[285px] shrink-0 overflow-hidden bg-neutral-bg relative">
           {item.image ? (
@@ -466,7 +659,7 @@ const VisitCard = ({ item, locale, translations }) => {
             </div>
           </div>
         </div>
-      </Link>
+      </button>
     </div>
   );
 };
