@@ -1,6 +1,16 @@
-import { revalidatePath } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
+/**
+ * POST /api/revalidate
+ *
+ * Body: { path: "/announcements" | "/penghargaan" | etc. }
+ *
+ * Invalidates both:
+ *  1. Cache TAGS (used by unstable_cache in server pages — required for
+ *     Firebase Admin SDK calls that don't go through fetch())
+ *  2. Path cache (for any pages that still use fetch-based ISR)
+ */
 export async function POST(request) {
   try {
     const { path } = await request.json();
@@ -12,24 +22,40 @@ export async function POST(request) {
       );
     }
 
-    // Trigger revalidation for the specified path
-    revalidatePath(path);
-
-    // Also revalidate sub-paths and home if needed
     if (path === "/announcements") {
-      revalidatePath("/", "layout"); // Revalidate home and everything under it if needed
-      revalidatePath("/announcements");
+      // Invalidate the data cache tag (unstable_cache)
+      revalidateTag("announcements");
+      // Also revalidate path-based cache for [id] detail pages
+      revalidatePath("/announcements", "page");
       revalidatePath("/announcements/[id]", "page");
-      revalidatePath("/management/khidmat_bantu");
+      revalidatePath("/management/khidmat_bantu", "page");
+      revalidatePath("/management/majlis_rasmi", "page");
     } else if (path === "/management/khidmat_bantu") {
-      revalidatePath("/management/khidmat_bantu");
-      revalidatePath("/announcements"); // They share data
+      revalidateTag("khidmat_bantu");
+      revalidatePath("/management/khidmat_bantu", "page");
+      // Khidmat Bantu shares the "announcement" collection
+      revalidateTag("announcements");
+      revalidatePath("/announcements", "page");
+    } else if (path === "/management/majlis_rasmi") {
+      revalidateTag("majlis_rasmi");
+      revalidatePath("/management/majlis_rasmi", "page");
+      revalidateTag("announcements");
     } else if (path === "/organization") {
-      revalidatePath("/organization/lps");
-      revalidatePath("/organization/pta");
+      revalidateTag("organization");
+      revalidatePath("/organization", "page");
+      revalidatePath("/organization/lps", "page");
+      revalidatePath("/organization/pta", "page");
     } else if (path === "/penghargaan") {
-      revalidatePath("/penghargaan");
+      revalidateTag("penghargaan");
+      revalidatePath("/penghargaan", "page");
       revalidatePath("/penghargaan/[id]", "page");
+    } else if (path === "/management") {
+      revalidateTag("management");
+      revalidatePath("/management/[category]", "page");
+      revalidatePath("/management/[category]/[id]", "page");
+    } else {
+      // Generic fallback — revalidate the given path
+      revalidatePath(path, "page");
     }
 
     return NextResponse.json({

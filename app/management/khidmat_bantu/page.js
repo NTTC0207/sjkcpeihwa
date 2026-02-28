@@ -1,17 +1,11 @@
+import { unstable_cache } from "next/cache";
 import { db } from "@lib/firebase-admin";
 import VisitClient from "./VisitClient";
 
-// ISR: cache indefinitely until manually revalidated
 export const revalidate = false;
 
-/**
- * NOTE: Uses firebase-admin (NOT the client SDK) so the Firestore fetch goes
- * through Node's http stack that Next.js ISR can cache. The browser client SDK
- * uses WebSocket/long-poll which bypasses Next.js's fetch cache entirely.
- */
-export default async function ServiceVisitPage() {
-  let initialItems = [];
-  try {
+const getCachedVisits = unstable_cache(
+  async () => {
     const snapshot = await db
       .collection("announcement")
       .where("badge", "==", "Kunjung Khidmat Bantu")
@@ -20,13 +14,24 @@ export default async function ServiceVisitPage() {
       .limit(20)
       .get();
 
-    initialItems = snapshot.docs.map((doc) => ({
+    return snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
+  },
+  ["khidmat_bantu-list"],
+  {
+    tags: ["khidmat_bantu", "announcements"],
+    revalidate: 604800,
+  },
+);
+
+export default async function ServiceVisitPage() {
+  let initialItems = [];
+  try {
+    initialItems = await getCachedVisits();
   } catch (error) {
     console.error("Error fetching initial visits for ISR:", error);
-    initialItems = [];
   }
 
   return <VisitClient initialItems={initialItems} />;
