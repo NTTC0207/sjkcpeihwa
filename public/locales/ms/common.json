@@ -67,10 +67,12 @@
     "mission": "Misi Kami",
     "missionText": "MELESTARIKAN SISTEM PENDIDIKAN YANG BERKUALITI UNTUK MEMBANGUNKAN POTENSI INDIVIDU BAGI MEMENUHI ASPIRASI NEGARA",
     "vision": "Visi Kami",
-    "visionText": "PENDIDIKAN BERKUALITI, INSAN TERDIDIK, NEGARA SEJAHTERA"
+    "visionText": "PENDIDIKAN BERKUALITI, INSAN TERDIDIK, NEGARA SEJAHTERA",
+    "yearsOfExcellence": "Tahun Kecemerlangan"
   },
   "charter": {
     "title": "PIAGAM PELANGGAN",
+    "ourCommitment": "Komitmen Kami",
     "items": [
       "Kami sedia memberi pendidikan yang bermutu dan melahirkan pelajar-pelajar yang cemerlang dan wawasan.",
       "Berusaha meningkatkan tahap pencapaian kecemerlangan pelajar dalam bidang kurikulum dan kokurikulum.",
@@ -83,6 +85,7 @@
   "programs": {
     "title": "Program Kami",
     "subtitle": "Pendidikan menyeluruh untuk setiap kanak-kanak",
+    "excellenceInEverything": "Kecemerlangan Dalam Segalanya",
     "academic": {
       "title": "Kecemerlangan Akademik",
       "description": "Asas kukuh dalam subjek teras dengan kaedah pengajaran inovatif"
@@ -102,6 +105,7 @@
   },
   "announcements": {
     "title": "Pengumuman Terkini",
+    "stayUpdated": "Kekal Dikemas Kini",
     "subtitle": "Kekal dikemas kini dengan berita dan acara sekolah",
     "viewAll": "Lihat Semua Pengumuman",
     "filterYear": "Tapis mengikut Tahun",

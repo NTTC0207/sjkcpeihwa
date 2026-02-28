@@ -67,10 +67,12 @@
     "mission": "我们的使命",
     "missionText": "永续发展素质教育，激发个人潜质，体现国家宏愿。",
     "vision": "学校宏愿",
-    "visionText": "素质教育、优质国民、国家安康"
+    "visionText": "素质教育、优质国民、国家安康",
+    "yearsOfExcellence": "卓越办学年"
   },
   "charter": {
     "title": "客户服务标准",
+    "ourCommitment": "我们的承诺",
     "items": [
       "我们将提供优良教育于学生，以培养一群优良且具有崇高道德价值观及能迎合建国目标的社会份子。",
       "我们将致力于提高学生们在学术上的水准。",
@@ -83,6 +85,7 @@
   "programs": {
     "title": "我们的课程",
     "subtitle": "为每个孩子提供全面教育",
+    "excellenceInEverything": "追求卓越，全面发展",
     "academic": {
       "title": "学术卓越",
       "description": "通过创新教学方法打下核心科目的坚实基础"
@@ -102,6 +105,7 @@
   },
   "announcements": {
     "title": "最新公告",
+    "stayUpdated": "保持关注",
     "subtitle": "了解学校新闻和活动",
     "viewAll": "查看所有公告",
     "filterYear": "按年份筛选",

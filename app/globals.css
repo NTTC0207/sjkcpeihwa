@@ -158,12 +158,51 @@
   .container-custom {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
+
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20;
+  }
+  .glass-dark {
+    @apply bg-gray-900/70 backdrop-blur-md border border-white/10;
+  }
+
+  /* Text & BG Gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary-dark to-primary;
+    background-size: 200% auto;
+    animation: textShine 5s linear infinite;
+  }
+
+  .mesh-gradient {
+    background-color: #f7f9fc;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(26, 73, 147, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(254, 193, 7, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(60, 165, 92, 0.05) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(238, 44, 36, 0.05) 0px, transparent 50%);
+  }
+
+  @keyframes textShine {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  .btn-primary-accent {
+    @apply relative overflow-hidden bg-primary text-white px-8 py-4 rounded-2xl font-bold transition-all duration-500 shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 active:scale-95;
+  }
+  .btn-primary-accent::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full transition-transform duration-1000 ease-in-out;
+  }
+  .btn-primary-accent:hover::before {
+    @apply translate-x-full;
+  }
 }
 
 /* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+html { }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {

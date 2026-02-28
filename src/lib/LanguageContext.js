@@ -4,22 +4,42 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const LanguageContext = createContext();
 
+/**
+ * Reads the preferred locale synchronously from localStorage.
+ * Safe to call during useState initializer — falls back to "ms" on SSR
+ * (where localStorage is undefined) so there's no server/client mismatch.
+ */
+function getInitialLocale() {
+  if (typeof window === "undefined") return "ms"; // SSR guard
+  const saved = localStorage.getItem("preferredLocale");
+  if (!saved || saved === "en") {
+    // Normalise legacy "en" value
+    localStorage.setItem("preferredLocale", "ms");
+    return "ms";
+  }
+  return saved;
+}
+
 export function LanguageProvider({ children }) {
-  const [locale, setLocale] = useState("ms");
+  // Initialise locale synchronously so the first fetch always targets the
+  // correct language — eliminates the "ms → zh" flicker on refresh.
+  const [locale, setLocale] = useState(getInitialLocale);
   const [translations, setTranslations] = useState(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [translationsReady, setTranslationsReady] = useState(false);
 
+  // Mark as mounted after first paint (client-only)
   useEffect(() => {
-    let savedLocale = localStorage.getItem("preferredLocale") || "ms";
-    if (savedLocale === "en") {
-      savedLocale = "ms";
-      localStorage.setItem("preferredLocale", "ms");
-    }
-    setLocale(savedLocale);
     setIsMounted(true);
   }, []);
 
+  // Load translations whenever the locale is known and the component is mounted
   useEffect(() => {
+    if (!isMounted) return;
+
+    let cancelled = false;
+    setTranslationsReady(false);
+
     const loadTranslations = async () => {
       try {
         const response = await fetch(`/locales/${locale}/common.json`);
@@ -27,32 +47,44 @@ export function LanguageProvider({ children }) {
           throw new Error(`Failed to load translations for ${locale}`);
         }
         const data = await response.json();
-        setTranslations(data);
+        if (!cancelled) {
+          setTranslations(data);
+          setTranslationsReady(true);
+        }
       } catch (error) {
         console.error("Error loading translations:", error);
         // Fallback to 'ms' if other locale fails
-        if (locale !== "ms") {
+        if (locale !== "ms" && !cancelled) {
           console.log("Falling back to 'ms' translations");
           try {
             const fallbackResponse = await fetch("/locales/ms/common.json");
             if (fallbackResponse.ok) {
               const fallbackData = await fallbackResponse.json();
-              setTranslations(fallbackData);
+              if (!cancelled) {
+                setTranslations(fallbackData);
+                setTranslationsReady(true);
+              }
             }
           } catch (fallbackError) {
             console.error(
               "Critical error: Could not load fallback translations",
               fallbackError,
             );
-            // Ensure we at least have an empty object to avoid infinite loading screens
-            setTranslations({});
+            if (!cancelled) {
+              setTranslations({});
+              setTranslationsReady(true);
+            }
           }
         }
       }
     };
-    if (isMounted) {
-      loadTranslations();
-    }
+
+    loadTranslations();
+
+    // Cleanup: ignore stale fetches when locale changes mid-flight
+    return () => {
+      cancelled = true;
+    };
   }, [locale, isMounted]);
 
   const changeLocale = (newLocale) => {
@@ -62,7 +94,13 @@ export function LanguageProvider({ children }) {
 
   return (
     <LanguageContext.Provider
-      value={{ locale, translations, changeLocale, isMounted }}
+      value={{
+        locale,
+        translations,
+        changeLocale,
+        isMounted,
+        translationsReady,
+      }}
     >
       {children}
     </LanguageContext.Provider>

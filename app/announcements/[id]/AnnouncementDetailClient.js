@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useLanguage } from "@lib/LanguageContext";
@@ -14,13 +15,29 @@ import {
 } from "react-icons/hi2";
 
 export default function AnnouncementDetailClient({ announcement }) {
-  const { translations } = useLanguage();
+  const { translations, isMounted } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(window.location.href);
       alert("Link copied to clipboard!");
     }
+  };
+
+  // Safe translation helper
+  const t = (key, fallback) => {
+    if (!mounted || !isMounted) return fallback;
+    const keys = key.split(".");
+    let val = translations;
+    for (const k of keys) {
+      val = val?.[k];
+    }
+    return val || fallback;
   };
 
   return (
@@ -38,7 +55,7 @@ export default function AnnouncementDetailClient({ announcement }) {
               className="inline-flex items-center text-primary font-bold hover:text-primary-dark transition-colors"
             >
               <HiArrowLeft className="mr-2" />
-              {translations?.penghargaan?.backToList || "Back to List"}
+              {t("penghargaan.backToList", "Back to List")}
             </Link>
           </motion.div>
 
@@ -145,7 +162,7 @@ export default function AnnouncementDetailClient({ announcement }) {
               className="flex justify-center"
             >
               <Link href="/announcements" className="btn-primary-accent">
-                {translations?.penghargaan?.viewMore || "View More"}
+                {t("penghargaan.viewMore", "View More")}
               </Link>
             </motion.div>
           </div>

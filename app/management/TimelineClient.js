@@ -30,14 +30,12 @@ const CATEGORY_META = {
 };
 
 export default function TimelineClient({ initialItems, category }) {
-  const { translations, locale, isMounted } = useLanguage();
+  const { translations, locale } = useLanguage();
   const [items] = useState(initialItems || []);
   const [selectedItem, setSelectedItem] = useState(null);
   const categoryMeta = CATEGORY_META[category] || CATEGORY_META.bangunan;
 
   const tNav = (key, fallback) => {
-    if (!isMounted) return fallback;
-
     const keys = key.split(".");
     let value = translations;
     for (const k of keys) {
@@ -68,14 +66,6 @@ export default function TimelineClient({ initialItems, category }) {
       document.body.style.overflow = "unset";
     };
   }, [selectedItem]);
-
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white pt-32 pb-24">

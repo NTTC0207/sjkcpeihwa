@@ -249,20 +249,6 @@ export default function AdminPage() {
                 </p>
               </Link>
 
-              {/* <Link
-                href="/admin/management"
-                className="card group hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-left block"
-              >
-                <div className="w-12 h-12 bg-accent-blue rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-blue-900/10">
-                  <span className="text-2xl text-white">💼</span>
-                </div>
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  Urusan Sekolah
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Urus persaraan, pertukaran, dan pembangunan sekolah.
-                </p>
-              </Link> */}
               <Link
                 href="/admin/management/retirement"
                 className="card group border-2 border-yellow-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-left block bg-gradient-to-br from-white to-yellow-50/30"
@@ -295,30 +281,6 @@ export default function AdminPage() {
                 </p>
               </Link>
 
-              <div className="card opacity-60 grayscale cursor-not-allowed">
-                <div className="w-12 h-12 bg-accent-green rounded-xl flex items-center justify-center mb-4">
-                  <span className="text-2xl">📅</span>
-                </div>
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  Acara (Akan Datang)
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Cipta dan urus aktiviti serta kalendar sekolah yang akan
-                  datang.
-                </p>
-              </div>
-
-              <div className="card opacity-60 grayscale cursor-not-allowed">
-                <div className="w-12 h-12 bg-primary-dark rounded-xl flex items-center justify-center mb-4">
-                  <span className="text-2xl">🖼️</span>
-                </div>
-                <h3 className="text-xl font-bold text-primary mb-2">
-                  Galeri (Akan Datang)
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Muat naik dan urus album foto dan kenangan sekolah.
-                </p>
-              </div>
             </div>
           </>
         </div>

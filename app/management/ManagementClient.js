@@ -53,7 +53,7 @@ const CATEGORY_META = {
 };
 
 export default function ManagementClient({ initialItems, category }) {
-  const { translations, locale, isMounted } = useLanguage();
+  const { translations, locale } = useLanguage();
   const [items, setItems] = useState(initialItems || []);
   const [loading, setLoading] = useState(false);
   const [lastDoc, setLastDoc] = useState(null);
@@ -62,7 +62,6 @@ export default function ManagementClient({ initialItems, category }) {
 
   const tNav = useCallback(
     (key, fallback) => {
-      if (!isMounted) return fallback;
       const keys = key.split(".");
       let value = translations;
       for (const k of keys) {
@@ -119,14 +118,6 @@ export default function ManagementClient({ initialItems, category }) {
       setLoading(false);
     }
   };
-
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-bg">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-neutral-bg pt-32 pb-24">

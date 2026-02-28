@@ -15,26 +15,17 @@ import { db } from "@lib/firebase";
 import { motion } from "framer-motion";
 
 export default function RetirementClient({ initialItems }) {
-  const { translations, locale, isMounted } = useLanguage();
+  const { translations, locale } = useLanguage();
   const [items, setItems] = useState(initialItems || []);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialItems?.length === 5);
 
   const tNav = (key, fallback) => {
-    if (!isMounted) return fallback;
     const keys = key.split(".");
     let value = translations;
     for (const k of keys) value = value?.[k];
     return value || fallback;
   };
-
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-bg">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   const fetchMore = async () => {
     if (loading || !hasMore) return;

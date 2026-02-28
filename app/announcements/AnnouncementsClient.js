@@ -2,15 +2,20 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import Image from "next/image";
 import { useLanguage } from "@lib/LanguageContext";
 import {
   HiMegaphone,
   HiArrowRight,
+  HiArrowLeft,
   HiCalendar,
   HiChevronDown,
   HiCheckCircle,
   HiXMark,
+  HiShare,
+  HiPaperClip,
+  HiDocumentText,
+  HiArrowTopRightOnSquare,
 } from "react-icons/hi2";
 import {
   collection,
@@ -106,7 +111,27 @@ export default function AnnouncementsClient({
   initialAnnouncements,
   initialCategory,
 }) {
-  const { translations, locale } = useLanguage();
+  const { translations, locale, isMounted } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Safe translation helper
+  const t = useCallback(
+    (key, fallback) => {
+      if (!mounted || !isMounted) return fallback;
+      const keys = key.split(".");
+      let val = translations;
+      for (const k of keys) {
+        val = val?.[k];
+      }
+      return val || fallback;
+    },
+    [translations, mounted, isMounted],
+  );
+
   const searchParams = useSearchParams();
 
   const [activeCategory, setActiveCategory] = useState(initialCategory || null);
@@ -126,6 +151,11 @@ export default function AnnouncementsClient({
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribing, setSubscribing] = useState(false);
   const [showSubTooltip, setShowSubTooltip] = useState(false);
+
+  // ── Inline detail view ───────────────────────────────────────────────────
+  // Holds the announcement object to display in the detail view.
+  // null = show list, non-null = show detail inline (no page reload).
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
   useEffect(() => {
     // Check if user has already granted permission and we have a token
@@ -184,16 +214,20 @@ export default function AnnouncementsClient({
           localStorage.setItem("fcm_subscribed", "true");
           localStorage.setItem("fcm_token", token);
           alert(
-            translations?.announcements?.subscribeSuccess ||
+            t(
+              "announcements.subscribeSuccess",
               "Anda telah berjaya melanggan pengumuman!",
+            ),
           );
         } else {
           throw new Error("Failed to subscribe to topic");
         }
       } else {
         alert(
-          translations?.announcements?.subscribeDenied ||
+          t(
+            "announcements.subscribeDenied",
             "Kebenaran notifikasi ditolak atau tidak disokong.",
+          ),
         );
       }
     } catch (error) {
@@ -253,15 +287,7 @@ export default function AnnouncementsClient({
   }, [lastDoc]);
 
   // Helper to read nested translation keys — memoized so it's stable across renders
-  const tNav = useCallback(
-    (key, fallback) => {
-      const keys = key.split(".");
-      let value = translations;
-      for (const k of keys) value = value?.[k];
-      return value || fallback;
-    },
-    [translations],
-  );
+  const tNav = t;
 
   // Core fetch function — stable identity via useCallback.
   // Only called for: (a) first visit to an uncached category, (b) "Load More".
@@ -427,12 +453,50 @@ export default function AnnouncementsClient({
   // NOTE: intentionally omitting handleCategoryChange & fetchAnnouncements from
   // deps — both are stable useCallback refs; adding them would cause double-fires.
 
+  // Open a detail view inline — pushes the detail URL so back button works
+  const handleSelectAnnouncement = useCallback((announcement) => {
+    setSelectedAnnouncement(announcement);
+    window.history.pushState(
+      { announcementId: announcement.id },
+      "",
+      `/announcements/${announcement.id}`,
+    );
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  // Return to list from inline detail view
+  const handleBackToList = useCallback(() => {
+    setSelectedAnnouncement(null);
+    const cat = activeCategoryRef.current;
+    const url = cat ? `/announcements?category=${cat}` : "/announcements";
+    window.history.pushState({ category: cat }, "", url);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   // Handle browser back/forward — stable: no deps that change frequently
   useEffect(() => {
     const handlePop = () => {
-      const params = new URLSearchParams(window.location.search);
-      const cat = params.get("category");
-      handleCategoryChange(cat);
+      // If we navigated back from a detail URL to the list URL, clear selection
+      const path = window.location.pathname;
+      if (path === "/announcements") {
+        setSelectedAnnouncement(null);
+        const params = new URLSearchParams(window.location.search);
+        const cat = params.get("category");
+        handleCategoryChange(cat);
+      } else {
+        // Navigated back/forward to a detail URL — check if we have it cached
+        const idMatch = path.match(/^\/announcements\/(.+)$/);
+        if (idMatch) {
+          const id = idMatch[1];
+          const found = announcementsRef.current.find((a) => a.id === id);
+          if (found) {
+            setSelectedAnnouncement(found);
+          } else {
+            // Not in cache — let Next.js hard navigate
+            window.location.href = path;
+          }
+        }
+      }
     };
     window.addEventListener("popstate", handlePop);
     return () => window.removeEventListener("popstate", handlePop);
@@ -458,6 +522,136 @@ export default function AnnouncementsClient({
     );
   }
 
+  // ── Inline detail view ───────────────────────────────────────────────────
+  if (selectedAnnouncement) {
+    const ann = selectedAnnouncement;
+    const handleShare = () => {
+      if (typeof window !== "undefined") {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard!");
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-neutral-bg">
+        <main className="pt-32 pb-24">
+          <div className="container-custom">
+            {/* Back Button */}
+            <div className="mb-8">
+              <button
+                onClick={handleBackToList}
+                className="inline-flex items-center text-primary font-bold hover:text-primary-dark transition-colors"
+              >
+                <HiArrowLeft className="mr-2" />
+                {t("penghargaan.backToList", "Back to List")}
+              </button>
+            </div>
+
+            <div className="max-w-4xl mx-auto">
+              {/* Header Card */}
+              <div className="bg-white rounded-t-[3rem] p-8 pb-0 shadow-sm border-x border-t border-gray-100">
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                  <span
+                    className={`text-sm font-bold uppercase tracking-widest px-4 py-1.5 rounded-full text-white ${
+                      ann.badgeColor || "bg-primary"
+                    }`}
+                  >
+                    {ann.badge}
+                  </span>
+                  <span className="flex items-center text-gray-500 font-medium">
+                    <HiCalendar className="mr-2 w-5 h-5 text-primary/60" />
+                    {ann.date}
+                  </span>
+                </div>
+
+                <h1 className="text-3xl md:text-5xl font-display font-bold text-primary mb-6 leading-tight">
+                  {ann.title}
+                </h1>
+
+                <div className="flex items-center justify-between py-6 border-t border-gray-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center relative overflow-hidden">
+                      <Image
+                        src="/logo.png"
+                        alt="Logo"
+                        width={24}
+                        height={24}
+                        className="object-contain"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-primary">
+                        SJKC Pei Hwa
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Official Announcement
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleShare}
+                    className="p-3 bg-neutral-bg hover:bg-gray-200 rounded-full transition-colors group"
+                    title="Share"
+                  >
+                    <HiShare className="w-5 h-5 text-gray-600 group-hover:text-primary" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Content Card */}
+              <div className="bg-white rounded-b-[3rem] p-8 pt-0 md:px-12 shadow-xl border-x border-b border-gray-100 mb-12">
+                <div className="overflow-x-auto pt-8">
+                  <div
+                    className="prose prose-lg max-w-none text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: ann.content }}
+                  />
+                </div>
+
+                {/* Attachments */}
+                {ann.attachments?.length > 0 && (
+                  <div className="mt-8 pt-6 border-t border-gray-100">
+                    <h4 className="font-bold text-gray-700 mb-3 flex items-center gap-2">
+                      <HiPaperClip className="w-4 h-4" />
+                      Attachments ({ann.attachments.length})
+                    </h4>
+                    <div className="space-y-2">
+                      {ann.attachments.map((att, i) => (
+                        <a
+                          key={i}
+                          href={att.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-indigo-50 transition-colors group"
+                        >
+                          <HiDocumentText className="w-5 h-5 text-gray-400 group-hover:text-indigo-500" />
+                          <span className="text-sm font-medium text-gray-700 flex-1 truncate">
+                            {att.name}
+                          </span>
+                          <HiArrowTopRightOnSquare className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Bottom Navigation */}
+              <div className="flex justify-center">
+                <button
+                  onClick={handleBackToList}
+                  className="btn-primary-accent"
+                >
+                  {t("penghargaan.viewMore", "View More")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-neutral-bg">
       <main className="pt-32 pb-24">
@@ -471,13 +665,13 @@ export default function AnnouncementsClient({
                   onClick={() => handleCategoryChange(null)}
                   className="text-sm text-gray-400 hover:text-primary transition-colors"
                 >
-                  {translations?.announcements?.title || "Pengumuman"}
+                  {t("announcements.title", "Pengumuman")}
                 </button>
                 <span className="text-gray-300">/</span>
                 <span
                   className={`text-sm font-semibold ${categoryMeta.textColor}`}
                 >
-                  {tNav(categoryMeta.labelKey, categoryMeta.fallback)}
+                  {t(categoryMeta.labelKey, categoryMeta.fallback)}
                 </span>
               </div>
             )}
@@ -485,7 +679,7 @@ export default function AnnouncementsClient({
             <h1 className="text-4xl md:text-5xl font-display font-bold text-primary mb-4">
               {categoryMeta
                 ? tNav(categoryMeta.labelKey, categoryMeta.fallback)
-                : translations?.announcements?.title || "Pengumuman"}
+                : t("announcements.title", "Pengumuman")}
             </h1>
             <div
               className={`w-20 h-1.5 mx-auto rounded-full mb-6 ${
@@ -493,8 +687,7 @@ export default function AnnouncementsClient({
               }`}
             />
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-              {translations?.announcements?.subtitle ||
-                "Berita dan pengumuman terkini."}
+              {t("announcements.subtitle", "Berita dan pengumuman terkini.")}
             </p>
 
             {/* Removed the large subscription section from here */}
@@ -509,9 +702,7 @@ export default function AnnouncementsClient({
                     : "bg-white text-gray-500 border border-gray-200 hover:border-primary/40 hover:text-primary"
                 }`}
               >
-                {translations?.announcements?.allYears
-                  ? tNav("announcements.title", "All")
-                  : "All"}
+                {t("announcements.allYears", "All")}
               </button>
               {Object.values(CATEGORY_META).map((cat) => (
                 <button
@@ -535,7 +726,7 @@ export default function AnnouncementsClient({
                 {/* Year Filter */}
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                    {translations?.announcements?.filterYear || "Tahun"}
+                    {t("announcements.filterYear", "Tahun")}
                   </span>
                   <div className="relative inline-block w-40">
                     <select
@@ -544,7 +735,7 @@ export default function AnnouncementsClient({
                       className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
                     >
                       <option value="all">
-                        {translations?.announcements?.allYears || "Semua Tahun"}
+                        {t("announcements.allYears", "Semua Tahun")}
                       </option>
                       {availableYears.map((year) => (
                         <option key={year} value={year}>
@@ -561,7 +752,7 @@ export default function AnnouncementsClient({
                 {/* Month Filter */}
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">
-                    {translations?.announcements?.filterMonth || "Bulan"}
+                    {t("announcements.filterMonth", "Bulan")}
                   </span>
                   <div className="relative inline-block w-40">
                     <select
@@ -570,8 +761,7 @@ export default function AnnouncementsClient({
                       className="w-full appearance-none bg-white border border-gray-200 rounded-2xl px-5 py-3 pr-10 text-primary font-bold focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer shadow-sm hover:shadow-md"
                     >
                       <option value="all">
-                        {translations?.announcements?.allMonths ||
-                          "Semua Bulan"}
+                        {t("announcements.allMonths", "Semua Bulan")}
                       </option>
                       {months.map((m) => (
                         <option key={m.value} value={m.value}>
@@ -589,7 +779,7 @@ export default function AnnouncementsClient({
 
             <div className="text-sm text-gray-400 font-medium">
               {filteredAnnouncements.length}{" "}
-              {translations?.announcements?.title || "Pengumuman"}
+              {t("announcements.title", "Pengumuman")}
             </div>
           </div>
 
@@ -600,7 +790,9 @@ export default function AnnouncementsClient({
                 key={announcement.id}
                 announcement={announcement}
                 locale={locale}
-                translations={translations}
+                t={t}
+                isMounted={isMounted}
+                onSelect={handleSelectAnnouncement}
               />
             ))}
 
@@ -610,8 +802,10 @@ export default function AnnouncementsClient({
                   <HiCalendar className="w-8 h-8 text-gray-300" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-400">
-                  {translations?.announcements?.noAnnouncements ||
-                    "No announcements found for this year"}
+                  {t(
+                    "announcements.noAnnouncements",
+                    "No announcements found for this year",
+                  )}
                 </h3>
               </div>
             )}
@@ -629,8 +823,10 @@ export default function AnnouncementsClient({
                   ) : (
                     <>
                       <span>
-                        {translations?.announcements?.loadMore ||
-                          "Request More Announcements"}
+                        {t(
+                          "announcements.loadMore",
+                          "Request More Announcements",
+                        )}
                       </span>
                       <HiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </>
@@ -666,8 +862,8 @@ export default function AnnouncementsClient({
             </div>
             <p className="text-xs text-gray-600 leading-relaxed mb-3">
               {isSubscribed
-                ? translations.announcements.subscribeStatus
-                : translations.announcements.subtitle}
+                ? t("announcements.subscribeStatus", "Anda sudah melanggan.")
+                : t("announcements.subtitle", "Berita dan pengumuman terkini.")}
             </p>
             <button
               onClick={async () => {
@@ -686,12 +882,12 @@ export default function AnnouncementsClient({
               ) : isSubscribed ? (
                 <>
                   <HiCheckCircle className="w-4 h-4" />
-                  {translations.announcements.subscribed}
+                  {t("announcements.subscribed", "Sudah Dilanggan")}
                 </>
               ) : (
                 <>
                   <HiMegaphone className="w-4 h-4" />
-                  {translations.announcements.subscribeAction}
+                  {t("announcements.subscribeAction", "Langgan")}
                 </>
               )}
             </button>
@@ -725,23 +921,28 @@ export default function AnnouncementsClient({
 // ─── Extracted & Memoized card component ────────────────────────────────────
 // Prevents individual cards from re-rendering when unrelated state (e.g.
 // selectedYear counter, loadingMore, hasMore) changes at the list level.
-const AnnouncementCard = ({ announcement, locale, translations }) => {
+const AnnouncementCard = ({ announcement, locale, t, isMounted, onSelect }) => {
   // Parse date once at card-creation time, not on every parent render
   const monthLabel = useMemo(() => {
     if (!announcement.date) return "";
-    return new Date(announcement.date).toLocaleString(
-      locale === "zh" ? "zh-CN" : "en-US",
-      { month: "short" },
-    );
-  }, [announcement.date, locale]);
+    // Use a stable locale during hydration to match server (ms -> en-US)
+    const activeLocale = !isMounted
+      ? "en-US"
+      : locale === "zh"
+        ? "zh-CN"
+        : "en-US";
+    return new Date(announcement.date).toLocaleString(activeLocale, {
+      month: "short",
+    });
+  }, [announcement.date, locale, isMounted]);
 
   const dayLabel = announcement.date?.split("-")[2];
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 group">
-      <Link
-        href={`/announcements/${announcement.id}`}
-        className="flex flex-col md:flex-row gap-0"
+      <button
+        onClick={() => onSelect(announcement)}
+        className="w-full text-left flex flex-col md:flex-row gap-0"
       >
         {/* Thumbnail Area */}
         <div className="w-full md:w-56 h-[200px] md:h-[285px] shrink-0 overflow-hidden bg-neutral-bg relative">
@@ -806,13 +1007,13 @@ const AnnouncementCard = ({ announcement, locale, translations }) => {
           <div className="mt-auto flex items-center justify-between">
             <div className="flex items-center text-primary font-bold text-sm tracking-tight group-hover:gap-1 transition-all">
               <span className="border-b-2 border-primary/0 group-hover:border-primary/20 transition-all">
-                {translations?.announcements?.readMore}
+                {t("announcements.readMore", "Read More")}
               </span>
               <HiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
         </div>
-      </Link>
+      </button>
     </div>
   );
 };

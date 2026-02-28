@@ -327,10 +327,10 @@ export default function RetirementAdminPage() {
             <h1 className="text-xl font-bold">Urus Persaraan</h1>
           </div>
           <Link
-            href="/admin/management"
+            href="/admin"
             className="flex items-center gap-1 text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-colors"
           >
-            <HiArrowLeft /> Kembali
+            <HiArrowLeft /> Papan Pemuka
           </Link>
         </div>
       </nav>

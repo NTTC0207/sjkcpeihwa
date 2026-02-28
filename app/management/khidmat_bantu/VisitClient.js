@@ -45,7 +45,7 @@ function buildYearList(data) {
 }
 
 export default function VisitClient({ initialItems }) {
-  const { translations, locale, isMounted } = useLanguage();
+  const { translations, locale } = useLanguage();
 
   const [items, setItems] = useState(initialItems || []);
   const [loading, setLoading] = useState(false);
@@ -223,14 +223,6 @@ export default function VisitClient({ initialItems }) {
     }
     return list;
   }, [items, selectedYear, selectedMonth]);
-
-  if (!isMounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-bg">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   if (loading && items.length === 0) {
     return (
