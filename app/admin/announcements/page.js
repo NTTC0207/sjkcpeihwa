@@ -148,7 +148,7 @@ const DEFAULT_AI_PROMPT_ZH = `您是 SJKC Pei Hwa Machang 学校的行政人员�
 请将以下学校公告改写成一则 **适合发送给家长群的 WhatsApp 消息**，语气需 **亲切、专业、清晰**。
 
 请注意：
-
+* 必须使用中文回复。
 * 使用合适的 emoji，让信息更吸引人，但仍保持专业形象。
 * 必须保留重要信息，例如 **标题和日期**。
 * 信息要 **简洁明了、重点清楚**。
@@ -165,7 +165,7 @@ const DEFAULT_AI_PROMPT_MS = `Anda adalah seorang pentadbir sekolah SJKC Pei Hwa
 Sila ubah suai pengumuman sekolah berikut menjadi **mesej WhatsApp yang sesuai untuk dihantar kepada kumpulan ibu bapa**, dengan nada yang **mesra, profesional, dan jelas**.
 
 Sila ambil perhatian:
-
+* 必须使用马来文回复。
 * Gunakan emoji yang sesuai supaya mesej lebih menarik, tetapi mengekalkan imej profesional.
 * Maklumat penting seperti **Tajuk dan Tarikh** mesti dikekalkan.
 * Mesej haruslah **ringkas dan padat**.
