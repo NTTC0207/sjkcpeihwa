@@ -79,35 +79,6 @@ function buildYearList(data) {
   return years.sort((a, b) => b - a);
 }
 
-// Toast notification component for client side
-function ClientToast({ message, type, onClose }) {
-  useEffect(() => {
-    const t = setTimeout(onClose, 5000);
-    return () => clearTimeout(t);
-  }, [onClose]);
-
-  return (
-    <div
-      className={`fixed top-24 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-white text-sm font-bold animate-in fade-in slide-in-from-top-4 duration-300 ${
-        type === "success" ? "bg-primary" : "bg-red-600"
-      }`}
-    >
-      <HiMegaphone className="w-5 h-5 shrink-0" />
-      <div className="flex flex-col">
-        <span className="leading-tight">{message.title}</span>
-        {message.body && (
-          <span className="text-[10px] opacity-80 font-normal mt-0.5">
-            {message.body}
-          </span>
-        )}
-      </div>
-      <button onClick={onClose} className="ml-2 opacity-70 hover:opacity-100">
-        <HiXMark className="w-4 h-4" />
-      </button>
-    </div>
-  );
-}
-
 export default function AnnouncementsClient({
   initialAnnouncements,
   initialCategory,
@@ -271,14 +242,19 @@ export default function AnnouncementsClient({
       },
     };
 
-    // Pre-seed categories from initial set to avoid immediate fetches
+    // Pre-seed category caches from the ISR batch.
+    // If the ISR batch was truncated (== INITIAL_LIMIT), a category's slice may
+    // also be truncated, so we conservatively mark hasMore=true so "Load More"
+    // remains available.  If the batch was smaller than INITIAL_LIMIT we know
+    // we received everything and hasMore stays false.
+    const isrTruncated = initialItems.length === INITIAL_LIMIT;
     initialItems.forEach((ann) => {
       if (ann.department) {
         if (!dataCacheRef.current[ann.department]) {
           dataCacheRef.current[ann.department] = {
             items: [],
             lastDoc: null,
-            hasMore: false, // Initial chunk doesn't guarantee full category list
+            hasMore: isrTruncated, // might have more if ISR batch was full
           };
         }
         dataCacheRef.current[ann.department].items.push(ann);
@@ -422,7 +398,32 @@ export default function AnnouncementsClient({
       activeCategoryRef.current = newCat;
 
       const cacheKey = newCat || "all";
-      const cached = dataCacheRef.current[cacheKey];
+      let cached = dataCacheRef.current[cacheKey];
+
+      // ── ISR-first strategy ────────────────────────────────────────────────
+      // If the specific category wasn't pre-seeded but we DO have the full
+      // "all" ISR batch, derive the category slice from it client-side.
+      // This avoids a Firebase round-trip for data already delivered by ISR.
+      if ((!cached || cached.items.length === 0) && newCat) {
+        const allCached = dataCacheRef.current["all"];
+        if (allCached && allCached.items.length > 0) {
+          const filtered = allCached.items.filter(
+            (a) => a.department === newCat,
+          );
+          // Only skip Firebase if the ISR batch was NOT truncated (we have all
+          // data) OR the filter returned some results (good enough to show).
+          if (!allCached.hasMore || filtered.length > 0) {
+            cached = {
+              items: filtered,
+              lastDoc: null,
+              // If ISR was truncated there may be more category-specific items
+              hasMore: allCached.hasMore,
+            };
+            dataCacheRef.current[cacheKey] = cached;
+          }
+        }
+      }
+
       if (cached && cached.items.length > 0) {
         setAnnouncements(cached.items);
         setLastDoc(cached.lastDoc);
@@ -430,6 +431,7 @@ export default function AnnouncementsClient({
         lastDocRef.current = cached.lastDoc;
         setAvailableYears(buildYearList(cached.items));
       } else {
+        // Only reaches Firebase if category truly has no items in the ISR seed
         fetchAnnouncements(false, newCat);
       }
     },
