@@ -108,10 +108,7 @@ function ClientToast({ message, type, onClose }) {
   );
 }
 
-export default function AnnouncementsClient({
-  initialAnnouncements,
-  initialCategory,
-}) {
+export default function AnnouncementsClient({ initialAnnouncements }) {
   const { translations, locale, isMounted } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
@@ -135,13 +132,19 @@ export default function AnnouncementsClient({
   );
 
   const searchParams = useSearchParams();
+  const urlCategoryOnMount = searchParams.get("category") || null;
 
-  const [activeCategory, setActiveCategory] = useState(initialCategory || null);
+  const [activeCategory, setActiveCategory] = useState(urlCategoryOnMount);
   const categoryMeta = activeCategory ? CATEGORY_META[activeCategory] : null;
 
-  const [announcements, setAnnouncements] = useState(
-    initialAnnouncements || [],
-  );
+  const [announcements, setAnnouncements] = useState(() => {
+    if (!urlCategoryOnMount) return initialAnnouncements || [];
+    const filtered = (initialAnnouncements || []).filter(
+      (a) => a.department === urlCategoryOnMount,
+    );
+    return filtered.length > 0 ? filtered : initialAnnouncements || [];
+  });
+
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [lastDoc, setLastDoc] = useState(null);
