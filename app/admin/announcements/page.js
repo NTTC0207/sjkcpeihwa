@@ -127,11 +127,6 @@ const BADGE_OPTIONS = [
 
 const DEPARTMENT_OPTIONS = [
   {
-    id: "all",
-    label: "Semua",
-    color: "bg-gray-500",
-  },
-  {
     id: "academic",
     label: "Akademik / Kurikulum",
     color: "bg-indigo-500",
@@ -141,6 +136,11 @@ const DEPARTMENT_OPTIONS = [
     id: "curriculum",
     label: "Kokurikulum",
     color: "bg-orange-500",
+  },
+  {
+    id: "others",
+    label: "Lain-lain",
+    color: "bg-purple-500",
   },
 ];
 
@@ -512,6 +512,10 @@ export default function AnnouncementsAdminPage() {
 
       if (filterDepartment !== "All") {
         constraints.push(where("department", "==", filterDepartment));
+      }
+
+      if (filterBadge !== "All") {
+        constraints.push(where("badge", "==", filterBadge));
       }
 
       if (filterYear !== "All") {
@@ -1107,67 +1111,65 @@ export default function AnnouncementsAdminPage() {
               </button>
             </div>
 
-            {/* Search & Filter */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <HiMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={handleSearch}
-                  placeholder="Cari pengumuman..."
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent transition-all"
-                />
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {/* <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
-                  {["All", ...BADGE_OPTIONS.map((o) => o.label)].map((b) => (
-                    <button
-                      key={b}
-                      onClick={() => setFilterBadge(b)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
-                        filterBadge === b
-                          ? "bg-white text-primary shadow-sm"
-                          : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
-                      }`}
-                    >
-                      {b}
-                    </button>
-                  ))}
-                </div> */}
-
-                <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
-                  {["All", ...DEPARTMENT_OPTIONS.map((o) => o.id)].map(
-                    (deptId) => {
-                      const label =
-                        deptId === "All"
-                          ? "Semua Jabatan"
-                          : DEPARTMENT_OPTIONS.find(
-                              (d) => d.id === deptId,
-                            )?.label.split(" (")[0];
-                      return (
-                        <button
-                          key={deptId}
-                          onClick={() => setFilterDepartment(deptId)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 ${
-                            filterDepartment === deptId
-                              ? "bg-white text-primary shadow-sm"
-                              : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      );
-                    },
-                  )}
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col lg:flex-row gap-3">
+                {/* Search Input */}
+                <div className="relative flex-1">
+                  <HiMagnifyingGlass className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearch}
+                    placeholder="Cari tajuk atau ringkasan pengumuman..."
+                    className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-transparent transition-all shadow-sm"
+                  />
                 </div>
 
-                <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+                {/* Filter Controls */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-xl border border-gray-100">
+                    <HiAdjustmentsHorizontal className="w-4 h-4 text-gray-400" />
+                    <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      Penapis
+                    </span>
+                  </div>
+
+                  {/* Badge Select */}
+                  <select
+                    value={filterBadge}
+                    onChange={(e) => setFilterBadge(e.target.value)}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer shadow-sm hover:border-primary/30"
+                  >
+                    <option value="All">Semua Label</option>
+                    {BADGE_OPTIONS.map((o) => (
+                      <option key={o.label} value={o.label}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Department Select */}
+                  <select
+                    value={filterDepartment}
+                    onChange={(e) => setFilterDepartment(e.target.value)}
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer shadow-sm hover:border-primary/30"
+                  >
+                    <option value="All">Semua Jabatan</option>
+                    {DEPARTMENT_OPTIONS.filter((o) => o.id !== "all").map(
+                      (o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.label}
+                        </option>
+                      ),
+                    )}
+                  </select>
+
+                  {/* Year Select */}
                   <select
                     value={filterYear}
                     onChange={(e) => setFilterYear(e.target.value)}
-                    className="bg-transparent text-xs font-semibold text-gray-500 px-2 py-1 outline-none cursor-pointer"
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer shadow-sm hover:border-primary/30"
                   >
                     <option value="All">Semua Tahun</option>
                     {availableYears.map((y) => (
@@ -1176,13 +1178,12 @@ export default function AnnouncementsAdminPage() {
                       </option>
                     ))}
                   </select>
-                </div>
 
-                <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+                  {/* Month Select */}
                   <select
                     value={filterMonth}
                     onChange={(e) => setFilterMonth(e.target.value)}
-                    className="bg-transparent text-xs font-semibold text-gray-500 px-2 py-1 outline-none cursor-pointer"
+                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all cursor-pointer shadow-sm hover:border-primary/30"
                   >
                     {MONTH_OPTIONS.map((m) => (
                       <option key={m.id} value={m.id}>
@@ -1195,7 +1196,7 @@ export default function AnnouncementsAdminPage() {
             </div>
 
             {/* Announcements list */}
-            {loading ? (
+            {loading && announcements.length === 0 ? (
               <div className="space-y-3">
                 {[1, 2, 3].map((i) => (
                   <div
@@ -1230,9 +1231,9 @@ export default function AnnouncementsAdminPage() {
             ) : (
               <div className="space-y-3">
                 <p className="text-xs text-gray-400 font-medium">
-                  Memaparkan {announcements.length} pengumuman
+                  Memaparkan {filtered.length} pengumuman
                 </p>
-                {announcements.map((ann) => (
+                {filtered.map((ann) => (
                   <AnnouncementCard
                     key={ann.id}
                     announcement={ann}
