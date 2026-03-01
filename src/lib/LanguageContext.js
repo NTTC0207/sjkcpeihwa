@@ -63,6 +63,7 @@ export function LanguageProvider({ children }) {
               if (!cancelled) {
                 setTranslations(fallbackData);
                 setTranslationsReady(true);
+                return; // Exit here as we transitioned successfully
               }
             }
           } catch (fallbackError) {
@@ -70,11 +71,14 @@ export function LanguageProvider({ children }) {
               "Critical error: Could not load fallback translations",
               fallbackError,
             );
-            if (!cancelled) {
-              setTranslations({});
-              setTranslationsReady(true);
-            }
           }
+        }
+
+        // Final safety: if we're already on 'ms' OR the fallback above failed,
+        // we MUST set translationsReady to true so the loader doesn't stick.
+        if (!cancelled) {
+          setTranslations({});
+          setTranslationsReady(true);
         }
       }
     };

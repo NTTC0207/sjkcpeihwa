@@ -61,15 +61,24 @@ function LayoutContent({ children }) {
 
   // Local state to ensure hydration matching.
   const [mounted, setMounted] = useState(false);
+  const [forceShow, setForceShow] = useState(false);
+
   useEffect(() => {
     setMounted(true);
+
+    // Safety timeout: if loader is stuck for > 8s, force show content
+    const timer = setTimeout(() => {
+      setForceShow(true);
+    }, 8000);
+    return () => clearTimeout(timer);
   }, []);
 
   // Show loader until translations for the correct locale are fully loaded.
   // - !mounted       → SSR / first paint, hide content to prevent mismatch
   // - !translationsReady → locale file still fetching
   const isLoading =
-    !mounted || !isMounted || !translationsReady || !translations;
+    (!mounted || !isMounted || !translationsReady || !translations) &&
+    !forceShow;
 
   if (isAdmin) {
     return (
