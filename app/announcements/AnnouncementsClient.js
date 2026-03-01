@@ -623,7 +623,7 @@ export default function AnnouncementsClient({
               >
                 <div className="overflow-x-auto pt-8">
                   <div
-                    className="prose prose-lg max-w-none text-gray-700"
+                    className="prose prose-lg markdown-content max-w-none text-gray-700"
                     dangerouslySetInnerHTML={{ __html: ann.content }}
                   />
                 </div>

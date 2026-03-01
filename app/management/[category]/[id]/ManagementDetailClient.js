@@ -130,7 +130,7 @@ export default function ManagementDetailClient({ item, category }) {
                 </button>
               </div>
 
-              <div className="prose prose-lg max-w-none text-gray-700">
+              <div className="prose prose-lg markdown-content max-w-none text-gray-700">
                 <div dangerouslySetInnerHTML={{ __html: item.content }} />
               </div>
             </motion.div>

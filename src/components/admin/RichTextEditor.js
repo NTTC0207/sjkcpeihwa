@@ -56,7 +56,7 @@ const Iframe = Node.create({
         default: "100%",
       },
       height: {
-        default: "400",
+        default: "600",
       },
       frameborder: {
         default: "0",
@@ -69,10 +69,10 @@ const Iframe = Node.create({
           "autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share",
       },
       style: {
-        default: "border:none;overflow:hidden",
+        default: "border:none;overflow:auto",
       },
       scrolling: {
-        default: "no",
+        default: "auto",
       },
     };
   },
@@ -302,7 +302,7 @@ export default function RichTextEditor({ content, onChange, placeholder }) {
           allowfullscreen: iframe.getAttribute("allowfullscreen") || "true",
           allow: iframe.getAttribute("allow"),
           style: iframe.getAttribute("style"),
-          scrolling: iframe.getAttribute("scrolling") || "no",
+          scrolling: iframe.getAttribute("scrolling") || "auto",
         };
         editor.chain().focus().insertContent({ type: "iframe", attrs }).run();
       } else {

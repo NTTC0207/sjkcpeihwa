@@ -262,8 +262,61 @@ html { }
 .markdown-content em {
   @apply italic;
 }
-.markdown-content iframe {
-  @apply w-full rounded-2xl shadow-inner border-0 my-8 bg-white;
+.markdown-content iframe,
+.prose iframe,
+.iframe-container iframe {
+  width: 100% !important;
+  min-height: 800px;
+  overflow-y: auto;
+  @apply rounded-2xl shadow-inner border-0 my-8 bg-white;
+}
+
+.iframe-container {
+  width: 100%;
+  position: relative;
+  overflow-y: auto;
+}
+
+/* Video embeds should maintain ratio */
+.markdown-content iframe[src*="youtube.com"],
+.prose iframe[src*="youtube.com"],
+.markdown-content iframe[src*="youtu.be"],
+.prose iframe[src*="youtu.be"],
+.markdown-content iframe[src*="vimeo.com"],
+.prose iframe[src*="vimeo.com"],
+.iframe-container iframe[src*="youtube.com"],
+.iframe-container iframe[src*="youtu.be"],
+.iframe-container iframe[src*="vimeo.com"] {
+  aspect-ratio: 16 / 9;
+  height: auto !important;
+  min-height: unset !important;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .markdown-content iframe,
+  .prose iframe,
+  .iframe-container iframe {
+    min-height: 400px;
+  }
+}
+
+/* Forms and documents should have a generous default height but allow scrolling if needed */
+.markdown-content iframe[src*="google.com/forms"],
+.prose iframe[src*="google.com/forms"],
+.iframe-container iframe[src*="google.com/forms"] {
+  min-height: 800px !important;
+  height: 1200px !important;
+}
+
+.markdown-content iframe[src*="docs.google.com"],
+.prose iframe[src*="docs.google.com"],
+.markdown-content iframe[src*="drive.google.com"],
+.prose iframe[src*="drive.google.com"],
+.iframe-container iframe[src*="docs.google.com"],
+.iframe-container iframe[src*="drive.google.com"] {
+  min-height: 600px !important;
+  height: 1000px !important;
 }
 
 /* Fallback prose styles for RichTextEditor and Preview */
