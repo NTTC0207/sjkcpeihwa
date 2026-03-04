@@ -207,6 +207,7 @@ html { }
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
@@ -265,9 +266,8 @@ html { }
 .markdown-content iframe,
 .prose iframe,
 .iframe-container iframe {
-  width: 100% !important;
+  width: 100%;
   min-height: 800px;
-  overflow-y: auto;
   @apply rounded-2xl shadow-inner border-0 my-8 bg-white;
 }
 
@@ -297,7 +297,10 @@ html { }
   .markdown-content iframe,
   .prose iframe,
   .iframe-container iframe {
-    min-height: 400px;
+    min-height: 85vh;
+    width: 100%;
+    min-width: 750px;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
